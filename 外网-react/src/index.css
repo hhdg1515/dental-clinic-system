@@ -1,0 +1,96 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  *, *::before, *::after {
+    @apply box-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-surface-base text-neutral-900 font-sans antialiased;
+  }
+
+  a {
+    @apply text-inherit no-underline transition-colors duration-normal;
+  }
+
+  a:hover {
+    @apply opacity-80;
+  }
+
+  img {
+    @apply max-w-full;
+  }
+
+  ul {
+    @apply list-none m-0 p-0;
+  }
+}
+
+@layer components {
+  .card-surface {
+    @apply rounded-[28px] border border-white/40 bg-white/95 p-6 shadow-elevationLg backdrop-blur-md md:p-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-transparent px-5 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.28em] transition duration-normal;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-primary text-white shadow-elevationSm hover:bg-brand-primaryDark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:bg-brand-primary/60;
+  }
+
+
+  .btn-outline {
+    @apply btn border-neutral-300 bg-transparent text-neutral-700 hover:border-brand-primary hover:bg-brand-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:border-neutral-200 disabled:text-neutral-300;
+  }
+
+  .btn-ghost {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/50 text-neutral-500 transition duration-normal hover:bg-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+
+  .form-label {
+    @apply text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500;
+  }
+
+  .form-input {
+    @apply w-full rounded-2xl border border-neutral-200 bg-white/95 px-4 py-3 text-sm text-neutral-900 shadow-elevationSm transition duration-normal focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/30 disabled:cursor-not-allowed disabled:bg-neutral-100;
+  }
+
+  .form-select {
+    @apply form-input pr-10;
+  }
+
+  .form-textarea {
+    @apply form-input min-h-[120px] resize-none;
+  }
+
+  .form-helper {
+    @apply mt-2 text-xs text-neutral-500;
+  }
+
+  .alert {
+    @apply flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm shadow-elevationSm;
+  }
+
+  .alert-success {
+    @apply alert border-emerald-200 bg-emerald-50/90 text-emerald-800;
+  }
+
+  .alert-error {
+    @apply alert border-rose-200 bg-rose-50/90 text-rose-700;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary;
+  }
+}

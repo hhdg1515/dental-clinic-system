@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Core Dental Services - First Ave Dental</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="shared-styles.css">
+        <link rel="stylesheet" href="landingpage.css">
+        <link rel="stylesheet" href="service.css">
+        <link rel="stylesheet" href="services-detail.css">
+    </head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- Header -->
+        <header class="site-header">
+            <a href="landingpage.html" class="logo" data-lang="nav-logo">FIRST AVE DENTAL & ORTHODONTICS</a>
+            <nav>
+                <img src="images/menu.svg" class="menu" id="menu-btn" alt="open menu">
+                <ul class="nav" id="nav">
+                    <li class="exit" id="exit-btn">
+                        <a href="#" aria-label="Close menu"><img src="images/exit.svg" alt="Close menu icon"></a>
+                    </li>
+                    <li><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                    <li class="active"><a href="service.html" data-lang="nav-services">Services</a></li>
+                    <li><a href="faq.html" data-lang="nav-faq">FAQ</a></li>
+                    <li>
+                        <button id="lang-toggle" class="lang-icon" onclick="switchLanguage(currentLanguage === 'en' ? 'zh' : 'en')" title="Switch Language">
+                            中 / EN
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <div class="breadcrumb-wrapper">
+                <ul class="breadcrumbs">
+                    <li><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                    <li>> <a href="service.html" data-lang="nav-services">Services</a></li>
+                    <li data-lang="detail-breadcrumb">> Core Services</li>
+                </ul>
+            </div>
+
+            <h1 data-lang="detail-1-title">Core Dental Services</h1>
+            <p class="hero-description" data-lang="detail-1-desc">Comprehensive dental care for every member of your family. From routine cleanings to advanced treatments, our expert team provides quality care with compassion and precision.</p>
+        </div>
+    </section>
+
+    <!-- Services Carousel Section -->
+    <section class="content-section">
+        <div class="content-container">
+
+            <!-- Service 1: General & Family -->
+            <div id="general-family" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="general-service-title">General & Family</h2>
+                    <h3 class="section-subtitle-bold" data-lang="general-service-subtitle">COMPREHENSIVE CARE FOR ALL AGES</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <!-- Info Card -->
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/family.jpg" alt="General & Family Care">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="general-card-title">Family Dental Care</h3>
+                                <ul class="service-details">
+                                    <li data-lang="general-detail-1">Comprehensive dental exams</li>
+                                    <li data-lang="general-detail-2">Professional teeth cleaning</li>
+                                    <li data-lang="general-detail-3">Digital X-rays and diagnostics</li>
+                                    <li data-lang="general-detail-4">Cavity fillings and repairs</li>
+                                    <li data-lang="general-detail-5">Children's dental care</li>
+                                    <li data-lang="general-detail-6">Senior dental care</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Section -->
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="general-package-1-name">Individual Care</h4>
+                            <p class="package-price">$150 - $300</p>
+                            <ul class="package-features">
+                                <li data-lang="general-package-1-item1">Exam & X-rays</li>
+                                <li data-lang="general-package-1-item2">Professional cleaning</li>
+                                <li data-lang="general-package-1-item3">Fluoride treatment</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="general-package-2-name">Family Package</h4>
+                            <p class="package-price">$500 - $800</p>
+                            <ul class="package-features">
+                                <li data-lang="general-package-2-item1">For family of 4</li>
+                                <li data-lang="general-package-2-item2">2 cleanings per year</li>
+                                <li data-lang="general-package-2-item3">Priority scheduling</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="general-package-3-name">Annual Membership</h4>
+                            <p class="package-price">$1,200</p>
+                            <ul class="package-features">
+                                <li data-lang="general-package-3-item1">Unlimited cleanings</li>
+                                <li data-lang="general-package-3-item2">AI Assistant Access</li>
+                                <li data-lang="general-package-3-item3">Priority scheduling</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 2: Cosmetic -->
+            <div id="cosmetic" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="cosmetic-service-title">Cosmetic Dentistry</h2>
+                    <h3 class="section-subtitle-bold" data-lang="cosmetic-service-subtitle">TRANSFORM YOUR SMILE</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/cosmetic.jpg" alt="Cosmetic Dentistry">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="cosmetic-card-title">Aesthetic Treatments</h3>
+                                <ul class="service-details">
+                                    <li data-lang="cosmetic-detail-1">Professional teeth whitening</li>
+                                    <li data-lang="cosmetic-detail-2">Porcelain veneers</li>
+                                    <li data-lang="cosmetic-detail-3">Dental bonding</li>
+                                    <li data-lang="cosmetic-detail-4">Smile makeovers</li>
+                                    <li data-lang="cosmetic-detail-5">Gum contouring</li>
+                                    <li data-lang="cosmetic-detail-6">Tooth reshaping</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="cosmetic-package-1-name">Whitening Package</h4>
+                            <p class="package-price">$300 - $600</p>
+                            <ul class="package-features">
+                                <li data-lang="cosmetic-package-1-item1">In-office whitening</li>
+                                <li data-lang="cosmetic-package-1-item2">Take-home kit included</li>
+                                <li data-lang="cosmetic-package-1-item3">Up to 8 shades lighter</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="cosmetic-package-2-name">Veneers</h4>
+                            <p class="package-price">$800 - $1,500</p>
+                            <p class="price-note" data-lang="per-tooth">per tooth</p>
+                            <ul class="package-features">
+                                <li data-lang="cosmetic-package-2-item1">Custom porcelain veneers</li>
+                                <li data-lang="cosmetic-package-2-item2">Natural appearance</li>
+                                <li data-lang="cosmetic-package-2-item3">15-20 year lifespan</li>
+                                <li data-lang="cosmetic-package-2-item4">Color-matched</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="cosmetic-package-3-name">Smile Makeover</h4>
+                            <p class="package-price">$3,000+</p>
+                            <ul class="package-features">
+                                <li data-lang="cosmetic-package-3-item1">Complete smile design</li>
+                                <li data-lang="cosmetic-package-3-item2">Multiple procedures</li>
+                                <li data-lang="cosmetic-package-3-item3">Personalized treatment plan</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 3: Orthodontics -->
+            <div id="orthodontics" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="orthodontics-service-title">Orthodontics</h2>
+                    <h3 class="section-subtitle-bold" data-lang="orthodontics-service-subtitle">STRAIGHTEN YOUR SMILE</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/or.jpg" alt="Orthodontics">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="orthodontics-card-title">Teeth Alignment</h3>
+                                <ul class="service-details">
+                                    <li data-lang="orthodontics-detail-1">Traditional metal braces</li>
+                                    <li data-lang="orthodontics-detail-2">Ceramic braces</li>
+                                    <li data-lang="orthodontics-detail-3">Clear aligners (Invisalign)</li>
+                                    <li data-lang="orthodontics-detail-4">Retainers</li>
+                                    <li data-lang="orthodontics-detail-5">Bite correction</li>
+                                    <li data-lang="orthodontics-detail-6">Teen & adult treatment</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="orthodontics-package-1-name">Traditional Braces</h4>
+                            <p class="package-price">$3,500 - $5,500</p>
+                            <ul class="package-features">
+                                <li data-lang="orthodontics-package-1-item1">Metal or ceramic</li>
+                                <li data-lang="orthodontics-package-1-item2">12-24 months treatment</li>
+                                <li data-lang="orthodontics-package-1-item3">Monthly adjustments</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="orthodontics-package-2-name">Clear Aligners</h4>
+                            <p class="package-price">$4,500 - $7,000</p>
+                            <ul class="package-features">
+                                <li data-lang="orthodontics-package-2-item1">Invisalign treatment</li>
+                                <li data-lang="orthodontics-package-2-item2">Removable & invisible</li>
+                                <li data-lang="orthodontics-package-2-item3">12-18 months average</li>
+                                <li data-lang="orthodontics-package-2-item4">Retainers included</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="orthodontics-package-3-name">Payment Plans</h4>
+                            <p class="package-price" data-lang="flexible-payment">Flexible</p>
+                            <ul class="package-features">
+                                <li data-lang="orthodontics-package-3-item1">0% interest available</li>
+                                <li data-lang="orthodontics-package-3-item2">Monthly installments</li>
+                                <li data-lang="orthodontics-package-3-item3">Insurance accepted</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 4: Root Canals -->
+            <div id="root-canals" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="rootcanal-service-title">Root Canal Therapy</h2>
+                    <h3 class="section-subtitle-bold" data-lang="rootcanal-service-subtitle">SAVE YOUR NATURAL TEETH</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/ro.jpg" alt="Root Canal">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="rootcanal-card-title">Endodontic Treatment</h3>
+                                <ul class="service-details">
+                                    <li data-lang="rootcanal-detail-1">Pain-free procedures</li>
+                                    <li data-lang="rootcanal-detail-2">Advanced diagnostics</li>
+                                    <li data-lang="rootcanal-detail-3">Single-visit options</li>
+                                    <li data-lang="rootcanal-detail-4">Root canal retreatment</li>
+                                    <li data-lang="rootcanal-detail-5">Crown restoration</li>
+                                    <li data-lang="rootcanal-detail-6">Emergency care available</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="rootcanal-package-1-name">Front Tooth</h4>
+                            <p class="package-price">$600 - $900</p>
+                            <ul class="package-features">
+                                <li data-lang="rootcanal-package-1-item1">Root canal treatment</li>
+                                <li data-lang="rootcanal-package-1-item2">Digital imaging</li>
+                                <li data-lang="rootcanal-package-1-item3">Follow-up included</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="rootcanal-package-2-name">Back Tooth</h4>
+                            <p class="package-price">$900 - $1,500</p>
+                            <ul class="package-features">
+                                <li data-lang="rootcanal-package-2-item1">Molar root canal</li>
+                                <li data-lang="rootcanal-package-2-item2">Advanced treatment</li>
+                                <li data-lang="rootcanal-package-2-item3">Pain management</li>
+                                <li data-lang="rootcanal-package-2-item4">Post-op care</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="rootcanal-package-3-name">With Crown</h4>
+                            <p class="package-price">$1,500 - $2,500</p>
+                            <ul class="package-features">
+                                <li data-lang="rootcanal-package-3-item1">Root canal + crown</li>
+                                <li data-lang="rootcanal-package-3-item2">Complete restoration</li>
+                                <li data-lang="rootcanal-package-3-item3">5-year warranty</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <!-- Contact Info -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-contact-title">CONTACT INFO</h3>
+                <div class="contact-details">
+                    <div class="address">
+                        <p class="address-line">65 N First Ave # 203,</p>
+                        <p class="address-line">Arcadia,</p>
+                        <p class="address-line">CA 91006</p>
+                    </div>
+                    <div class="email-contact">
+                        <a href="mailto:XXXXXXXXXXX@gmail.com" class="email-link">XXXXXXXXXXX@gmail.com</a>
+                    </div>
+                    <div class="social-media">
+                        <a href="#" class="social-icon facebook" aria-label="Visit our Facebook page"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon spotify" aria-label="Listen to our Spotify playlist"><i class="fab fa-spotify"></i></a>
+                        <a href="#" class="social-icon instagram" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon youtube" aria-label="Subscribe to our YouTube channel"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opening Hours -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-hours-title">OPENING HOURS</h3>
+                <div class="hours-list">
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-monday">Monday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-tuesday">Tuesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-wednesday">Wednesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-thursday">Thursday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-friday">Friday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-saturday">Saturday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-sunday">Sunday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-nav-title">NAVIGATION</h3>
+                <div class="nav-links">
+                    <a href="service.html" class="nav-link" data-lang="footer-nav-services">Services</a>
+                    <a href="faq.html" class="nav-link" data-lang="footer-nav-faq">FAQ</a>
+                    <a href="#" class="nav-link" data-lang="footer-nav-contact">Contact us</a>
+                    <a href="#" class="nav-link book-now" data-lang="footer-nav-book">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to top">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <p class="copyright">© 2025 XXXXX - All rights reserved • <i class="fas fa-heart"></i> to all our amazing patients</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="languages.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="shared-navigation.js"></script>
+    <script src="shared-utils.js"></script>
+    <script src="services-detail.js"></script>
+    </body>
+</html>

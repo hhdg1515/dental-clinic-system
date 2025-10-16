@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Specialized Dental Care - First Ave Dental</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="shared-styles.css">
+        <link rel="stylesheet" href="landingpage.css">
+        <link rel="stylesheet" href="service.css">
+        <link rel="stylesheet" href="services-detail.css">
+    </head>
+<body id="detail-page-2">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- Header -->
+        <header class="site-header">
+            <a href="landingpage.html" class="logo" data-lang="nav-logo">FIRST AVE DENTAL & ORTHODONTICS</a>
+            <nav>
+                <img src="images/menu.svg" class="menu" id="menu-btn" alt="open menu">
+                <ul class="nav" id="nav">
+                    <li class="exit" id="exit-btn">
+                        <a href="#" aria-label="Close menu"><img src="images/exit.svg" alt="Close menu icon"></a>
+                    </li>
+                    <li><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                    <li class="active"><a href="service.html" data-lang="nav-services">Services</a></li>
+                    <li><a href="faq.html" data-lang="nav-faq">FAQ</a></li>
+                    <li>
+                        <button id="lang-toggle" class="lang-icon" onclick="switchLanguage(currentLanguage === 'en' ? 'zh' : 'en')" title="Switch Language">
+                            中 / EN
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <div class="breadcrumb-wrapper">
+                <ul class="breadcrumbs">
+                    <li><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                    <li>> <a href="service.html" data-lang="nav-services">Services</a></li>
+                    <li data-lang="detail-breadcrumb-2">> Specialized Care</li>
+                </ul>
+            </div>
+
+            <h1 data-lang="detail-2-title">Specialized Dental Care</h1>
+            <p class="hero-description" data-lang="detail-2-desc">Advanced treatments and specialized procedures performed by our expert team. From prevention to complex restorations and surgical procedures, we provide comprehensive specialized care.</p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="content-section">
+        <div class="content-container">
+
+            <!-- Service 5: Periodontics -->
+            <div id="periodontics" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="periodontics-service-title">Periodontics</h2>
+                    <h3 class="section-subtitle-bold" data-lang="periodontics-service-subtitle">GUM DISEASE TREATMENT</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/pe.jpg" alt="Periodontics">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="periodontics-card-title">Gum Health</h3>
+                                <ul class="service-details">
+                                    <li data-lang="periodontics-detail-1">Deep scaling & root planing</li>
+                                    <li data-lang="periodontics-detail-2">Laser gum therapy</li>
+                                    <li data-lang="periodontics-detail-3">Gum grafting</li>
+                                    <li data-lang="periodontics-detail-4">Periodontal maintenance</li>
+                                    <li data-lang="periodontics-detail-5">Antibiotic treatment</li>
+                                    <li data-lang="periodontics-detail-6">Pocket reduction surgery</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="periodontics-package-1-name">Scaling & Planing</h4>
+                            <p class="package-price">$200 - $400</p>
+                            <p class="price-note" data-lang="per-quadrant">per quadrant</p>
+                            <ul class="package-features">
+                                <li data-lang="periodontics-package-1-item1">Deep cleaning</li>
+                                <li data-lang="periodontics-package-1-item2">Root planing</li>
+                                <li data-lang="periodontics-package-1-item3">Local anesthesia</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="periodontics-package-2-name">Full Mouth</h4>
+                            <p class="package-price">$800 - $1,400</p>
+                            <ul class="package-features">
+                                <li data-lang="periodontics-package-2-item1">All quadrants treated</li>
+                                <li data-lang="periodontics-package-2-item2">Antibiotic therapy</li>
+                                <li data-lang="periodontics-package-2-item3">Follow-up visits</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="periodontics-package-3-name">Maintenance Plan</h4>
+                            <p class="package-price">$100 - $200</p>
+                            <p class="price-note" data-lang="per-visit">per visit</p>
+                            <ul class="package-features">
+                                <li data-lang="periodontics-package-3-item1">Quarterly cleanings</li>
+                                <li data-lang="periodontics-package-3-item2">Pocket monitoring</li>
+                                <li data-lang="periodontics-package-3-item3">Preventive care</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 6: Restorations -->
+            <div id="restorations" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="restorations-service-title">Restorations</h2>
+                    <h3 class="section-subtitle-bold" data-lang="restorations-service-subtitle">RESTORE FUNCTION & BEAUTY</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/res.jpg" alt="Restorations">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="restorations-card-title">Dental Restorations</h3>
+                                <ul class="service-details">
+                                    <li data-lang="restorations-detail-1">Dental crowns (all-ceramic)</li>
+                                    <li data-lang="restorations-detail-2">Bridges (fixed & removable)</li>
+                                    <li data-lang="restorations-detail-3">Full & partial dentures</li>
+                                    <li data-lang="restorations-detail-4">Inlays & onlays</li>
+                                    <li data-lang="restorations-detail-5">Same-day restorations</li>
+                                    <li data-lang="restorations-detail-6">Digital impressions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="restorations-package-1-name">Single Crown</h4>
+                            <p class="package-price">$800 - $1,500</p>
+                            <ul class="package-features">
+                                <li data-lang="restorations-package-1-item1">All-ceramic crown</li>
+                                <li data-lang="restorations-package-1-item2">Natural appearance</li>
+                                <li data-lang="restorations-package-1-item3">10-15 year warranty</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="restorations-package-2-name">3-Unit Bridge</h4>
+                            <p class="package-price">$2,400 - $4,500</p>
+                            <ul class="package-features">
+                                <li data-lang="restorations-package-2-item1">Fixed bridge</li>
+                                <li data-lang="restorations-package-2-item2">Permanent solution</li>
+                                <li data-lang="restorations-package-2-item3">Color-matched</li>
+                                <li data-lang="restorations-package-2-item4">Precision fit</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="restorations-package-3-name">Full Dentures</h4>
+                            <p class="package-price">$1,500 - $3,500</p>
+                            <ul class="package-features">
+                                <li data-lang="restorations-package-3-item1">Complete dentures</li>
+                                <li data-lang="restorations-package-3-item2">Custom fit</li>
+                                <li data-lang="restorations-package-3-item3">Adjustments included</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 7: Preventive Care -->
+            <div id="preventive" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="preventive-service-title">Preventive Care</h2>
+                    <h3 class="section-subtitle-bold" data-lang="preventive-service-subtitle">PREVENTION IS KEY</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/preventive.png" alt="Preventive Care">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="preventive-card-title">Prevention Programs</h3>
+                                <ul class="service-details">
+                                    <li data-lang="preventive-detail-1">Regular cleanings & exams</li>
+                                    <li data-lang="preventive-detail-2">Fluoride treatments</li>
+                                    <li data-lang="preventive-detail-3">Dental sealants</li>
+                                    <li data-lang="preventive-detail-4">Oral cancer screening</li>
+                                    <li data-lang="preventive-detail-5">Bite analysis</li>
+                                    <li data-lang="preventive-detail-6">Hygiene education</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="preventive-package-1-name">Basic Package</h4>
+                            <p class="package-price">$100 - $180</p>
+                            <ul class="package-features">
+                                <li data-lang="preventive-package-1-item1">Exam & cleaning</li>
+                                <li data-lang="preventive-package-1-item2">X-rays (if needed)</li>
+                                <li data-lang="preventive-package-1-item3">Oral health assessment</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="preventive-package-2-name">Children's Package</h4>
+                            <p class="package-price">$80 - $150</p>
+                            <ul class="package-features">
+                                <li data-lang="preventive-package-2-item1">Kid-friendly exam</li>
+                                <li data-lang="preventive-package-2-item2">Fluoride treatment</li>
+                                <li data-lang="preventive-package-2-item3">Sealants included</li>
+                                <li data-lang="preventive-package-2-item4">Fun experience</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="preventive-package-3-name">Annual Membership</h4>
+                            <p class="package-price">$299</p>
+                            <ul class="package-features">
+                                <li data-lang="preventive-package-3-item1">2 cleanings per year</li>
+                                <li data-lang="preventive-package-3-item2">All X-rays included</li>
+                                <li data-lang="preventive-package-3-item3">AI Assistant Access</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service 8: Oral Surgery -->
+            <div id="oral-surgery" class="service-detail-block">
+                <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="oral-surgery-service-title">Oral Surgery</h2>
+                    <h3 class="section-subtitle-bold" data-lang="oral-surgery-service-subtitle">EXPERT SURGICAL CARE</h3>
+                </div>
+
+                <div class="service-carousel">
+                    <div class="carousel-content">
+                        <div class="carousel-item active">
+                            <div class="image-section">
+                                <!-- 预留图片位置 -->
+                                <img class="service-image" src="./images/oral.jpg" alt="Oral Surgery">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="service-card-title" data-lang="oral-surgery-card-title">Surgical Procedures</h3>
+                                <ul class="service-details">
+                                    <li data-lang="oral-surgery-detail-1">Wisdom tooth extraction</li>
+                                    <li data-lang="oral-surgery-detail-2">Dental implant placement</li>
+                                    <li data-lang="oral-surgery-detail-3">Bone grafting</li>
+                                    <li data-lang="oral-surgery-detail-4">Complex extractions</li>
+                                    <li data-lang="oral-surgery-detail-5">Sedation options</li>
+                                    <li data-lang="oral-surgery-detail-6">3D imaging & planning</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <h3 class="pricing-title" data-lang="pricing-title">Pricing & Packages</h3>
+                    <div class="pricing-cards">
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="oral-surgery-package-1-name">Simple Extraction</h4>
+                            <p class="package-price">$150 - $300</p>
+                            <ul class="package-features">
+                                <li data-lang="oral-surgery-package-1-item1">Tooth removal</li>
+                                <li data-lang="oral-surgery-package-1-item2">Local anesthesia</li>
+                                <li data-lang="oral-surgery-package-1-item3">Post-op care</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card featured">
+                            <div class="featured-badge" data-lang="popular-badge">Most Popular</div>
+                            <h4 class="package-name" data-lang="oral-surgery-package-2-name">Wisdom Teeth</h4>
+                            <p class="package-price">$250 - $600</p>
+                            <p class="price-note" data-lang="per-tooth">per tooth</p>
+                            <ul class="package-features">
+                                <li data-lang="oral-surgery-package-2-item1">Impacted tooth removal</li>
+                                <li data-lang="oral-surgery-package-2-item2">Sedation available</li>
+                                <li data-lang="oral-surgery-package-2-item3">3D imaging</li>
+                                <li data-lang="oral-surgery-package-2-item4">Pain management</li>
+                            </ul>
+                        </div>
+                        <div class="pricing-card">
+                            <h4 class="package-name" data-lang="oral-surgery-package-3-name">Dental Implant</h4>
+                            <p class="package-price">$2,500 - $4,500</p>
+                            <ul class="package-features">
+                                <li data-lang="oral-surgery-package-3-item1">Implant + crown</li>
+                                <li data-lang="oral-surgery-package-3-item2">Permanent solution</li>
+                                <li data-lang="oral-surgery-package-3-item3">Lifetime warranty</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <!-- Contact Info -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-contact-title">CONTACT INFO</h3>
+                <div class="contact-details">
+                    <div class="address">
+                        <p class="address-line">65 N First Ave # 203,</p>
+                        <p class="address-line">Arcadia,</p>
+                        <p class="address-line">CA 91006</p>
+                    </div>
+                    <div class="email-contact">
+                        <a href="mailto:XXXXXXXXXXX@gmail.com" class="email-link">XXXXXXXXXXX@gmail.com</a>
+                    </div>
+                    <div class="social-media">
+                        <a href="#" class="social-icon facebook" aria-label="Visit our Facebook page"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon spotify" aria-label="Listen to our Spotify playlist"><i class="fab fa-spotify"></i></a>
+                        <a href="#" class="social-icon instagram" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon youtube" aria-label="Subscribe to our YouTube channel"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opening Hours -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-hours-title">OPENING HOURS</h3>
+                <div class="hours-list">
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-monday">Monday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-tuesday">Tuesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-wednesday">Wednesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-thursday">Thursday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-friday">Friday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-saturday">Saturday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-sunday">Sunday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-nav-title">NAVIGATION</h3>
+                <div class="nav-links">
+                    <a href="service.html" class="nav-link" data-lang="footer-nav-services">Services</a>
+                    <a href="faq.html" class="nav-link" data-lang="footer-nav-faq">FAQ</a>
+                    <a href="#" class="nav-link" data-lang="footer-nav-contact">Contact us</a>
+                    <a href="#" class="nav-link book-now" data-lang="footer-nav-book">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to top">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <p class="copyright">© 2025 XXXXX - All rights reserved • <i class="fas fa-heart"></i> to all our amazing patients</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="languages.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="shared-navigation.js"></script>
+    <script src="shared-utils.js"></script>
+    <script src="services-detail.js"></script>
+    </body>
+</html>

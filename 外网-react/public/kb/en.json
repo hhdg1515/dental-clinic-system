@@ -1,0 +1,21 @@
+[
+  {
+    "id": "root-canal-aftercare",
+    "title": "Root Canal Aftercare Guide",
+    "locale": "en",
+    "tags": ["root canal", "aftercare", "recovery"],
+    "excerpt": "Key steps to keep your tooth comfortable after a root canal visit.",
+    "body": "Take over-the-counter pain relief as directed and avoid chewing on the treated side for 24 hours. Keep up with gentle brushing and flossing, and call us immediately if swelling or discomfort increases after the second day.",
+    "updatedAt": "2025-10-01T10:00:00.000Z"
+  },
+  {
+    "id": "veneers-prep",
+    "title": "Preparing for Porcelain Veneers",
+    "locale": "en",
+    "tags": ["veneers", "cosmetic", "preparation"],
+    "excerpt": "How to get ready for your smile design appointment.",
+    "body": "Before your veneer placement, avoid staining foods, keep a consistent hygiene routine, and bring any bite guards or retainers you currently use. Plan for a follow-up visit two weeks after placement to fine-tune bite alignment.",
+    "updatedAt": "2025-09-15T09:30:00.000Z"
+  }
+]
+

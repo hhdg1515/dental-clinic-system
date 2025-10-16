@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>First Ave Dental</title>
+        <link rel="stylesheet" href="shared-styles.css">
+        <link rel="stylesheet" href="landingpage.css">
+        <link rel="stylesheet" href="auth-ui.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="appointment-ui.css">
+        <link rel="stylesheet" href="chat-assistant.css">
+    </head>
+    <body>
+        <div class="forest-hero">
+            <div class="wrapper no-padding">
+                <header>
+                    <a href="landingpage.html" class="logo">FIRST AVE DENTAL & ORTHODONTICS</a>
+                    <nav>
+                        <img src="images/menu.svg" class="menu" id="menu-btn" alt="open menu">
+                        <ul class="nav" id="nav">
+                            <li class="exit" id="exit-btn">
+                                <a href="#" aria-label="Close menu"><img src="images/exit.svg" alt="Close menu icon"></a>
+                            </li>
+                            <li class="active"><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                            <li><a href="service.html" data-lang="nav-services">Services</a></li>
+                            <li><a href="faq.html" data-lang="nav-faq">FAQ</a></li>
+                            <li>
+                                <button id="lang-toggle" class="lang-icon" onclick="switchLanguage(currentLanguage === 'en' ? 'zh' : 'en')" title="Switch Language">
+    中 / EN</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </header>
+            </div>
+            <div class="wrapper hero">
+                <div class="flex">
+                    <div class="left main-copy">
+                        <p class="subtitle" data-lang="hero-subtitle">Your Dental Journey</p>
+                        <h1>
+                            <span data-lang="hero-title1">Your</span>
+                            <span data-lang="hero-title2">Best Smile</span>
+                            <span data-lang="hero-title3">Awaits you</span>
+                        </h1>
+                        <a href="cabins.html" class="cta" data-lang="hero-cta">Book Now</a>
+                    </div>
+                    <ul class="featured-cabins">
+                        <li>
+                            <a href="services-detail-1.html#general-family" aria-label="General and Family dentistry services"><img src="images/family.jpg" class="cabin-img" alt="Family dental care"></a>
+                            <p class="cabin-title" data-lang="service-general-title">General & Family</p>
+                            <p class="cabin-desc">
+                                <span data-lang="service-general-exams">Exams & X-rays</span><br>
+                                <span data-lang="service-general-cleanings">Cleanings</span><br>
+                                <span data-lang="service-general-fillings">Fillings & more</span>
+                            </p>
+                            <a href="services-detail-1.html#general-family" class="cabin-cta" aria-label="View general and family dentistry service information">
+                                <span data-lang="service-cosmetic-cta">Service Info</span>
+                                <img src="images/arrows.svg" alt="Arrow icon">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="services-detail-1.html#cosmetic" aria-label="Cosmetic dentistry services"><img src="images/cosmetic.jpg" class="cabin-img" alt="Cosmetic dental procedures"></a>
+                            <p class="cabin-title" data-lang="service-cosmetic-title">Cosmetic</p>
+                            <p class="cabin-desc">
+                                <span data-lang="service-general-exams">Teeth Whitening</span><br>
+                                <span data-lang="service-cosmetic-veneers">Veneers</span><br>
+                               <span data-lang="service-cosmetic-bonding"> Dental Bonding</span></p>
+                            <a href="services-detail-1.html#cosmetic" class="cabin-cta" aria-label="View cosmetic dentistry service information">
+                                <span data-lang="service-cosmetic-cta">Service Info</span>
+                                <img src="images/arrows.svg" alt="Arrow icon">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="services-detail-1.html#root-canals" aria-label="Root canal services"><img src="images/ro.jpg" class="cabin-img" alt="Root canal treatment"></a>
+                            <p class="cabin-title" data-lang="service-rootcanal-title">Root Canals</p>
+                            <p class="cabin-desc">
+                                <span data-lang="service-rootcanal-diagnosis">Diagnosis</span><br>
+                                <span data-lang="service-rootcanal-procedures">Root Canal Procedures</span><br>
+                                <span data-lang="service-rootcanal-retreatment">Endodontic Retreatment</span></p>
+                            <a href="services-detail-1.html#root-canals" class="cabin-cta" aria-label="View root canal service information">
+                                <span data-lang="service-cosmetic-cta">Service Info</span>
+                                <img src="images/arrows.svg" alt="Arrow icon">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+      <div class="wrapper last-container">
+    <div class="flex">
+        <div class="left bio">
+            <h3 data-lang="form-description">Schedule your appointment</h3>
+            <p data-lang="form-detail">Schedule your appointment with our specialists today and experience the highest standard of personalized dental care. We are committed to support your journey towards your well-being.</p>
+            <img src="images/blue.jpg" class="image-container-img" alt="Dental clinic interior"> </div>
+        <div class="login-container">
+            <div class="login-card">
+                <h2>
+                    <i class="fas fa-calendar-alt"></i>
+                    <span data-lang="form-title">Schedule your appointment</span>
+                </h2>
+                <form>
+                    <label for="email" data-lang="form-email">Email:</label>
+                    <input type="email" id="email" placeholder="JOEMARK@GMAIL.COM" autocomplete="email">
+                    <label for="password" data-lang="form-password">Password:</label>
+                    <input type="password" id="password" placeholder="*************" autocomplete="current-password">
+                    <button type="submit" class="login-btn" data-lang="form-login" id="login">Login</button>
+                    <p class="register-text"><span data-lang="form-no-account">Don't have an account?</span>
+                        <a href="#" data-lang="form-link">Register here</a></p>
+                </form>
+            </div>
+        </div>
+        </div>
+    <img src="images/fern.svg" class="fern" alt="Decorative fern illustration">
+</div>
+         
+   <!-- Community Showcase Section - 放在预约区下方 -->
+<section class="community-showcase">
+    <div class="community-container">
+        <!-- 标题区域 -->
+        <div class="community-header">
+            <h2 class="community-main-title" data-lang="community-main-title">Making Connections</h2>
+            <h3 class="community-subtitle" data-lang="community-subtitle">WITH COMMUNITY, CITY, AND ACHIEVEMENTS</h3>
+        </div>
+        
+        <!-- 照片轮播区域 -->
+        <div class="community-carousel">
+            <div class="community-carousel-content">
+                
+                <!-- Slide 1: Community Events -->
+                <div class="community-slide active">
+                    <div class="photo-grid">
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Community Partnership</span>
+                            </div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Health Fair</span>
+                            </div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Recognition</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 2: City Engagement -->
+                <div class="community-slide">
+                    <div class="photo-grid">
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Mayor Meeting</span>
+                            </div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Local Business</span>
+                            </div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Media Feature</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Slide 3: Achievements -->
+                <div class="community-slide">
+                    <div class="photo-grid">
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Celebrity Visit</span>
+                            </div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Awards</span>
+                            </div>
+                        </div>
+                        <div class="photo-item">
+                            <div class="photo-placeholder">
+                                <span class="photo-label">Community Care</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- 导航箭头 -->
+            <button class="community-nav-btn community-prev" onclick="changeCommunitySlide(-1)" aria-label="Previous community slide">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="community-nav-btn community-next" onclick="changeCommunitySlide(1)" aria-label="Next community slide">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <!-- 轮播指示器 -->
+            <div class="community-indicators">
+                <span class="community-indicator active" onclick="goToCommunitySlide(0)"></span>
+                <span class="community-indicator" onclick="goToCommunitySlide(1)"></span>
+                <span class="community-indicator" onclick="goToCommunitySlide(2)"></span>
+            </div>
+        </div>
+    </div>
+</section>      
+         
+<!-- 专业牙
+ <!-- 就诊规划与便民服务区块 - 添加到你的landingpage.html -->
+<section class="visit-amenities-section">
+    <div class="fern2"></div>
+    <div class="fern3"></div>
+    <div class="visit-amenities-background">
+        <div class="visit-amenities-container">
+            
+            <!-- 上半部分：图片卡片 -->
+            <div class="image-cards-row">
+                <!-- Local Amenities 卡片 -->
+                <div class="image-card amenities-card">
+                    <div class="image-container">
+                        <img src="./images/local.jpg" alt="Local Amenities" class="card-image">
+                        <div class="image-overlay">
+                            <div class="image-content">
+                                <h2 class="card-title" data-lang="amenities-title">LOCAL AMENITIES</h2>
+                                <p class="card-description" data-lang="amenities-description">Find nearby pharmacies, cafes, and parking options to make your visit stress-free.</p>
+                                <button class="card-button amenities-btn" data-lang="amenities-button">Things to know</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan Your Visit 卡片 -->
+                <div class="image-card plan-card">
+                    <div class="image-container">
+                        <img src="./images/todo.jpg" alt="Plan Your Visit" class="card-image">
+                        <div class="image-overlay">
+                            <div class="image-content">
+                                <h2 class="card-title" data-lang="plan-title">PLAN YOUR VISIT</h2>
+                                <p class="card-description" data-lang="plan-description">Before you arrive for your appointment, check out our guide of what to expect and how to prepare for your treatment.</p>
+                                <button class="card-button plan-btn" data-lang="plan-button">Things to bring</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 下半部分：信息卡片 -->
+            <div class="info-cards-row">
+                <!-- Tips 卡片 -->
+                <div class="info-card tips-card">
+                    <div class="tips-header">
+                        <div class="tips-accent-line"></div>
+                        <h2 class="tips-title" data-lang="tips-title">TIPS FOR SMOOTH & COMFORTABLE VISITS</h2>
+                    </div>
+                    <div class="tips-content">
+                        <div class="tip-item">
+                            <h3 class="tip-heading" data-lang="tip-insurance-title">Insurance & Documentation</h3>
+                            <p class="tip-text" data-lang="tip-insurance-text">Bring your insurance card, photo ID, and current medication list for a smooth check-in process.</p>
+                        </div>
+                        <div class="tip-item">
+                            <h3 class="tip-heading" data-lang="tip-comfort-title">Comfort & Preparation</h3>
+                            <p class="tip-text" data-lang="tip-comfort-text">Eat a light meal beforehand, arrive 15 minutes early, and let us know about any dental anxiety.</p>
+                        </div>
+                        <div class="tip-item">
+                            <h3 class="tip-heading" data-lang="tip-aftercare-title">Post-Treatment Care</h3>
+                            <p class="tip-text" data-lang="tip-aftercare-text">Plan for soft foods after procedures and arrange transportation if sedation is involved.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share Your Story 卡片 -->
+                <div class="info-card story-card">
+                    <div class="story-content">
+                        <h2 class="story-title" data-lang="story-title">SHARE YOUR JOURNEY</h2>
+                        <p class="story-subtitle" data-lang="story-subtitle">WE LOVE HEARING FROM PATIENTS</p>
+                        <div class="story-icon">
+                            <i class="fas fa-comment-dots"></i>
+                        </div>
+                        <button class="story-button" data-lang="story-button">ONLINE FORM</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>       
+
+
+    <section class="clinic-map-section">
+        <div class="fern4"></div>
+        <div class="fern5"></div>
+        <div class="fern7"></div>
+    <div class="map-background-grid">
+        <div class="map-container">
+            <!-- 左侧 Map Your Trip 卡片 -->
+            <div class="map-trip-card">
+                <div class="trip-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3 class="trip-title" data-lang="map-trip-title">MAP YOUR TRIP</h3>
+                <div class="trip-contact">
+                    <p class="trip-phone">XXX-XXX-XXXX</p>
+                </div>
+                <button class="trip-book-btn">Book Now</button>
+            </div>
+
+            <!-- 中间地图轮播区域 -->
+            <div class="map-slider-area">
+                <div class="map-slider" id="map-slider">
+                    <!-- 诊所1: Arcadia -->
+                    <div class="map-slide active" data-clinic="arcadia">
+                        <div class="map-display">
+                            <a href="https://maps.google.com/maps?q=Arcadia,CA" target="_blank" class="map-link">
+                                <div class="city-image-container">
+                                    <!-- 预留图片位置 - 你可以替换为真实城市图片 -->
+                                    <img src="./images/arcadia2.jpg" alt="Arcadia" class="city-image">
+                                    <div class="city-overlay">
+                                        <div class="city-content">
+                                            <h3 class="city-name" data-lang="data-clinic-arcadia">Arcadia</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 诊所2: Rowland Heights -->
+                    <div class="map-slide" data-clinic="rowland">
+                        <div class="map-display">
+                            <a href="https://maps.google.com/maps?q=Rowland+Heights,CA" target="_blank" class="map-link">
+                                <div class="city-image-container">
+                                    <img src="./images/rowland.jpg" alt="Rowland Heights" class="city-image">
+                                    <div class="city-overlay">
+                                        <div class="city-content">
+                                            <h3 class="city-name" data-lang="data-clinic-rowland-heights">Rowland Heights</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 诊所3: Irvine -->
+                    <div class="map-slide" data-clinic="irvine">
+                        <div class="map-display">
+                            <a href="https://maps.google.com/maps?q=Irvine,CA" target="_blank" class="map-link">
+                                <div class="city-image-container">
+                                    <img src="./images/irvine2.jpg" alt="Irvine" class="city-image">
+                                    <div class="city-overlay">
+                                        <div class="city-content">
+                                            <h3 class="city-name" data-lang="data-clinic-irvine">Irvine</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 诊所4: South Pasadena -->
+                    <div class="map-slide" data-clinic="south-pasadena">
+                        <div class="map-display">
+                            <a href="https://maps.google.com/maps?q=South+Pasadena,CA" target="_blank" class="map-link">
+                                <div class="city-image-container">
+                                    <img src="./images/pasadena2.jpg" alt="South Pasadena" class="city-image">
+                                    <div class="city-overlay">
+                                        <div class="city-content">
+                                            <h3 class="city-name" data-lang="data-clinic-south-pasadena">South Pasadena</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 诊所5: Eastvale -->
+                    <div class="map-slide" data-clinic="eastvale">
+                        <div class="map-display">
+                            <a href="https://www.google.com/maps/place/Eastvale,+CA/@33.9706633,-117.6600842,13z/data=!3m1!4b1!4m6!3m5!1s0x80dcca122ea0b3d1:0x16b212b53bc73dde!8m2!3d33.9672152!4d-117.567051!16s%2Fm%2F026hg1_?entry=ttu&g_ep=EgoyMDI1MDgxMi4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="map-link">
+                                <div class="city-image-container">
+                                    <img src="./images/eastvale.jpg" alt="Eastvale" class="city-image">
+                                    <div class="city-overlay">
+                                        <div class="city-content">
+                                            <h3 class="city-name" data-lang="data-clinic-eastvale">Eastvale</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 导航按钮 -->
+                <button class="map-nav-btn prev-btn" id="prev-clinic" aria-label="Previous clinic location">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="map-nav-btn next-btn" id="next-clinic" aria-label="Next clinic location">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- 指示器 -->
+                <div class="map-indicators">
+                    <span class="indicator active" data-slide="0"></span>
+                    <span class="indicator" data-slide="1"></span>
+                    <span class="indicator" data-slide="2"></span>
+                    <span class="indicator" data-slide="3"></span>
+                    <span class="indicator" data-slide="4"></span>
+                </div>
+            </div>
+
+            <!-- 右侧距离信息区域 -->
+            <div class="distance-info">
+                <div class="distance-card">
+                    <div class="distance-title-container">
+                        <h3 class="distance-title-fancy" data-lang="distance-title-fancy">Distance from</h3>
+                        <h4 class="distance-title-regular" data-lang="distance-title-regular">NEARBY CITIES</h4>
+                    </div>
+                    <div class="distance-list" id="distance-list">
+                        <!-- 距离信息将通过JavaScript动态更新 -->
+                    </div>
+                    <div class="visit-california-container">
+                        <a href="http://www.visitcalifornia.com" target="_blank" class="visit-california-btn">
+                            <span data-lang="visit-california">Visit California</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>
+
+<footer class="dental-footer">
+    <!-- 主要页脚内容 -->
+    <div class="footer-main-content">
+        <div class="footer-container">
+            <!-- Contact Info 联系信息 -->
+            <div class="footer-section contact-info">
+                <h3 class="footer-title" data-lang="footer-contact-title">CONTACT INFO</h3>
+                <div class="contact-details">
+                    <div class="address">
+                        <p class="address-line">65 N First Ave # 203,</p>
+                        <p class="address-line">Arcadia,</p>
+                        <p class="address-line">CA 91006</p>
+                    </div>
+                    <div class="email-contact">
+                        <a href="mailto:XXXXXXXXXXX@gmail.com" class="email-link">XXXXXXXXXXX@gmail.com</a>
+                    </div>
+                    <div class="social-media">
+                        <a href="#" class="social-icon facebook" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon spotify" aria-label="Spotify">
+                            <i class="fab fa-spotify"></i>
+                        </a>
+                        <a href="#" class="social-icon instagram" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-icon youtube" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opening Hours 营业时间 -->
+            <div class="footer-section opening-hours">
+                <h3 class="footer-title" data-lang="footer-hours-title">OPENING HOURS</h3>
+                <div class="hours-list">
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-monday">Monday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-tuesday">Tuesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-wednesday">Wednesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-thursday">Thursday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-friday">Friday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-saturday">Saturday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-sunday">Sunday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation 导航 -->
+            <div class="footer-section navigation">
+                <h3 class="footer-title" data-lang="footer-nav-title">NAVIGATION</h3>
+                <div class="nav-links">
+                    <a href="service.html" class="nav-link" data-lang="footer-nav-services">Services</a>
+                    <a href="faq.html" class="nav-link" data-lang="footer-nav-faq">FAQ</a>
+                    <a href="#" class="nav-link" data-lang="footer-nav-contact">Contact us</a>
+                    <a href="#" class="nav-link book-now" data-lang="footer-nav-book">Book Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部版权条 (Camp Nokomis风格) -->
+    <div class="footer-bottom-bar">
+        <div class="bottom-bar-container">
+            <div class="back-to-top">
+                <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to top">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="copyright-text">
+                <p>© 2025 XXXXX - All rights reserved • <i class="fas fa-heart copyright-heart"></i> to all our amazing patients</p>
+            </div>
+        </div>
+    </div>
+</footer>
+        <script src="shared-navigation.js"></script>
+        <script src="shared-utils.js"></script>
+        <script type="module" src="ui-functions.js"></script>
+        <script type="module" src="appointment.js"></script>
+        <script type="module" src="chat-assistant.js"></script>
+        <script type="module" src="firebase-config.js"></script>
+        <script src="languages.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.4/gsap.min.js"></script>
+        <script src="landingpage.js" type="module"></script>
+        </body>
+</html>

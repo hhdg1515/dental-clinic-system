@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Our Services - First Ave Dental</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="shared-styles.css">
+        <link rel="stylesheet" href="landingpage.css">
+        <link rel="stylesheet" href="service.css">
+    </head>
+    <body>
+        
+        <div class="sub-hero">
+            <div class="wrapper no-padding">
+                <header>
+                    <a href="landingpage.html" class="logo" data-lang="nav-logo">FIRST AVE DENTAL & ORTHODONTICS</a>
+
+                    <nav>
+                        <img src="images/menu.svg" class="menu" id="menu-btn" alt="open menu">
+
+                        <ul class="nav" id="nav">
+                            <li class="exit" id="exit-btn">
+                                <a href="#" aria-label="Close menu"><img src="images/exit.svg" alt="Close menu icon"></a>
+                            </li>
+                            <li class="active"><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                            <li><a href="service.html" data-lang="nav-services">Services</a></li>
+                            <li><a href="faq.html" data-lang="nav-faq">FAQ</a></li>
+                            <li>
+                            <button id="lang-toggle" class="lang-icon" onclick="switchLanguage(currentLanguage === 'en' ? 'zh' : 'en')" title="Switch Language">
+    中 / EN</button>
+                        </li>
+                        </ul>
+                    </nav>
+                </header>
+            </div>
+            
+            <div class="wrapper hero">
+                <div class="main-copy">
+                    <div class="bread-wrapper">
+                        <ul class="breadcrumbs">
+                            <li><a href="landingpage.html" data-lang="service-breadcrumb-home">Home</a></li>
+                            <li>> <span data-lang="service-breadcrumb-current">Our Services</span></a>
+                        </ul>
+                    </div>
+
+                    <h1>
+                        <span data-lang="service-page-title">Our Services</span>
+                    </h1>
+                    <p class="sub-desc" data-lang="service-hero-desc">At FIRST AVE DENTAL & ORTHODONTICS, we're committed to helping you achieve a lifetime of excellent oral health. From preventative care and regular check-ups, to restorative treatments and cosmetic dentistry, our experienced team is here for you.</p>
+                </div>
+                         
+                <ul class="featured-cabins">
+                    <li>
+                        <a href="services-detail-1.html#general-family" aria-label="General and Family dentistry services"><img src="images/family.jpg" class="cabin-img" alt="Family dental care"></a>
+                        <p class="cabin-title" data-lang="service-general-title">General & Family</p>
+                        <p class="cabin-desc">
+                            <span data-lang="service-general-exams">Exams & X-rays</span><br>
+                            <span data-lang="service-general-cleanings">Cleanings</span><br>
+                            <span data-lang="service-general-fillings">Fillings & more</span></p>
+
+                        <a href="services-detail-1.html#general-family" class="cabin-cta" aria-label="View general and family dentistry service information">
+                            <span data-lang="service-general-cta">Service Info</span>
+                            <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="services-detail-1.html#cosmetic" aria-label="Cosmetic dentistry services"><img src="images/cosmetic.jpg" class="cabin-img" alt="Cosmetic dental procedures"></a>
+                        <p class="cabin-title" data-lang="service-cosmetic-title">Cosmetic</p>
+                        <p class="cabin-desc">
+                            <span data-lang="service-cosmetic-whitening">Teeth Whitening</span><br>
+                            <span data-lang="service-cosmetic-veneers">Veneers</span><br>
+                            <span data-lang="service-cosmetic-bonding">Dental Bonding</span></p>
+
+                        <a href="services-detail-1.html#cosmetic" class="cabin-cta" aria-label="View cosmetic dentistry service information">
+                            <span data-lang="service-cosmetic-cta">Service Info</span>
+                            <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="services-detail-1.html#orthodontics" aria-label="Orthodontics services"><img src="images/or.jpg" class="cabin-img" alt="Orthodontic treatment"></a>
+
+                        <p class="cabin-title" data-lang="service-orthodontics-title">Orthodontics</p>
+                        <p class="cabin-desc">
+                            <span data-lang="service-orthodontics-item1">Braces</span><br>
+                            <span data-lang="service-orthodontics-item2">Clear Aligners</span><br>
+                            <span data-lang="service-orthodontics-item3">Retainers</span></p>
+
+                        <a href="services-detail-1.html#orthodontics" class="cabin-cta" aria-label="View orthodontics service information">
+                            <span data-lang="service-cosmetic-cta">Service Info</span>
+                            <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="services-detail-1.html#root-canals" aria-label="Root canal services"><img src="images/ro.jpg" class="cabin-img" alt="Root canal treatment"></a>
+                        <p class="cabin-title" data-lang="service-rootcanal-title">Root Canals</p>
+                        <p class="cabin-desc">
+                            <span data-lang="service-rootcanal-diagnosis">Diagnosis</span><br>
+                            <span data-lang="service-rootcanal-procedures">Root Canal Procedures</span><br>
+                            <span data-lang="service-rootcanal-retreatment">Endodontic Retreatment</span></p>
+                        <a href="services-detail-1.html#root-canals" class="cabin-cta" aria-label="View root canal service information">
+                            <span data-lang="service-cosmetic-cta">Service Info</span>
+                            <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+<!-- 主要内容区域 - 第二排服务卡片 -->
+<main class="services-main-content">
+    <div class="wrapper">
+        <ul class="featured-cabins">
+            <li>
+                <a href="services-detail-2.html#periodontics" aria-label="Periodontics services"><img src="images/pe.jpg" class="cabin-img" alt="Periodontal treatment"></a>
+                <p class="cabin-title" data-lang="service-periodontics-title">Periodontics</p>
+                <p class="cabin-desc">
+                    <span data-lang="service-periodontics-item1">Deep Cleanings</span><br>
+                    <span data-lang="service-periodontics-item2">Gum Disease Treatment</span><br>
+                    <span data-lang="service-periodontics-item3">Periodontal Maintenance</span></p>
+                <a href="services-detail-2.html#periodontics" class="cabin-cta" aria-label="View periodontics service information">
+                    <span data-lang="service-cosmetic-cta">Service Info</span>
+                    <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="services-detail-2.html#restorations" aria-label="Restorations services"><img src="images/res.jpg" class="cabin-img" alt="Dental restorations"></a>
+                <p class="cabin-title" data-lang="service-restorations-title">Restorations</p>
+                <p class="cabin-desc">
+                    <span data-lang="service-restorations-item1">Crowns & Bridges</span><br>
+                    <span data-lang="service-restorations-item2">Dentures (Full & Partial)</span><br>
+                    <span data-lang="service-restorations-item3">Inlays & Onlays</span></p>
+                <a href="services-detail-2.html#restorations" class="cabin-cta" aria-label="View restorations service information">
+                    <span data-lang="service-cosmetic-cta">Service Info</span>
+                    <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="services-detail-2.html#preventive" aria-label="Preventive care services"><img src="images/preventive.png" class="cabin-img" alt="Preventive dental care"></a>
+                <p class="cabin-title" data-lang="service-preventive-title">Preventive Care</p>
+                <p class="cabin-desc">
+                    <span data-lang="service-preventive-item1">Regular Cleanings & Exams</span><br>
+                    <span data-lang="service-preventive-item2">Fluoride Treatments</span><br>
+                    <span data-lang="service-preventive-item3">Dental Sealants</span></p>
+                <a href="services-detail-2.html#preventive" class="cabin-cta" aria-label="View preventive care service information">
+                    <span data-lang="service-cosmetic-cta">Service Info</span>
+                    <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                </a>
+            </li>
+            <li>
+                <a href="services-detail-2.html#oral-surgery" aria-label="Oral surgery services"><img src="images/oral.jpg" class="cabin-img" alt="Oral surgery procedures"></a>
+                <p class="cabin-title" data-lang="service-oral-surgery-title">Oral Surgery</p>
+                <p class="cabin-desc">
+                    <span data-lang="service-oral-surgery-item1">Tooth Extractions</span><br>
+                    <span data-lang="service-oral-surgery-item2">Dental Implant Placement</span><br>
+                    <span data-lang="service-oral-surgery-item3">Bone Grafting</span></p>
+                <a href="services-detail-2.html#oral-surgery" class="cabin-cta" aria-label="View oral surgery service information">
+                    <span data-lang="service-cosmetic-cta">Service Info</span>
+                    <img src="images/arrows-black.svg" class="transparent-img" alt="">
+                </a>
+            </li>
+        </ul>
+    </div>
+</main>
+
+<footer class="dental-footer">
+    <!-- 主要页脚内容 -->
+    <div class="footer-main-content">
+        <div class="footer-container">
+            <!-- Contact Info 联系信息 -->
+            <div class="footer-section contact-info">
+                <h3 class="footer-title" data-lang="footer-contact-title">CONTACT INFO</h3>
+                <div class="contact-details">
+                    <div class="address">
+                        <p class="address-line">65 N First Ave # 203,</p>
+                        <p class="address-line">Arcadia,</p>
+                        <p class="address-line">CA 91006</p>
+                    </div>
+                    <div class="email-contact">
+                        <a href="mailto:XXXXXXXXXXX@gmail.com" class="email-link">XXXXXXXXXXX@gmail.com</a>
+                    </div>
+                    <div class="social-media">
+                        <a href="#" class="social-icon facebook" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon spotify" aria-label="Spotify">
+                            <i class="fab fa-spotify"></i>
+                        </a>
+                        <a href="#" class="social-icon instagram" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-icon youtube" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opening Hours 营业时间 -->
+            <div class="footer-section opening-hours">
+                <h3 class="footer-title" data-lang="footer-hours-title">OPENING HOURS</h3>
+                <div class="hours-list">
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-monday">Monday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-tuesday">Tuesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-wednesday">Wednesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-thursday">Thursday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-friday">Friday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-saturday">Saturday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-sunday">Sunday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation 导航 -->
+            <div class="footer-section navigation">
+                <h3 class="footer-title" data-lang="footer-nav-title">NAVIGATION</h3>
+                <div class="nav-links">
+                    <a href="service.html" class="nav-link" data-lang="footer-nav-services">Services</a>
+                    <a href="faq.html" class="nav-link" data-lang="footer-nav-faq">FAQ</a>
+                    <a href="#" class="nav-link" data-lang="footer-nav-contact">Contact us</a>
+                    <a href="#" class="nav-link book-now" data-lang="footer-nav-book">Book Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部版权条 -->
+    <div class="footer-bottom-bar">
+        <div class="bottom-bar-container">
+            <div class="back-to-top">
+                <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to top">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+            <div class="copyright-text">
+                <p>© 2025 XXXXX - All rights reserved • <i class="fas fa-heart copyright-heart"></i> to all our amazing patients</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+        <script src="languages.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.2.4/gsap.min.js"></script>
+        <script src="shared-navigation.js"></script>
+        <script src="static-pages.js"></script>
+    </body>
+</html>

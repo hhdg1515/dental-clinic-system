@@ -1,0 +1,723 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - First Ave Dental</title>
+    <link rel="stylesheet" href="css/shared.css">
+    <link rel="stylesheet" href="css/glass-effects.css">
+    <link rel="stylesheet" href="css/appointments.css">
+    <link rel="stylesheet" href="css/liquid-glass-modal.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- 认证检查由各页面的 JS 文件处理 -->
+
+    <!-- Firebase v9 SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+        import { getAuth, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+        import { getStorage } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js';
+
+        // Make Firebase functions available globally
+        window.firebaseSDK = {
+            initializeApp,
+            getAuth,
+            GoogleAuthProvider,
+            getFirestore,
+            getStorage
+        };
+    </script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Left Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-tooth"></i>
+                    <div class="logo-text">
+                        <div class="company-name">FIRST AVE DENTAL</div>
+                        <div class="company-subtitle">&ORTHODONTICS</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                  <!-- Collapsible toggle button -->
+                <div class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-indent"></i>
+                </div>
+                
+                <a href="patients.html" class="nav-item">
+                    <i class="fas fa-tasks"></i>
+                    <span>Appointments</span>
+                </a>
+                <a href="appointments.html" class="nav-item active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendar</span>
+                </a>
+                <a href="#logout" class="nav-item logout" onclick="handleLogout(event); return false;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-actions">
+                    <div class="page-title">
+                        <h1>Calendar</h1>
+                    </div>
+                    <div class="global-search-container">
+                        <input type="text" class="global-search-input" id="globalSearchInput" placeholder="Search appointments, patients...">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                    <div class="history-icon" id="historyIcon">
+                        <i class="fas fa-users"></i>
+                        <div class="tooltip">Accounts</div>
+                    </div>
+                    <div class="notification-bell" id="notificationBell">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge"></span>
+                        <div class="tooltip">Notifications</div>
+                    </div>
+                    <div class="user-profile">
+                        <img class="profile-img" src="./author_lily.jpg" alt="Profile">
+                        <div class="user-info">
+                            <div class="user-name">Sunny</div>
+                            <div class="user-role">Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Appointments Content -->
+            <div class="appointments-content">
+                <!-- View Toggle with New Appointment Button -->
+                <div class="view-toggle-container">
+    <div class="current-date-display">
+        <button class="nav-arrow" id="prevWeek" aria-label="Previous week">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <span id="currentDateDisplay">July 2, 2025</span>
+        <button class="nav-arrow" id="nextWeek" aria-label="Next week">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
+    <div class="view-toggle" id="mainViewToggle">
+        <button class="view-btn active" data-view="week">Week</button>
+        <button class="view-btn" data-view="day">Day</button>
+        <button class="view-btn" data-view="month">Month</button>
+    </div>
+    
+    <button class="new-appointment-btn" id="newAppointmentBtn">
+        <i class="fas fa-plus"></i>
+        New Appointment
+    </button>
+</div>
+
+                <!-- Week View - Default Active -->
+                <div class="view-content active" id="week-view">
+                    
+                    <div class="week-grid">
+                        <div class="week-time-axis">
+                            <div class="week-time-slot empty-slot"></div> <!-- Empty slot to align with day headers -->
+                            <div class="week-time-slot">09:00</div>
+                            <div class="week-time-slot">10:00</div>
+                            <div class="week-time-slot">11:00</div>
+                            <div class="week-time-slot">12:00</div>
+                            <div class="week-time-slot">13:00</div>
+                            <div class="week-time-slot">14:00</div>
+                            <div class="week-time-slot">15:00</div>
+                            <div class="week-time-slot">16:00</div>
+                        </div>
+                        
+                        <div class="week-days">
+                            <div class="week-day">
+                                <div class="day-header">Mon<br><span class="day-number">30</span></div>
+                                <div class="day-appointments">
+                                    <!-- Appointments will be dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="week-day">
+                                <div class="day-header">Tue<br><span class="day-number">1</span></div>
+                                <div class="day-appointments">
+                                    <!-- Appointments will be dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="week-day">
+                                <div class="day-header">Wed<br><span class="day-number">2</span></div>
+                                <div class="day-appointments">
+                                    <!-- Appointments will be dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="week-day">
+                                <div class="day-header">Thu<br><span class="day-number">3</span></div>
+                                <div class="day-appointments">
+                                    <!-- Appointments will be dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="week-day">
+                                <div class="day-header">Fri<br><span class="day-number">4</span></div>
+                                <div class="day-appointments">
+                                    <!-- Appointments will be dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="week-day">
+                                <div class="day-header">Sat<br><span class="day-number">5</span></div>
+                                <div class="day-appointments">
+                                    <!-- Appointments will be dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="week-day">
+                                <div class="day-header">Sun<br><span class="day-number">6</span></div>
+                                <div class="day-appointments">
+                                    <!-- Appointments will be dynamically populated -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day View -->
+                <div class="view-content" id="day-view">
+                    
+                    <div class="day-schedule-container">
+                        <div class="time-axis">
+                            <div class="time-slot">09:00 AM</div>
+                            <div class="time-slot">10:00 AM</div>
+                            <div class="time-slot">11:00 AM</div>
+                            <div class="time-slot">12:00 PM</div>
+                            <div class="time-slot">01:00 PM</div>
+                            <div class="time-slot">02:00 PM</div>
+                            <div class="time-slot">03:00 PM</div>
+                            <div class="time-slot">04:00 PM</div>
+                            <div class="time-slot">05:00 PM</div>
+                        </div>
+                        
+                        <div class="appointments-area" id="dayAppointmentsArea">
+                            <div class="live-time-indicator" id="liveTimeIndicator"></div>
+                            <!-- Appointments will be dynamically populated from unified data source -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Month View -->
+                <div class="view-content" id="month-view">
+                    
+                    <div class="month-calendar">
+                        <div class="month-weekdays">
+                             <div class="weekday">Mon</div>
+                            <div class="weekday">Tue</div>
+                            <div class="weekday">Wed</div>
+                            <div class="weekday">Thu</div>
+                            <div class="weekday">Fri</div>
+                            <div class="weekday">Sat</div>
+                            <div class="weekday">Sun</div>
+                        </div>
+                        
+                        <div class="month-dates" id="monthDates">
+                            <!-- Dynamically generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History View - UPDATED DESIGN -->
+                <div class="view-content" id="history-view">
+                    <!-- Updated: Search and Close button with proper alignment -->
+                    <div class="history-controls">
+                        <button class="close-history-btn" id="closeHistoryBtn" aria-label="Close history">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Updated: 5-column table with new headers -->
+                    <div class="history-table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Phone</th>
+                                    <th>First Visit</th>
+                                    <th>Total Visits</th>
+                                    <th>Account Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- History appointments will be dynamically populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Updated: Simple pagination with Previous and Next only -->
+                    <div class="history-pagination">
+                        <button class="pagination-btn" id="prevPageBtn" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <button class="pagination-btn" id="nextPageBtn">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Process Appointment Modal - Updated Layout -->
+    <div class="modal-overlay liquid-glass" id="processModal">
+        <div class="modal-content liquid-glass">
+            <div class="modal-header">
+                <h3>Process Appointment</h3>
+                <button class="modal-close" id="processModalClose" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="appointment-summary" id="appointmentSummary">
+                    <h4>Appointment Details</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Patient:</span>
+                        <span class="detail-value">Robert Chen</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Service:</span>
+                        <span class="detail-value">Root Canal</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value">scheduled</span>
+                    </div>
+                </div>
+                
+                <div class="process-actions">
+                    <h4>Select Action:</h4>
+                    <div class="action-buttons-grid">
+                        <!-- Row 1: Arrival Status -->
+                        <div class="action-row">
+                            <button class="btn-action btn-secondary-action" id="arrivedBtn">
+                                <i class="fas fa-check-circle"></i>
+                                <span>arrived</span>
+                            </button>
+                            <button class="btn-action btn-secondary-action" id="noShowBtn">
+                                <i class="fas fa-user-times"></i>
+                                <span>no-show</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Row 2: Adjustments -->
+                        <div class="action-row">
+                            <button class="btn-action btn-secondary-action" id="editBtn">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit</span>
+                            </button>
+                            <button class="btn-action btn-secondary-action" id="holdBtn">
+                                <i class="fas fa-pause-circle"></i>
+                                <span>Hold</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Row 3: Final Outcomes -->
+                        <div class="action-row">
+                            <button class="btn-action btn-primary-action" id="completedBtn">
+                                <i class="fas fa-check-double"></i>
+                                <span>completed</span>
+                            </button>
+                            <button class="btn-action btn-danger-action" id="cancelBtn">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Cancel</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Appointment Modal -->
+    <div class="modal-overlay liquid-glass" id="editModal">
+        <div class="modal-content liquid-glass">
+            <div class="modal-header">
+                <h3>Edit Appointment Details</h3>
+                <button class="modal-close" id="editModalClose" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editDate">Date</label>
+                            <input type="date" id="editDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTime">Time</label>
+                            <select id="editTime" required>
+                                <option value="">Select Time Slot</option>
+                                <option value="09:00-10:00">09:00 AM - 10:00 AM</option>
+                                <option value="10:00-11:00">10:00 AM - 11:00 AM</option>
+                                <option value="11:00-12:00">11:00 AM - 12:00 PM</option>
+                                <option value="12:00-13:00">12:00 PM - 01:00 PM</option>
+                                <option value="13:00-14:00">01:00 PM - 02:00 PM</option>
+                                <option value="14:00-15:00">02:00 PM - 03:00 PM</option>
+                                <option value="15:00-16:00">03:00 PM - 04:00 PM</option>
+                                <option value="16:00-17:00">04:00 PM - 05:00 PM</option>
+                                <option value="17:00-18:00">05:00 PM - 06:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editService">Service</label>
+                            <select id="editService" required>
+                                <option value="">Select Service</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editLocation">Location</label>
+                            <select id="editLocation" required>
+                                <option value="">Select Location</option>
+                                <option value="arcadia">Arcadia</option>
+                                <option value="irvine">Irvine</option>
+                                <option value="south-pasadena">South Pasadena</option>
+                                <option value="rowland-heights">Rowland Heights</option>
+                                <option value="eastvale">Eastvale</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNotes">Notes (Optional)</label>
+                        <textarea id="editNotes" rows="3" placeholder="Add any notes about the modification..."></textarea>
+                    </div>
+                </form>
+                <!-- Warnings container for edit restrictions -->
+                <div id="editWarnings" class="hidden edit-warnings">
+                    <!-- Warning messages will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="editCancel">Cancel</button>
+                <button type="submit" class="btn-primary" form="editForm">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancellation Reason Modal - No Title -->
+    <div class="modal-overlay" id="cancellationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" id="cancellationModalClose" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cancellation-options">
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="cancelReason" value="patient-cancelled">
+                            <span>patient-cancelled</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cancelReason" value="clinic-cancelled">
+                            <span>clinic-cancelled</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="cancelNotes">Additional Notes (Optional)</label>
+                        <textarea id="cancelNotes" rows="3" placeholder="Add any additional notes..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelBack">Back</button>
+                <button type="button" class="btn-primary" id="confirmCancellation">Confirm Cancellation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Appointment Modal -->
+    <div class="modal-overlay liquid-glass" id="newAppointmentModal">
+        <div class="modal-content liquid-glass">
+            <div class="modal-header">
+                <h3>Create New Appointment</h3>
+                <button class="modal-close" id="newAppointmentClose" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newAppointmentForm">
+                    <div class="form-group">
+                        <label for="appointmentPatientName">Patient Name</label>
+                        <input type="text" id="appointmentPatientName" pattern="[A-Za-z\s]+" title="Please enter only English letters and spaces" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appointmentDate">Date</label>
+                            <input type="date" id="appointmentDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentTime">Time</label>
+                            <select id="appointmentTime" required>
+                                <option value="">Select Time Slot</option>
+                                <option value="09:00-10:00">09:00 AM - 10:00 AM</option>
+                                <option value="10:00-11:00">10:00 AM - 11:00 AM</option>
+                                <option value="11:00-12:00">11:00 AM - 12:00 PM</option>
+                                <option value="12:00-13:00">12:00 PM - 01:00 PM</option>
+                                <option value="13:00-14:00">01:00 PM - 02:00 PM</option>
+                                <option value="14:00-15:00">02:00 PM - 03:00 PM</option>
+                                <option value="15:00-16:00">03:00 PM - 04:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appointmentService">Service</label>
+                            <select id="appointmentService" required>
+                                <option value="">Select Service</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="appointmentLocation">Location</label>
+                            <select id="appointmentLocation" required>
+                                <option value="">Select Location</option>
+                                <option value="arcadia">Arcadia</option>
+                                <option value="irvine">Irvine</option>
+                                <option value="south-pasadena">South Pasadena</option>
+                                <option value="rowland-heights">Rowland Heights</option>
+                                <option value="eastvale">Eastvale</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentPhone">Phone Number</label>
+                        <input type="tel" id="appointmentPhone" placeholder="(XXX) XXX-XXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentNotes">Additional Notes (Optional)</label>
+                        <textarea id="appointmentNotes" rows="3" placeholder="Add any special notes for this appointment..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="newAppointmentCancel">Cancel</button>
+                <button type="submit" class="btn-primary" form="newAppointmentForm">Create Appointment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Details Modal (Read-only for History) -->
+    <div class="modal-overlay" id="appointmentDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Appointment Details</h3>
+                <button class="modal-close" id="appointmentDetailsClose" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="appointment-details-content" id="appointmentDetailsContent">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="appointmentDetailsOk">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Patient Account Modal -->
+<div class="modal-overlay liquid-glass" id="patientAccountModal">
+    <div class="patient-account-modal liquid-glass">
+        <!-- Header -->
+        <div class="account-modal-header">
+            <div class="patient-header-info">
+                <div class="patient-basic-info">
+                    <h2 id="accountPatientName">Sarah Johnson</h2>
+                    <div class="patient-details">
+                        <span class="patient-id">Patient ID: #PAT-2025-001</span>
+                        <div class="patient-status-toggle">
+                            <span class="status-label">Status:</span>
+                            <button class="status-toggle active" id="patientStatusToggle">
+                                <span class="status-text">active</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="account-modal-actions">
+                <button class="btn-primary" id="accountScheduleBtn">
+                    <i class="fas fa-plus"></i> New Appointment
+                </button>
+                <button class="modal-close" id="accountModalClose" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="account-tab-navigation">
+            <div class="account-tab-list">
+                <div class="account-tab-item active" data-tab="information">Patient Information</div>
+                <div class="account-tab-item" data-tab="history">Appointment History</div>
+                <div class="account-tab-item" data-tab="records">Medical Records</div>
+                <div class="account-tab-item" data-tab="treatment">Next Treatment</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="account-modal-content">
+            <!-- Patient Information Tab -->
+<div class="account-tab-content active" id="information">
+    <div class="patient-info-card">
+        <div class="section-header">
+            <span>Patient Information</span>
+            <button class="section-menu" id="editPatientInfoBtn" aria-label="Edit patient information">
+                <i class="fas fa-edit"></i>
+            </button>
+        </div>
+        <div class="info-details" id="patientInfoDisplay">
+            <!-- Display mode - will be populated by JS -->
+        </div>
+        <div class="info-details hidden" id="patientInfoEdit">
+            <!-- Edit mode -->
+            <div class="info-row">
+                <label for="editPhone">Phone:</label>
+                <input type="tel" id="editPhone" class="edit-input" aria-label="Edit phone number">
+            </div>
+            <div class="info-row">
+                <label for="editEmail">Email:</label>
+                <input type="email" id="editEmail" class="edit-input" aria-label="Edit email address">
+            </div>
+            <div class="info-row">
+                <label for="editAddress">Address:</label>
+                <input type="text" id="editAddress" class="edit-input" aria-label="Edit address">
+            </div>
+            <div class="info-row">
+                <label for="editEmergency">Emergency Contact:</label>
+                <input type="text" id="editEmergency" class="edit-input" aria-label="Edit emergency contact">
+            </div>
+            <div class="info-row">
+                <label for="editDateOfBirth">Date of Birth:</label>
+                <input type="date" id="editDateOfBirth" class="edit-input" aria-label="Edit date of birth">
+            </div>
+            <div class="info-row">
+                <label for="editAge">Age:</label>
+                <input type="number" id="editAge" class="edit-input" min="0" max="120" aria-label="Edit age">
+            </div>
+            <div class="info-row">
+                <span>Gender:</span>
+                <select id="editGender" class="edit-input" aria-label="Select gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+            </div>
+            <div class="info-row">
+                <label for="editFirstVisit">First Visit:</label>
+                <input type="date" id="editFirstVisit" class="edit-input">
+            </div>
+            <div class="info-row">
+                <label for="editAllergies">Allergies:</label>
+                <input type="text" id="editAllergies" class="edit-input">
+            </div>
+            <div class="info-row">
+                <label for="editMedications">Medications:</label>
+                <input type="text" id="editMedications" class="edit-input">
+            </div>
+            <div class="info-row">
+                <label for="editConditions">Medical Conditions:</label>
+                <input type="text" id="editConditions" class="edit-input">
+            </div>
+        </div>
+        
+        <div class="notes-summary">
+            <label for="notesEdit" class="notes-label">Notes Summary:</label>
+            <div class="notes-text" id="notesDisplay">Regular patient with good compliance. Hypertension well controlled. Previous root canal treatment on tooth #14 completed successfully. Requires ongoing preventive care every 6 months.</div>
+            <textarea id="notesEdit" class="hidden" aria-label="Edit notes summary">Regular patient with good compliance. Hypertension well controlled. Previous root canal treatment on tooth #14 completed successfully. Requires ongoing preventive care every 6 months.</textarea>
+        </div>
+        
+        <div class="edit-actions hidden" id="editActions">
+            <button class="btn-secondary" id="cancelEdit">Cancel</button>
+            <button class="btn-primary" id="saveEdit">Save</button>
+        </div>
+    </div>
+</div>
+
+            <!-- Appointment History Tab -->
+            <div class="account-tab-content" id="history">
+                <div class="history-list" id="accountHistoryList">
+                    <!-- History items will be populated here -->
+                </div>
+            </div>
+
+            <!-- Medical Records Tab -->
+            <div class="account-tab-content" id="records">
+                <div class="records-upload">
+                    <div class="section-header">
+                        <span>Upload Medical Records</span>
+                    </div>
+                    <div class="upload-icons">
+                        <div class="upload-option" onclick="document.getElementById('accountFileInput').click()">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF</span>
+                        </div>
+                        <div class="upload-option" onclick="document.getElementById('accountFileInput').click()">
+                            <i class="fas fa-file-image"></i>
+                            <span>Image</span>
+                        </div>
+                        <div class="upload-option" onclick="document.getElementById('accountFileInput').click()">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Document</span>
+                        </div>
+                    </div>
+                    <input type="file" id="accountFileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" class="hidden" aria-label="Upload medical records">
+                </div>
+                
+                <div class="existing-records">
+                    <div class="section-header">
+                        <span>Existing Records</span>
+                    </div>
+                    <div class="records-list" id="accountRecordsList">
+                        <!-- Records will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Treatment Tab -->
+            <div class="account-tab-content" id="treatment">
+                <div class="treatment-list" id="accountTreatmentList">
+                    <!-- Treatment cards will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="js/service-mapping.js"></script>
+    <script src="js/cache-manager.js"></script>
+    <script src="js/data-manager.js"></script>
+    <script src="js/shared.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script src="js/firebase-data-service.js"></script>
+    <script src="js/appointments.js"></script>
+</body>
+</html>

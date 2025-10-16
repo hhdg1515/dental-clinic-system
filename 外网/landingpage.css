@@ -1,0 +1,2699 @@
+/* landingpage.css - 优化版 */
+/* 基础样式已移至 shared-styles.css */
+/* 此文件仅包含 landing page 特定的样式 */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+
+/* =================== Landing Page 特定的 Header 样式 =================== */
+header {
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.logo {
+    color: white;
+    text-shadow: var(--shadow-text);
+}
+
+nav ul li a {
+    color: white;
+    text-shadow: var(--shadow-text);
+}
+
+.forest-hero {
+    background: url('images/forest.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    width: 100%; /* 确保全宽 */
+}
+
+.wrapper {
+    padding: .5em;
+    text-align: center;
+    max-width: 1600px; /* 限制主容器最大宽度,适配超大屏幕 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.no-padding {
+    padding: 0;
+    width: 100%; /* 确保无padding的wrapper也全宽 */
+    max-width: none; /* 移除max-width限制让header可以全宽 */
+}
+
+.subtitle {
+    padding: 3em 1em;
+}
+
+h1 span {
+    display: block;
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%); 
+}
+
+.cta {
+    display: inline-block;
+    padding: 1em;
+    background: #2569E9;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 3em;
+    margin-top: 1em;
+    border-radius: 8px; /* 设置圆角为 12px */
+    transition: all 0.3s ease;
+
+}
+
+.cta:hover {
+    background: #1a59bf; /* 鼠标悬停时背景变深 */
+    border-color: rgba(255, 255, 255, 0.1); /* 鼠标悬停时边框变得更亮 */
+    cursor: pointer;
+}
+
+ul.featured-cabins {
+    width: 60%;
+    margin: 0 auto;
+    max-width: 900px; /* 限制最大宽度,防止在超大屏幕上过度拉伸 */
+}
+
+ul.featured-cabins li {
+    margin-bottom: 3em;
+    max-width: 350px; /* 限制单个卡片最大宽度 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cabin-img {
+    box-shadow: 10px 10px 10px rgba(0,0,0,.2);
+    height: 288px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center; /* 确保图片居中裁剪 */
+    transition: transform 0.5s ease-in;
+    max-width: 350px; /* 限制图片最大宽度 */
+}
+
+.cabin-img:hover {
+    transform: scale(1.05); /* 放大 10% */
+}
+
+.cabin-title {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.cabin-desc, ul.features li p, .left p {
+    line-height: 1.9em;
+    font-size: .8em;
+    margin-bottom: 2em;
+    padding: 0;
+    list-style: none;
+}
+
+.cabin-cta {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.cabin-cta:after {
+    position: absolute;
+    content: '';
+    bottom: -12px;
+    background: #AAAAAA;
+    width: 100%;
+    height: 1px;
+}
+
+.cabin-cta span {
+    color: #AAAAAA;
+    font-weight: medium;
+}
+
+.cabin-cta img {
+    width: 10px;
+    filter: invert(0.5);
+}
+
+.cabin-cta:hover span,
+.cabin-cta:hover img,
+.cabin-cta:hover:after {
+    color: #FFFFFF; /* 悬停时文字变回白色 */
+    filter: invert(0); /* 悬停时箭头恢复为白色 */
+}
+
+.feature-container {
+    background: #1A1A1A;
+    color: white;
+}
+
+ul.features {
+    margin: 3em auto;
+    width: 70%;
+}
+
+ul.features li img {
+    width: 40px;
+}
+
+ul.features li p {
+    color: #CCCCCC;
+}
+
+.main-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2em;
+    font-style: italic;
+    margin-bottom: .5em;
+}
+
+cite {
+    margin-bottom: 3em;
+    display: block;
+}
+
+ul.testimonials {
+    margin: 3em 0;
+}
+
+ul.testimonials li {
+    margin-bottom: 3em;
+}
+
+.test-img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+p.test-desc {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+}
+
+p.test-auth {
+    font-weight: bold;
+    font-size: .85em;
+}
+
+.last-container {
+    position: relative;
+}
+
+.fern {
+    position: absolute;
+    bottom: 100px;
+    left: 432px;
+    z-index: 0; /* 改为0，确保不会覆盖登录框 */
+    width: 80%;
+    opacity: .05;
+}
+
+/* 手机端隐藏导航菜单 - 让页面更简洁聚焦 */
+@media (max-width: 549px) {
+    .menu, .exit {
+        display: none !important; /* 隐藏hamburger菜单图标 */
+    }
+
+    nav {
+        display: none !important; /* 完全隐藏导航区域 */
+    }
+
+    header {
+        justify-content: center; /* logo居中 */
+        padding: 1em;
+    }
+
+    .logo {
+        font-size: 0.9em; /* 稍微缩小logo以适应手机屏幕 */
+        text-align: center;
+    }
+}
+
+@media (min-width: 550px) {
+
+    .menu, .exit {
+        display: none;
+    }
+
+    header {
+        padding: 1.5em;
+    }
+
+    ul.nav {
+        visibility: unset;
+        opacity: 1;
+        background: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        position: unset;
+        height: auto;
+    }
+
+    ul.nav li a {
+        font-size: .9em;
+        padding: 0 1em;
+        font-weight: normal;
+        color: white; /* 桌面端也是白色 */
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    ul.nav li:last-child a {
+        padding-right: 0;
+    }
+
+    ul.nav .active a {
+        font-weight: bold;
+    }
+    
+    
+    ul.featured-cabins {
+        width: 90%;
+        max-width: 1100px; /* 在大屏幕上限制最大宽度 */
+        display: grid;
+        grid-template-columns: repeat(3, minmax(250px, 350px)); /* 固定3列,每列最大350px */
+        grid-gap: 3em;
+        justify-content: center; /* 居中对齐 */
+    }
+
+    ul.featured-cabins li {
+        max-width: none; /* 在grid布局中移除单个li的max-width */
+    }
+    
+}
+
+@media(min-width: 650px) {
+    
+    ul.features {
+        width: 90%;
+        display: grid;
+        grid-template-columns: repeat(3,auto);
+        grid-gap: 3em;
+    }
+}
+
+
+@media(min-width: 900px) {
+    
+    .wrapper {
+        text-align: left;
+    }
+    
+    .flex {
+        display: flex;
+    }
+    
+    .hero {
+        padding: 8em 4em;
+    }
+    
+    .last-container {
+        padding: 0 4em;
+    }
+    
+    .main-copy {
+        width: 40%;
+    }
+    
+    p.subtitle {
+        margin: 0 0 1em;
+        padding: 0;
+    }
+    
+    h1 {
+        font-size: 3em;
+        margin-top: 0;
+    }
+    
+    ul.featured-cabins {
+        width: 70%;
+    }
+    
+    .main-quote, .main-cite {
+        text-align: center;
+    }
+    
+    .main-quote {
+        font-size: 3em;
+        margin-top: 2em;
+    }
+    
+    .main-cite {
+        font-size: 1.5em;
+        margin-bottom: 3em;
+    }
+    
+    
+    .bio {
+        margin-top: 2em;
+        width: 75%;
+    }
+    
+    ul.testimonials {
+        margin-left: 2em;
+        width: 100%;
+    }
+    
+    ul.testimonials li {
+        display: flex;
+        background: white;
+        padding: 1.5em;
+        margin-bottom: 1em;
+    }
+    
+    .test-img {
+        margin-right: 1em;
+    }
+    
+    .test-desc {
+        margin-top: .5em;
+        font-size: 1.1em;
+        margin-bottom: 0;
+    }
+    
+    .fern {
+        width: 20%;
+    }
+    
+    .cabin-desc, ul.features li p, .left p {
+        font-size: .9em;
+         padding: 0;
+         line-height: 1.9em;
+        list-style: none;
+    }
+    
+    
+}
+
+.image-container-img {
+  width: 400px; /* 让图片宽度填满容器 */
+  height: 400px; /* 让图片高度填满容器 */
+  object-fit: scale-down; /* 核心代码：保持比例，裁剪多余部分 */
+}
+
+/* =================== 新增的登录表单样式 =================== */
+
+.login-container {
+    /* 配合父级 .flex 容器，让登录表单占据右侧空间 */
+    width: 45%;
+    margin-left: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 2em;
+    width: 100%;
+    max-width: 400px; /* 限制卡片的最大宽度 */
+    position: relative; /* 添加相对定位 */
+    z-index: 2; /* 确保始终在装饰图之上 */
+}
+
+.login-card h2 {
+    font-size: 1.1em; /* 稍微减小字体 */
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    text-align: left; /* 改为左对齐 */
+    margin: 0 0 1.5em 0; /* 移除左边距 */
+    color: #333333;
+    gap: 0.5em; /* 使用gap控制图标和文字间距 */
+}
+
+.login-card h2 i {
+    flex-shrink: 0; /* 图标不缩小 */
+    font-size: 1.2em;
+}
+
+.login-card h2 span {
+    white-space: nowrap; /* 防止换行 */
+    font-size: 1em; /* 如果还不够，可以进一步减小 */
+}
+
+.calendar-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5em;
+    object-fit: contain;
+}
+
+.login-card form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-card label {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    color: #555555;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 1em;
+    margin-bottom: 1.5em;
+    border: none;
+    background-color: #F0F4F8;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box; /* 保证 padding 和 border 不会增加宽度 */
+}
+
+.login-btn {
+    background-color: #2569E9;
+    color: white;
+    font-weight: bold;
+    padding: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 0.5em;
+}
+
+.login-btn:hover {
+    background-color: #1A54C9;
+}
+
+.register-text {
+    text-align: center;
+    font-size: 0.9em;
+    margin-top: 1.5em;
+}
+
+.register-text a {
+    color: #2569E9;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* 调整左侧 bio 区域的宽度，使其与登录表单并排 */
+.bio {
+    width: 50%;
+    margin-right: 2em;
+}
+
+/* 媒体查询，在小屏幕上，让登录表单堆叠显示 */
+@media (max-width: 900px) {
+    .flex {
+        flex-direction: column;
+        align-items: center; /* 居中对齐所有子元素 */
+    }
+    .bio, .login-container {
+        width: 100%;
+        margin: 0;
+        text-align: center; /* 文字居中 */
+    }
+    .login-card {
+        margin-top: 2em;
+        margin-left: auto; /* 卡片本身也居中 */
+        margin-right: auto;
+    }
+
+    /* 让bio区域的图片也居中 */
+    .bio .image-container-img {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.login-card h2 i {
+    font-size: 16px; /* 调整图标大小 */
+    margin-right: 1em;
+    color: #555; /* 可以设置颜色 */
+}
+
+
+
+/* 语言切换按钮样式 */
+
+.lang-icon {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.9); /* 白色文字 */
+    font-size: 12px;
+    font-style: italic;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.lang-icon:hover {
+    color: white;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.lang-icon:active {
+    color: blue;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .lang-icon {
+        
+        font-size: 14px;
+    }
+}
+
+/* 中文字体优化 */
+[lang="zh"] {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* 中文文本间距调整 */
+[lang="zh"] h1, [lang="zh"] h2, [lang="zh"] h3 {
+    letter-spacing: 0.05em;
+}
+
+/* 修复语言切换抖动问题的CSS补丁 */
+
+/* 1. 稳定化导航栏 */
+header {
+    min-height: 80px; /* 固定导航高度 */
+    box-sizing: border-box;
+}
+
+nav ul {
+    min-height: 40px; /* 固定导航列表高度 */
+}
+
+/* 2. 防止背景图抖动 */
+.forest-hero {
+    background: url('images/forest.jpg');
+    background-size: cover;
+    background-attachment: fixed; /* 固定背景 */
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    will-change: auto; /* 防止GPU加速问题 */
+}
+
+/* 3. 稳定化语言按钮尺寸 */
+.lang-icon {
+    background: none;
+    color: grey;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    /* 只对背景和边框做动画，不影响布局 */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    /* 防止字体变化引起尺寸变化 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0; /* 防止压缩 */
+}
+
+.lang-icon:hover {
+    color: darkblue;
+}
+
+.lang-icon:active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 4. 修复中文字体变化引起的布局问题 */
+/* 只对内容区域应用中文样式，不影响导航 */
+.wrapper [lang="zh"] h1, 
+.wrapper [lang="zh"] h2, 
+.wrapper [lang="zh"] h3 {
+    letter-spacing: 0.05em;
+}
+
+.wrapper [lang="zh"] p, 
+.wrapper [lang="zh"] li {
+    line-height: 1.8;
+}
+
+/* 导航区域保持统一样式 */
+header [data-lang],
+nav [data-lang] {
+    font-family: 'Montserrat', sans-serif !important;
+    line-height: 1.4 !important;
+    letter-spacing: normal !important;
+}
+
+/* 5. 防止导航文字变化引起晃动 */
+nav ul li a {
+    display: inline-block;
+    min-width: 60px; /* 为短文字预留空间 */
+    text-align: center;
+    white-space: nowrap; /* 防止换行 */
+}
+
+/* 特别处理"BOOK NOW"按钮 */
+nav ul li.res a {
+    min-width: 80px;
+}
+
+/* 6. 如果你之前有这些样式，请删除或修改 */
+/* 
+删除或注释掉这些可能引起问题的样式：
+
+.language-btn {
+    all: unset;
+    transition: all 0.3s ease;
+}
+
+[lang="zh"] p, [lang="zh"] li {
+    line-height: 1.8;
+}
+*/
+
+/* 7. 额外的稳定化措施 + Footer置底 */
+html {
+    height: 100%;
+}
+
+body {
+    overflow-x: hidden; /* 防止水平滚动引起的抖动 */
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* forest-hero自适应高度，不被flex拉伸 */
+.forest-hero {
+    flex-shrink: 0;
+}
+
+.dental-footer {
+    margin-top: auto;
+}
+
+/* 8. 响应式修复 */
+@media (max-width: 768px) {
+    .lang-icon {
+        font-size: 14px;
+    }
+    
+    header {
+        min-height: 70px;
+    }
+}
+
+/* 9. 减少动画偏好用户的修复 */
+@media (prefers-reduced-motion: reduce) {
+    .lang-icon {
+        transition: none;
+    }
+    
+    .forest-hero {
+        background-attachment: scroll; /* 对某些设备更友好 */
+    }
+}
+
+/* 页脚各部分 */
+.footer-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}/* 专业牙科页脚样式 - 添加到你的landingpage.css文件 */
+
+/* 主页脚容器 */
+.dental-footer {
+    background: #263C38;
+    color: white;
+    padding: 50px 0 0;
+    width: 100%;
+    position: relative;
+    z-index: 1; /* 确保footer在装饰图片之上 */
+}
+
+/* 主要内容区域 */
+.footer-main-content {
+    padding: 0;
+}
+
+.footer-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: space-between;
+    gap: 30px 80px;
+}
+
+/* 页脚各部分标题 */
+.footer-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: white;
+    letter-spacing: 0.5px;
+    text-transform: uppercase; /* 全部大写 */
+}
+
+/* Contact Info 部分 */
+.contact-info .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.address {
+    line-height: 1.6;
+}
+
+.address-line {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.email-link {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.email-link:hover {
+    color: #8CC8A8;
+    text-decoration: underline;
+}
+
+/* 社交媒体图标 */
+.social-media {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.social-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.social-icon i {
+    font-size: 14px;
+}
+
+/* Opening Hours 部分 */
+.hours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    max-width: 280px;
+}
+
+.hours-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1px 0;
+    width: 100%;
+}
+
+.day {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    text-align: left;
+    min-width: 110px;
+}
+
+.time {
+    color: white;
+    font-weight: 400;
+    font-size: 0.9rem;
+    text-align: left;
+    margin-left: 16px;
+}
+
+/* Navigation 部分 */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.footer-section.navigation {
+    margin-left: auto;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    padding: 6px 0;
+    cursor: pointer;
+}
+
+.nav-link:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+.nav-link.book-now {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+}
+
+.nav-link.book-now:hover {
+    color: white;
+    transform: translateX(5px);
+}
+
+/* 底部版权条 (Camp Nokomis风格) */
+.footer-bottom-bar {
+    background: #213330; /* 深绿色 */
+    padding: 20px 0;
+    margin-top: 40px;
+    width: 100%;
+}
+
+.bottom-bar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 返回顶部按钮 */
+.back-to-top {
+    flex-shrink: 0;
+}
+
+.back-to-top-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-to-top-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.back-to-top-btn i {
+    font-size: 16px;
+}
+
+/* 版权文字 */
+.copyright-text {
+    flex: 1;
+    text-align: center;
+    margin-left: 40px;
+}
+
+.copyright-text p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 0;
+}
+
+.copyright-heart {
+    color: #ff6b6b;
+    margin: 0 4px;
+    font-size: 0.8rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 968px) {
+    .footer-container {
+        width: 90%;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+    }
+    
+    .bottom-bar-container {
+        width: 90%;
+    }
+    
+    .footer-section {
+        width: 100%;
+        text-align: center;
+        align-items: center !important;
+    }
+    
+    .footer-section.opening-hours {
+        order: 1;
+    }
+    
+    .footer-section.contact-info {
+        order: 2;
+    }
+    
+    .footer-section.navigation {
+        order: 3;
+ 
+    }
+    
+    .nav-links {
+        align-items: center;
+    }
+    
+    .hours-item {
+        justify-content: space-between;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+    
+    .day {
+        text-align: left;
+        min-width: 96px;
+    }
+    
+    .time {
+        text-align: left;
+        margin-left: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        width: 95%;
+        gap: 25px;
+    }
+    
+    .bottom-bar-container {
+        width: 95%;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .footer-main-content {
+        padding: 35px 0 35px;
+    }
+    
+    .social-media {
+        justify-content: center;
+    }
+    
+    .copyright-text {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-title {
+        font-size: 0.8rem;
+    }
+    
+    .footer-container {
+        width: 95%;
+        padding: 0 15px;
+        gap: 20px;
+    }
+    
+    .bottom-bar-container {
+        width: 95%;
+    }
+    
+    .footer-main-content {
+        padding: 30px 0 30px;
+    }
+    
+    .address-line {
+        font-size: 0.8rem;
+    }
+    
+    .email-link {
+        font-size: 0.8rem;
+    }
+    
+    .day {
+        font-size: 0.8rem;
+        min-width: 100px;
+    }
+    
+    .time {
+        font-size: 0.8rem;
+        margin-left: 15px;
+    }
+    
+    .nav-link {
+        font-size: 0.8rem;
+    }
+    
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .social-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .social-icon i {
+        font-size: 12px;
+    }
+    
+    .copyright-text p {
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+    
+    .hours-item {
+        max-width: 220px;
+    }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+    .social-icon:hover,
+    .nav-link:hover,
+    .back-to-top-btn:hover {
+        transform: none;
+    }
+}
+
+/* 可滑动诊所地图样式 - 添加到你的landingpage.css文件 */
+
+/* 主要容器 - 背景全宽 */
+.clinic-map-section {
+    background: white;
+    padding: 80px 0;
+    position: relative;
+    width: 100%; /* 全宽背景 */
+}
+
+/* 网格背景 */
+.map-background-grid {
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 0;
+    padding: 60px 0;
+}
+
+.map-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+    min-height: 450px;
+}
+
+/* 左侧 Map Your Trip 卡片 - 增加宽度 */
+.map-trip-card {
+    flex: 0 0 32%;
+    background: transparent;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+    min-height: 450px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+
+.trip-icon {
+    margin-bottom: 20px;
+}
+
+.trip-icon i {
+    font-size: 3rem;
+    color: #333;
+}
+
+.trip-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 25px 0;
+    color: #333;
+    letter-spacing: 1px;
+}
+
+.trip-contact {
+    margin-bottom: 25px;
+}
+
+.trip-phone {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+    font-weight: 500;
+}
+
+.trip-book-btn {
+    background: #2569E9;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: lighter;
+    font-size: 0.75rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(37, 105, 233, 0.3);
+}
+
+.trip-book-btn:hover {
+    background: #1a59bf;
+    box-shadow: 0 6px 20px rgba(37, 105, 233, 0.4);
+}
+
+/* 中间地图轮播区域 - 缩小宽度 */
+.map-slider-area {
+    flex: 0 0 28%;
+    position: relative;
+    min-height: 450px;
+}
+
+.map-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.map-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.map-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.map-slide.prev {
+    transform: translateX(-100%);
+}
+
+.map-display {
+    width: 100%;
+    height: 100%;
+}
+
+.map-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.city-image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    background: none;
+}
+
+.city-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease-in;
+}
+
+.city-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.6s ease-in;
+}
+
+.city-image-container:hover .city-image {
+    transform: scale(1.05);
+}
+
+.city-content {
+    text-align: center;
+    color: white;
+}
+
+.city-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.city-content .city-name {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem 0;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    opacity: 0.9;
+}
+
+
+
+/* 导航按钮 */
+.map-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.map-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.map-nav-btn.prev-btn {
+    left: 10px; /* 移到更靠内，确保在图片内 */
+}
+
+.map-nav-btn.next-btn {
+    right: 10px; /* 移到更靠内，确保在图片内 */
+}
+
+.map-nav-btn i {
+    font-size: 16px;
+}
+
+/* 指示器 */
+.map-indicators {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 20;
+}
+
+.indicator {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.3s ease-in;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.indicator.active {
+    background: white;
+    transform: scale(1.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.indicator:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* 右侧距离信息区域 - 增加宽度 */
+.distance-info {
+    flex: 0 0 32%;
+}
+
+.distance-card {
+    background: #263C38;
+    border-radius: 12px;
+    padding: 30px 30px 15px 30px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    height: 100%; /* 改为100%与左侧卡片对齐 */
+    display: flex;
+    position: relative;
+    z-index: 1;
+    flex-direction: column;
+    overflow: hidden; /* 防止出现滚动条 */
+    max-height: 450px; /* 限制最大高度与容器一致 */
+}
+
+.distance-title-container {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.distance-title-fancy {
+    font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2569E9;
+    font-style: italic;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: skew(-15deg);
+}
+
+.distance-title-regular {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 4px 0 0 0; /* 减小上边距从8px到4px */
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.distance-list {
+    flex: 1;
+    margin-bottom: -4px;
+    overflow-y: hidden; /* 完全隐藏滚动条 */
+    overflow-x: hidden; /* 隐藏横向滚动条 */
+    min-height: 160px;
+    max-height: 280px; /* 限制最大高度,避免溢出 */
+}
+
+.distance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0 0 0px; /* 减小间距从16px到8px */
+}
+
+.distance-item .city-name {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+}
+
+.distance-details {
+    text-align: right;
+}
+
+.distance-miles {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: white;
+}
+
+/* Visit California 按钮容器 */
+.visit-california-container {
+    display: flex;
+    margin-top: -4px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.visit-california-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #2569E9;
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-weight: lighter;
+    font-size: 0.75rem;
+    width: 40%;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(37, 105, 233, 0.3);
+    min-width: 120px;
+}
+
+.visit-california-btn:hover {
+    background: #1a59bf;
+    box-shadow: 0 6px 20px rgba(37, 105, 233, 0.4);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .map-container {
+        width: 90%;
+        gap: 15px;
+    }
+    
+    .map-trip-card {
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .clinic-map-section {
+        padding: 60px 0;
+    }
+    
+    .map-background-grid {
+        padding: 40px 0;
+    }
+    
+    .map-container {
+        width: 95%;
+        flex-direction: column;
+        gap: 20px;
+        min-height: 0;
+    }
+    
+    .map-trip-card,
+    .map-slider-area,
+    .distance-info {
+        flex: none;
+        width: 100%;
+        min-height: 0;
+    }
+    
+    .map-slider,
+    .distance-card {
+        height: 300px;
+        min-height: 300px;
+    }
+    
+    .distance-list {
+        min-height: 200px;
+    }
+    
+    .map-nav-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .map-nav-btn.prev-btn {
+        left: 15px;
+    }
+    
+    .map-nav-btn.next-btn {
+        right: 15px;
+    }
+    
+    .visit-california-btn {
+        width: 60%;
+    }
+}
+
+@media (max-width: 480px) {
+    .clinic-map-section {
+        padding: 40px 0;
+    }
+    
+    .map-background-grid {
+        padding: 30px 0;
+    }
+    
+    .map-container {
+        width: 95%;
+        gap: 15px;
+    }
+    
+    .map-slider,
+    .distance-card {
+        min-height: 250px;
+    }
+    
+    .distance-card {
+        padding: 20px;
+    }
+    
+    .distance-list {
+        min-height: 120px;
+    }
+    
+    .distance-title-fancy {
+        font-size: 1.2rem;
+    }
+    
+    .distance-title-regular {
+        font-size: 1rem;
+    }
+    
+    .city-content     .city-content .city-name {
+        font-size: 0.9rem;
+    }
+    
+    .city-icon {
+        font-size: 2.5rem;
+    }
+    
+    .visit-california-btn {
+        width: 80%;
+        padding: 10px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .trip-title {
+        font-size: 1.1rem;
+    }
+    
+    .trip-icon i {
+        font-size: 2.5rem;
+    }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+    .map-slide,
+    .map-nav-btn,
+    .indicator,
+    .visit-california-btn,
+    .city-image,
+    .trip-book-btn {
+        transition: none;
+    }
+    
+    .map-nav-btn:hover,
+    .visit-california-btn:hover,
+    .trip-book-btn:hover {
+        transform: none;
+    }
+    
+    .city-image-container:hover .city-image {
+        transform: none;
+    }
+}
+
+/* 就诊规划与便民服务样式 - 添加到你的landingpage.css文件 */
+
+/* 主要容器 - 背景全宽 */
+.visit-amenities-section {
+    background: white;
+    padding: 80px 0 40px 0;
+    overflow-x: hidden; /* 防止横向溢出 */
+    position: relative;
+    width: 100%; /* 全宽背景 */
+}
+
+/* 网格背景 */
+.visit-amenities-background {
+    background-image: 
+        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 0;
+    padding: 60px 0;
+}
+
+.visit-amenities-container {
+    width: 75%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    box-sizing: border-box; /* 确保padding不会增加宽度 */
+}
+
+/* 上半部分：图片卡片行 */
+.image-cards-row {
+    display: flex;
+    gap: 20px;
+    width: 100%; /* 确保不超出容器 */
+    margin-bottom: 20px;
+}
+
+.image-card {
+    flex: 1;
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    box-sizing: border-box; /* 重要：防止padding/border增加宽度 */
+}
+
+.image-card:hover {
+    transform: translateY(-5px);
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-card:hover .card-image {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.9) 100%);;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.image-content {
+    text-align: center;
+    color: white;
+}
+
+/* 图片卡片标题 - 覆盖shared-styles */
+.image-content .card-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    color: white !important; /* 确保白色 */
+}
+
+/* 图片卡片描述 - 覆盖shared-styles */
+.image-content .card-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 0 30px 0;
+    opacity: 0.95;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    max-width: 280px;
+    margin-left: auto;
+    color: white !important; /* 确保白色 */
+    margin-right: auto;
+}
+
+.card-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(10px);  /* 毛玻璃效果 */
+    backdrop-filter: blur(10px);
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: capitalize
+}
+
+.card-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 下半部分：信息卡片行 */
+.info-cards-row {
+    display: flex;
+    gap: 20px;
+    min-height: 400px;
+    width: 100%; /* 确保与上排宽度一致 */
+    box-sizing: border-box;
+}
+
+.info-card {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    box-sizing: border-box; /* 防止padding增加宽度 */
+}
+
+/* Tips 卡片 */
+.tips-card {
+    flex: 0 0 65%; /* 固定65%宽度 */
+    background: transparent; /* 半透明白色 */
+    -webkit-backdrop-filter: blur(10px); /* Safari兼容 */
+    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    padding: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    z-index: 1;
+    position: relative;
+    flex-direction: column;
+    justify-content: center; /* 垂直居中 */
+    align-items: flex-start; /* 水平左对齐，但tips-header会处理居中 */
+}
+
+.tips-header {
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: flex-start; /* 水平左对齐 */
+    width: 100%;
+    height: 100%;
+}
+
+.tips-accent-line {
+    width: 4px;
+    height: 60px;
+    background: #d4a574;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.tips-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+}
+
+.tips-content {
+    display: none;
+}
+
+.tip-item {
+    padding-left: 24px;
+}
+
+.tip-heading {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    color: #2569E9;
+}
+
+.tip-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    color: #666;
+}
+
+/* Share Your Story 卡片 */
+.story-card {
+    flex: 0 0 35%;
+    background: #263C38;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.story-content {
+    z-index: 2;
+    width: 100%;
+}
+
+.story-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0 0 30px 0;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+    color: white;
+}
+
+/* 隐藏不需要的元素 */
+.story-subtitle,
+.story-icon,
+.story-description {
+    display: none;
+}
+
+.story-button {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem; /* 你可以在这里调整字体大小 */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0;
+}
+
+.story-button:hover {
+    background: white;
+    color: #263C38;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
+}
+
+/* 装饰性图标背景 */
+.story-card::before {
+    display: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .visit-amenities-container {
+        width: 85%;
+        gap: 30px;
+    }
+    
+    .image-cards-row,
+    .info-cards-row {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .visit-amenities-section {
+        padding: 60px 0;
+    }
+    
+    .visit-amenities-background {
+        padding: 40px 0;
+    }
+    
+    .visit-amenities-container {
+        width: 95%;
+        gap: 25px;
+    }
+    
+    .image-cards-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .image-card {
+        height: 250px;
+    }
+    
+    .image-overlay {
+        padding: 30px;
+    }
+    
+    .card-title {
+        font-size: 1.6rem;
+    }
+    
+    .card-description {
+        font-size: 0.9rem;
+    }
+    
+    .info-cards-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .tips-card,
+    .story-card {
+        padding: 30px;
+        flex: none;
+    }
+    
+    .tips-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .tips-accent-line {
+        width: 40px;
+        height: 4px;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .tips-title {
+        font-size: 1.2rem;
+    }
+    
+    .story-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .visit-amenities-section {
+        padding: 40px 0;
+    }
+    
+    .visit-amenities-background {
+        padding: 30px 0;
+    }
+    
+    .visit-amenities-container {
+        width: 95%;
+        gap: 20px;
+    }
+    
+    .image-card {
+        height: 200px;
+    }
+    
+    .image-overlay {
+        padding: 25px;
+    }
+    
+    .card-title {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+    }
+    
+    .card-description {
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+    
+    .card-button,
+    .story-button {
+        padding: 10px 25px;
+        font-size: 0.9rem;
+    }
+    
+    .tips-card,
+    .story-card {
+        padding: 25px;
+    }
+    
+    .tips-title {
+        font-size: 1.1rem;
+    }
+    
+    .tip-heading {
+        font-size: 1rem;
+    }
+    
+    .tip-text {
+        font-size: 0.9rem;
+    }
+    
+    .story-title {
+        font-size: 1.3rem;
+    }
+    
+    .story-icon i {
+        font-size: 2.5rem;
+    }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+    .image-card,
+    .card-image,
+    .card-button,
+    .story-button {
+        transition: none;
+    }
+    
+    .image-card:hover,
+    .card-button:hover,
+    .story-button:hover {
+        transform: none;
+    }
+    
+    .image-card:hover .card-image {
+        transform: none;
+    }
+}
+
+/* 就诊规划与便民服务样式更新 - 添加到你的landingpage.css文件 */
+
+/* 上半部分图片卡片的文字对齐调整 */
+.image-content {
+    text-align: center; /* 保持整体居中，但我们会单独调整文字部分 */
+    color: white;
+}
+
+.card-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    letter-spacing: 0.3px; /* 减少letter-spacing从1px到0.3px */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    text-align: center; /* 标题保持居中 */
+}
+
+.card-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 0 30px 0;
+    opacity: 0.95;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    /* 文字左对齐并限制宽度 */
+    text-align: left;
+    max-width: 280px; /* 限制文字宽度 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 下半部分：调整卡片比例 */
+.info-cards-row {
+    display: flex;
+    gap: 20px;
+    min-height: 200px;
+}
+
+/* Tips 卡片调整为65% */
+.tips-card {
+    flex: 0 0 65%; /* 从 flex: 1 改为固定65% */
+    background: transparent; /* 半透明白色 */
+    -webkit-backdrop-filter: blur(10px); /* Safari兼容 */
+    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    padding: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 只保留标题，移除内容区域 */
+.tips-content {
+    display: none; /* 隐藏所有tips内容 */
+}
+
+/* Share Your Story 卡片调整为35% */
+.story-card {
+    flex: 0 0 35%; /* 从 flex: 0 0 40% 改为35% */
+    background: #263C38;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+/* 更新故事卡片标题 - 改为单行 */
+.story-title {
+    font-size: 1.15rem; /* 稍微减小字体以适应单行 */
+    font-weight: 500;
+    margin: 0 0 30px 0;
+    letter-spacing: 0.5px; /* 减少letter-spacing */
+    line-height: 1.2;
+}
+
+/* 隐藏副标题 */
+.story-subtitle {
+    display: none;
+}
+
+/* 隐藏图标 */
+.story-icon {
+    display: none;
+}
+
+/* 隐藏描述文字 */
+.story-description {
+    display: none;
+}
+
+/* 调整按钮位置，因为删除了其他元素 */
+.story-button {
+    background: transparent;
+    color: white;
+    border: 0.5px solid white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 400;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0; /* 移除上边距 */
+}
+
+/* 移除装饰性背景图标 */
+.story-card::before {
+    display: none;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .card-description {
+        max-width: 240px; /* 在小屏幕上进一步限制宽度 */
+        font-size: 0.9rem;
+    }
+    
+    .card-title {
+        font-size: 1.6rem;
+        letter-spacing: 0.2px;
+    }
+    
+    .info-cards-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .tips-card,
+    .story-card {
+        flex: none;
+        width: 100%;
+    }
+    
+    .story-title {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-description {
+        max-width: 200px;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+    }
+    
+    .card-title {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+        letter-spacing: 0.1px;
+    }
+    
+    .story-title {
+        font-size: 1.2rem;
+    }
+}
+
+.fern2 {
+    background: url('./images/fern2.jpg') no-repeat;
+    height: 50vh;
+    width: 50%;
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    z-index: 0;
+    opacity: 0.1;
+}
+
+.fern3 {
+    background: url('./images/fern3.jpg') no-repeat;
+    height: 85vh;
+    width: 70%;
+    position: absolute;
+    top: 15%;
+    left: 0%;
+    z-index: 0;
+    opacity: 0.1;
+}
+
+.fern4 {
+    background: url('./images/fern4.jpg') no-repeat;
+    height: 65vh;
+    width: 65%;
+    position: absolute;
+    top: -2%;
+    left: calc(5% - 6rem); /* 向左移动6rem */
+    z-index: 0;
+    opacity: 0.2;
+}
+
+.fern5 {
+    background: url('./images/fern5.jpg') no-repeat;
+    height: 65vh;
+    width: 65%;
+    position: absolute;
+    top: -10%;
+    left: 58%; /* 保持不变,位置已经在右侧 */
+    z-index: 0;
+    opacity: 0.2;
+}
+
+.fern7 {
+    background: url('./images/fern7.jpg') no-repeat;
+    height: 60vh;
+    width: 65%;
+    position: absolute;
+    top: 62%;
+    left: calc(0% - 6rem); /* 向左移动6rem */
+    z-index: 0; /* 恢复为0 */
+    opacity: 0.35;
+}
+
+/* =================== 社区展示区块样式 =================== */
+
+/* 主要容器 - 背景全宽 */
+.community-showcase {
+    background: white;
+    padding: 64px 0;
+    margin-top: 24px; /* 上方预留24px空间 */
+    position: relative;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    background-image:
+    linear-gradient(rgba(0,0,0,0.01) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.01) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 0;
+    width: 100%; /* 全宽背景 */
+}
+
+.community-showcase::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('images/forest.jpg') center/cover;
+    opacity: 0.05;
+    z-index: 1;
+    background-image: 
+    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.community-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2em;
+    position: relative;
+    z-index: 2;
+}
+
+/* 标题区域 */
+.community-header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.community-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 400;
+    font-style: italic;
+    color: #D4A574;
+    margin: 0 0 15px 0;
+    letter-spacing: -0.02em;
+}
+
+.community-subtitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* 轮播容器 */
+.community-carousel {
+    position: relative;
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: none;
+}
+
+.community-carousel-content {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+/* 单个轮播项 */
+.community-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.community-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 照片网格 */
+.photo-grid {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0;
+}
+
+/* 单个照片项目 */
+.photo-item {
+    flex: 1;
+    height: 250px;
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s ease;
+}
+
+.photo-item:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* 照片占位符 */
+.photo-placeholder {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position: relative;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.photo-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.photo-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    z-index: 2;
+    position: relative;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.photo-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    z-index: 2;
+    position: relative;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.5px;
+}
+
+/* 导航箭头 */
+.community-nav-btn {
+    position: absolute;
+    top: 53%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    z-index: 10;
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+}
+
+.community-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+    color: whitesmoke;
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.community-prev {
+    left: 1rem;
+}
+
+.community-next {
+    right: 1rem;
+}
+
+/* 轮播指示器 */
+.community-indicators {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+.community-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: lightgray;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid whitesmoke;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.community-indicator.active {
+    background: rgba(255, 255, 255, 0.6);  /* 改为透明白色 */
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.3);
+    box-shadow: 0 2px 4px rgba(150, 150, 150, 0.3);
+}
+
+.community-indicator:hover {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .community-carousel {
+        padding: 20px 30px;
+    }
+    
+    .photo-grid {
+        gap: 16px;
+    }
+    
+    .community-nav-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .community-prev {
+        left: -20px;
+    }
+    
+    .community-next {
+        right: -20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .community-showcase {
+        padding: 60px 0;
+        margin-top: 16px;
+    }
+
+    .community-container {
+        padding: 0 1em;
+    }
+
+    .community-main-title {
+        font-size: 2.2rem;
+    }
+
+    .community-subtitle {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .community-carousel {
+        padding: 30px 20px;
+        border-radius: 15px;
+    }
+
+    .community-carousel-content {
+        height: 350px; /* 增加高度以容纳单张大图 */
+    }
+
+    .photo-grid {
+        flex-direction: column; /* 保持纵向排列 */
+        gap: 12px;
+        justify-content: center; /* 居中对齐 */
+    }
+
+    .photo-item {
+        height: 280px; /* 增加高度，让每张图清楚显示 */
+        flex: none;
+        width: 100%; /* 确保宽度撑满 */
+        max-width: 100%; /* 限制最大宽度 */
+    }
+
+    /* 隐藏除第一张外的其他图片，实现单图显示 */
+    .photo-item:nth-child(2),
+    .photo-item:nth-child(3) {
+        display: none;
+    }
+
+    .photo-placeholder i {
+        font-size: 2.5rem; /* 增大图标尺寸 */
+        margin-bottom: 15px;
+    }
+
+    .photo-label {
+        font-size: 1rem; /* 增大文字尺寸 */
+        font-weight: 600;
+    }
+
+    .community-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .community-prev {
+        left: 10px; /* 调整箭头位置 */
+    }
+
+    .community-next {
+        right: 10px;
+    }
+
+    .community-indicators {
+        bottom: 15px;
+        gap: 10px; /* 增加指示器间距 */
+    }
+
+    .community-indicator {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .community-showcase {
+        padding: 40px 0;
+        margin-top: 12px;
+    }
+
+    .community-main-title {
+        font-size: 1.8rem;
+    }
+
+    .community-carousel {
+        padding: 20px 15px;
+    }
+
+    .community-carousel-content {
+        height: 320px; /* 增加高度以容纳单张大图 */
+    }
+
+    .photo-item {
+        height: 250px; /* 增加高度，让每张图清楚显示 */
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* 隐藏除第一张外的其他图片，实现单图显示 */
+    .photo-item:nth-child(2),
+    .photo-item:nth-child(3) {
+        display: none;
+    }
+
+    .photo-placeholder i {
+        font-size: 2rem; /* 增大图标尺寸 */
+        margin-bottom: 12px;
+    }
+
+    .photo-label {
+        font-size: 0.9rem; /* 增大文字尺寸 */
+        font-weight: 600;
+    }
+
+    .community-nav-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .community-indicator {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+    .community-slide,
+    .photo-item,
+    .community-nav-btn,
+    .community-indicator {
+        transition: none;
+    }
+    
+    .photo-item:hover,
+    .community-nav-btn:hover {
+        transform: none;
+    }
+}

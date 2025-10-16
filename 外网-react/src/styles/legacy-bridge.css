@@ -1,0 +1,9 @@
+/* legacy-bridge.css
+ * Temporary bundle of pre-refactor styles.
+ * Remove individual imports as components migrate to Tailwind.
+ */
+@import './shared-styles.css';
+@import './landingpage.css';
+@import './service.css';
+@import './faq-clean.css';
+@import './services-detail.css';

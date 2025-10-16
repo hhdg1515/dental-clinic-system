@@ -1,0 +1,202 @@
+/* service.html页面布局 - Footer置底 */
+html {
+    height: 100%;
+}
+
+body {
+    background: #F9FAFB;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* sub-hero固定高度，不参与flex拉伸 */
+.sub-hero {
+    flex-shrink: 0;
+}
+
+/* 主内容区域 - 第二排服务卡片 */
+.services-main-content {
+    flex: 1;
+    background: #F9FAFB;
+    padding: 4em 0;
+}
+
+.dental-footer {
+    margin-top: auto;
+}
+
+/* Service.html的hero区域 - 使用伪元素实现固定高度背景 */
+.sub-hero {
+    position: relative;
+    width: 100%;
+    padding-bottom: 2em; /* 底部留白 */
+}
+
+/* 背景图伪元素 - 固定70vh高度 */
+.sub-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70vh; /* 背景固定70vh */
+    background: url('images/forest-bg-2.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: -1; /* 在所有内容之后 */
+}
+
+/* Service页面header - 浅色背景特殊处理 */
+.sub-hero header {
+    background: rgba(0, 0, 0, 0.15); /* 改用深色半透明背景,在浅色森林上更明显 */
+    -webkit-backdrop-filter: blur(8px); /* 保持一致的模糊度 */
+    backdrop-filter: blur(8px);
+    position: relative;
+    z-index: 1; /* 在背景之上 */
+}
+
+/* Service页面文字 - 减少阴影,只要能看清即可 */
+.sub-hero header .logo,
+.sub-hero nav ul li a {
+    color: white;
+    text-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.6),  /* 轻微阴影 */
+        0 0 8px rgba(0, 0, 0, 0.4);    /* 轻微外发光 */
+}
+
+.bread-wrapper {
+    display: grid;
+    justify-content: center;
+    margin: 3em 0 0;
+    background-color: #F3F4F6;
+}
+
+ul.breadcrumbs {
+    display: flex;
+    margin-bottom: .5em;
+}
+
+ul.breadcrumbs li a {
+    color: black;
+    margin-right: .5em;
+    font-weight: bold;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+.sub-desc {
+    width: 80%;
+    margin: 0 auto;
+    letter-spacing: 1px;
+    line-height: 24px;
+    text-align: left; /* 默认左对齐 */
+}
+
+/* Service页面卡片布局 - 让卡片向上移，部分叠在背景上 */
+.sub-hero ul.featured-cabins {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4列等宽 */
+    width: 100%;
+    max-width: 1000px;
+    justify-content: start;
+    margin: 4em 0 0 0;
+    row-gap: 2em;
+    column-gap: 4em;
+    padding-left: 0;
+    position: relative;
+    z-index: 1; /* 在背景之上 */
+}
+
+/* 主内容区域的卡片布局 - 正常间距 */
+.services-main-content ul.featured-cabins {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    row-gap: 2em;
+    column-gap: 4em;
+    padding-left: 0;
+}
+
+/* 强制所有卡片统一宽度 */
+.sub-hero ul.featured-cabins li {
+    max-width: none !important; /* 移除max-width限制 */
+    width: 100%; /* 占满grid列宽 */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* 统一图片宽度 */
+.sub-hero .cabin-img {
+    max-width: none !important;
+    width: 100%;
+}
+
+.cabin-cta span {
+    color: #A9ACAE;
+    font-weight: lighter;
+}
+
+.cabin-cta span:hover{
+    color: #7C7D7D;
+}
+
+.transparent-img{
+    opacity: 0.5;
+}
+
+.cabin-cta:after {
+    background: #E4E7EA;
+}
+
+/* 响应式布局: 中等屏幕显示2列 */
+@media (max-width: 1024px) {
+    ul.featured-cabins {
+        grid-template-columns: repeat(2, minmax(200px, 300px)); /* 2列 */
+        gap: 2em;
+    }
+}
+
+/* 响应式布局: 小屏幕显示1列 */
+@media (max-width: 600px) {
+    ul.featured-cabins {
+        grid-template-columns: 1fr; /* 1列 */
+        gap: 2em;
+        width: 90%;
+    }
+}
+
+@media (min-width: 900px) {
+    .hero {
+        padding: 4em;
+        text-align: left; /* 整体左对齐 */
+    }
+
+    ul.featured-cabins {
+        justify-content: start; /* 保持左对齐 */
+        margin-left: 0; /* 靠左 */
+    }
+
+    .bread-wrapper {
+        display: unset;
+        text-align: left; /* 面包屑左对齐 */
+    }
+
+    .sub-desc {
+        width: 100%;
+        text-align: left; /* 文字左对齐 */
+        max-width: 1000px; /* 与卡片容器宽度一致 */
+        margin: 0; /* 完全靠左,不居中 */
+        padding: 0;
+    }
+
+    h1 {
+        text-align: left;
+        max-width: 1000px;
+        margin-left: 0;
+    }
+}

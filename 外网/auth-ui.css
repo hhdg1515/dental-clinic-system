@@ -1,0 +1,453 @@
+/* auth-ui.css - 认证界面样式 */
+
+/* =================== 消息通知系统 =================== */
+.message-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    min-width: 300px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+.message-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+
+.message-content {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.message-notification.success .message-content {
+    background: linear-gradient(135deg, rgba(46, 160, 67, 0.95) 0%, rgba(39, 174, 96, 0.95) 100%);
+    color: white;
+    border-color: rgba(46, 160, 67, 0.3);
+}
+
+.message-notification.error .message-content {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.95) 0%, rgba(192, 57, 43, 0.95) 100%);
+    color: white;
+    border-color: rgba(231, 76, 60, 0.3);
+}
+
+.message-notification.info .message-content {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.95) 0%, rgba(41, 128, 185, 0.95) 100%);
+    color: white;
+    border-color: rgba(52, 152, 219, 0.3);
+}
+
+.message-notification.warning .message-content {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.95) 0%, rgba(230, 126, 34, 0.95) 100%);
+    color: white;
+    border-color: rgba(243, 156, 18, 0.3);
+}
+
+.message-content i {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.message-content span {
+    flex: 1;
+}
+
+.message-close {
+    background: none;
+    border: none;
+    color: inherit;
+    margin-left: 12px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 3px;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.message-close:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* =================== 已登录用户界面 =================== */
+.logged-in-content {
+    text-align: center;
+    padding: 0;
+}
+
+.user-welcome {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E8E9EA;
+}
+
+.user-avatar {
+    font-size: 3rem;
+    color: #2569E9;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.user-welcome h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.user-email {
+    margin: 0 0 15px 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.first-login-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #2569E9 0%, #1a59bf 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(37, 105, 233, 0.3);
+}
+
+.first-login-badge i {
+    font-size: 0.8rem;
+}
+
+.user-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.primary-btn, .secondary-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.primary-btn {
+    background: linear-gradient(135deg, #2569E9 0%, #1a59bf 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(37, 105, 233, 0.3);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 105, 233, 0.4);
+}
+
+.secondary-btn {
+    background: #F8F9FA;
+    color: #495057;
+    border: 1px solid #E9ECEF;
+}
+
+.secondary-btn:hover {
+    background: #E9ECEF;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-footer {
+    padding-top: 15px;
+    border-top: 1px solid #E8E9EA;
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: #6C757D;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto;
+}
+
+.text-btn:hover {
+    color: #495057;
+}
+
+/* =================== 管理员重定向界面 =================== */
+.admin-redirect {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #263C38 0%, #1a2e2a 100%);
+    color: white;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-redirect::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    animation: shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.admin-welcome {
+    position: relative;
+    z-index: 2;
+}
+
+.admin-icon {
+    font-size: 3rem;
+    color: #8CC8A8;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 10px rgba(140, 200, 168, 0.3);
+}
+
+.admin-welcome h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.admin-welcome p {
+    margin: 0 0 20px 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+}
+
+.loading-spinner {
+    margin-top: 20px;
+}
+
+.loading-spinner i {
+    font-size: 1.5rem;
+    color: #8CC8A8;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* =================== 表单错误提示 =================== */
+.form-error {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #c0392b;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.form-error i {
+    color: #e74c3c;
+    flex-shrink: 0;
+}
+
+/* =================== 加载状态 =================== */
+.login-btn:disabled,
+.primary-btn:disabled,
+.secondary-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.login-btn:disabled:hover,
+.primary-btn:disabled:hover,
+.secondary-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* 旋转动画 */
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* =================== 响应式设计 =================== */
+@media (max-width: 768px) {
+    .message-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        min-width: auto;
+    }
+    
+    .message-content {
+        padding: 14px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .user-welcome h3 {
+        font-size: 1.2rem;
+    }
+    
+    .user-avatar {
+        font-size: 2.5rem;
+    }
+    
+    .admin-welcome h3 {
+        font-size: 1.3rem;
+    }
+    
+    .admin-icon {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .message-content {
+        padding: 12px 14px;
+        font-size: 0.8rem;
+    }
+    
+    .logged-in-content {
+        padding: 0;
+    }
+    
+    .user-actions {
+        gap: 10px;
+    }
+    
+    .primary-btn, .secondary-btn {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .first-login-badge {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+    }
+    
+    .admin-redirect {
+        padding: 30px 15px;
+    }
+}
+
+/* =================== 深色模式支持 =================== */
+@media (prefers-color-scheme: dark) {
+    .secondary-btn {
+        background: #343A40;
+        color: #F8F9FA;
+        border-color: #495057;
+    }
+    
+    .secondary-btn:hover {
+        background: #495057;
+    }
+    
+    .form-error {
+        background: rgba(231, 76, 60, 0.2);
+        border-color: rgba(231, 76, 60, 0.4);
+        color: #ff6b6b;
+    }
+    
+    .user-welcome {
+        border-bottom-color: #495057;
+    }
+    
+    .user-footer {
+        border-top-color: #495057;
+    }
+}
+
+/* =================== 减少动画偏好支持 =================== */
+@media (prefers-reduced-motion: reduce) {
+    .message-notification,
+    .primary-btn,
+    .secondary-btn,
+    .text-btn,
+    .message-close {
+        transition: none;
+    }
+    
+    .primary-btn:hover,
+    .secondary-btn:hover {
+        transform: none;
+    }
+    
+    .fa-spinner,
+    .loading-spinner i {
+        animation: none;
+    }
+    
+    .admin-redirect::before {
+        animation: none;
+    }
+}
+
+/* =================== 可访问性增强 =================== */
+.primary-btn:focus,
+.secondary-btn:focus,
+.text-btn:focus,
+.message-close:focus {
+    outline: 2px solid #2569E9;
+    outline-offset: 2px;
+}
+
+.message-close:focus {
+    outline-color: rgba(255, 255, 255, 0.8);
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+    .message-content {
+        border-width: 2px;
+    }
+    
+    .primary-btn,
+    .secondary-btn {
+        border: 2px solid transparent;
+    }
+    
+    .primary-btn:focus,
+    .secondary-btn:focus {
+        outline-width: 3px;
+    }
+}

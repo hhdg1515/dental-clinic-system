@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FAQ - First Ave Dental</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="shared-styles.css">
+        <link rel="stylesheet" href="landingpage.css">
+        <link rel="stylesheet" href="service.css">
+        <link rel="stylesheet" href="faq-clean.css">
+    </head>
+<body>
+    <!-- 森林背景Hero区域 -->
+    <section class="hero-section">
+        <!-- Header -->
+        <header class="site-header">
+            <a href="landingpage.html" class="logo" data-lang="nav-logo">FIRST AVE DENTAL & ORTHODONTICS</a>
+            <nav>
+                <img src="images/menu.svg" class="menu" id="menu-btn" alt="open menu">
+                <ul class="nav" id="nav">
+                    <li class="exit" id="exit-btn">
+                        <a href="#" aria-label="Close menu"><img src="images/exit.svg" alt="Close menu icon"></a>
+                    </li>
+                    <li><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                    <li><a href="service.html" data-lang="nav-services">Services</a></li>
+                    <li class="active"><a href="faq.html" data-lang="nav-faq">FAQ</a></li>
+                    <li>
+                        <button id="lang-toggle" class="lang-icon" onclick="switchLanguage(currentLanguage === 'en' ? 'zh' : 'en')" title="Switch Language">
+                            中 / EN
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Hero内容 -->
+        <div class="hero-content">
+            <div class="breadcrumb-wrapper">
+                <ul class="breadcrumbs">
+                    <li><a href="landingpage.html" data-lang="nav-home">Home</a></li>
+                    <li data-lang="breadcrumb-faq">> Patient Care Guide</li>
+                </ul>
+            </div>
+            
+            <h1 data-lang="faq-page-title">Patient Care Guide</h1>
+            <p class="hero-description" data-lang="faq-page-desc">Everything you need to know for a smooth and comfortable dental experience. From preparation tips to nearby amenities, we're here to support your journey to optimal oral health.</p>
+        </div>
+    </section>
+
+    <!-- FAQ内容区域 -->
+    
+    <section class="content-section">
+        <div class="content-container">
+            <!-- Things to Bring Section -->
+            <div class="section-header">
+                <h2 class="section-title-elegant" data-lang="things-to-bring-elegant">Things to Bring</h2>
+                <h3 class="section-subtitle-bold" data-lang="for-your-visit">FOR YOUR VISIT</h3>
+            </div>
+            <div class="maples"></div>
+            <div class="maple2"></div>
+            <div class="pinecone"></div>
+            <div class="things-to-bring-card">
+                <div class="card-sections">
+                    <!-- FOR SAFETY 部分 -->
+                    <div class="card-section">
+                        <h4 class="card-section-title" data-lang="for-safety-title">FOR SAFETY</h4>
+                        <ul class="card-item-list">
+                            <li data-lang="safety-insurance">Insurance card and photo ID</li>
+                            <li data-lang="safety-medical">Current medications list</li>
+                            <li data-lang="safety-allergies">Known allergies information</li>
+                            <li data-lang="safety-emergency">Emergency contact details</li>
+                            <li data-lang="safety-history">Previous dental records</li>
+                            <li data-lang="safety-referral">Referral letters (if applicable)</li>
+                        </ul>
+                    </div>
+
+                    <!-- FOR COMFORT 部分 -->
+                    <div class="card-section">
+                        <h4 class="card-section-title" data-lang="for-comfort-title">FOR COMFORT</h4>
+                        <ul class="card-item-list">
+                            <li data-lang="comfort-headphones">Headphones for relaxation</li>
+                            <li data-lang="comfort-blanket">Comfort blanket or pillow</li>
+                            <li data-lang="comfort-entertainment">Reading material or tablet</li>
+                            <li data-lang="comfort-clothing">Comfortable clothing</li>
+                            <li data-lang="comfort-snacks">Post-treatment soft snacks</li>
+                            <li data-lang="comfort-water">Water bottle</li>
+                            <li data-lang="comfort-sunglasses">Sunglasses (for after treatment)</li>
+                        </ul>
+                    </div>
+
+                    <!-- FOR CONVENIENCE 部分 -->
+                    <div class="card-section">
+                        <h4 class="card-section-title" data-lang="for-convenience-title">FOR CONVENIENCE</h4>
+                        <ul class="card-item-list">
+                            <li data-lang="convenience-payment">Payment(card/cash/others)</li>
+                            <li data-lang="convenience-forms">Pre-filled forms (if available)</li>
+                            <li data-lang="convenience-questions">List of questions for doctor</li>
+                            <li data-lang="convenience-transport">Transportation arrangements</li>
+                            <li data-lang="convenience-childcare">Childcare arrangements</li>
+                            <li data-lang="convenience-work">Work schedule flexibility</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 其他FAQ部分占位 -->
+            <div class="other-sections">
+                    <!-- Things to Know 部分 -->
+                    <div class="section-header">
+                    <h2 class="section-title-elegant" data-lang="things-to-know-title">Things to Know</h2>
+                    <h3 class="section-subtitle-bold" data-lang="nearby-amenities">NEARBY AMENITIES</h3>
+                    </div>
+                    <div class="maple6"></div>
+                    <div class="maple3"></div>
+
+                    <!-- 轮播组件 -->
+                    <div class="amenities-carousel">
+                    <div class="carousel-content">
+                        <!-- Parking -->
+                        <div class="carousel-item active parking">
+                            <div class="image-section">
+                                    <img class="left-image" src="./images/parking.jpg" alt="Parking area">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="amenity-title" data-lang="amenity-parking-title">Parking</h3>
+                                <ul class="amenity-details">
+                                    <li data-lang="amenity-parking-1">Free patient parking</li>
+                                    <li data-lang="amenity-parking-2">limited duration</li>
+                                    <li data-lang="amenity-parking-3">Accessible parking</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Dining -->
+                        <div class="carousel-item dining">
+                            <div class="image-section">
+                                    <img class="left-image" src="./images/dining2.jpg" alt="Dining options nearby">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="amenity-title" data-lang="amenity-dining-title">Dining</h3>
+                                <ul class="amenity-details">
+                                    <li data-lang="amenity-dining-1">Soup & soft-food cafes </li>
+                                    <li data-lang="amenity-dining-2">Ice cream shops</li>
+                                    <li data-lang="amenity-dining-3">Drive-throughs</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Pharmacies -->
+                        <div class="carousel-item pharmacy">
+                            <div class="image-section">
+                                    <img class="left-image" src="./images/drug.jpg" alt="Pharmacy">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="amenity-title" data-lang="amenity-pharmacy-title">Pharmacies</h3>
+                                <ul class="amenity-details">
+                                    <li data-lang="amenity-pharmacy-1">CVS, Walgreens, Vons pharmacy</li>
+                                    <li data-lang="amenity-pharmacy-2">Insurance accepted</li>
+                                    <li data-lang="amenity-pharmacy-3">Drive-through services</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Waiting Areas -->
+                        <div class="carousel-item waiting">
+                            <div class="image-section">
+                                    <img class="left-image" src="./images/relax.jpg" alt="Relaxation area">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="amenity-title" data-lang="amenity-waiting-title">Waiting Areas</h3>
+                                <ul class="amenity-details">
+                                    <li data-lang="amenity-waiting-1">Coffee shops</li>
+                                    <li data-lang="amenity-waiting-2">Parks and seating areas</li>
+                                    <li data-lang="amenity-waiting-3">Free WiFi</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Transportation -->
+                        <div class="carousel-item transport">
+                            <div class="image-section">
+                                    <img class="left-image" src="./images/bus.jpg" alt="Public transportation">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="amenity-title" data-lang="amenity-transport-title">Transportation</h3>
+                                <ul class="amenity-details">
+                                    <li data-lang="amenity-transport-1">Bus stops</li>
+                                    <li data-lang="amenity-transport-2">Metro stations</li>
+                                    <li data-lang="amenity-transport-3">Uber/Lyft pickup zones</li>
+                                    <li data-lang="amenity-transport-4">Bicycle parking</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Accessibility -->
+                        <div class="carousel-item accessibility">
+                            <div class="image-section">
+                                    <img class="left-image" src="./images/wheelchair.jpg" alt="Wheelchair accessibility">
+                            </div>
+                            <div class="text-section">
+                                <h3 class="amenity-title" data-lang="amenity-accessibility-title">Accessibility</h3>
+                                <ul class="amenity-details">
+                                    <li data-lang="amenity-accessibility-1">Elevator access</li>
+                                    <li data-lang="amenity-accessibility-2">Accessible parking spaces</li>
+                                    <li data-lang="amenity-accessibility-3">Wheelchair-friendly paths</li>
+                                    <li data-lang="amenity-accessibility-4">Accessible restrooms</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 导航箭头 -->
+                    <button class="carousel-nav prev" onclick="changeSlide(-1)" aria-label="Previous nearby amenity">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-nav next" onclick="changeSlide(1)" aria-label="Next nearby amenity">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+
+                    <!-- 轮播指示器 -->
+                    <div class="carousel-indicators">
+                        <span class="indicator active" onclick="goToSlide(0)"></span>
+                        <span class="indicator" onclick="goToSlide(1)"></span>
+                        <span class="indicator" onclick="goToSlide(2)"></span>
+                        <span class="indicator" onclick="goToSlide(3)"></span>
+                        <span class="indicator" onclick="goToSlide(4)"></span>
+                        <span class="indicator" onclick="goToSlide(5)"></span>
+                    </div>
+                 </div>
+ 
+               <!-- Tips for Smooth Visits Section -->
+<section class="tips-section">
+    <div class="tips-container">
+        <!-- 章节标题 -->
+        <div class="tips-header">
+            <h3 class="tips-subtitle-bold" data-lang="tips-comfort-guide">YOUR COMFORT GUIDE</h3>
+        </div>
+        <div class="maple4"></div>
+        <div class="maple5"></div>
+        <!-- 轮播组件 -->
+        <div class="tips-carousel">
+            <div class="tips-carousel-content">
+                <!-- Before Your Visit -->
+                <div class="tips-carousel-item active">
+                    <img class="tips-image-section" src="./images/Appointment.jpg" alt="Appointment preparation">
+
+                    <div class="tips-text-section">
+                        <h3 class="tips-card-title" data-lang="tips-appointment-title">Appointment</h3>
+                        <ul class="tips-card-list">
+                            <li data-lang="tips-appointment-1">Arrive 15 minutes early</li>
+                            <li data-lang="tips-appointment-2">Bring headphones for music</li>
+                            <li data-lang="tips-appointment-3">Use the restroom beforehand</li>
+                            <li data-lang="tips-appointment-4">Set your phone to silent</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- During Treatment -->
+                <div class="tips-carousel-item">
+                    <div class="tips-image-section">
+                        <img class="left-image" src="./images/during.jpg" alt="During your appointment">
+                    </div>
+                    <div class="tips-text-section">
+                        <h3 class="tips-card-title" data-lang="tips-during-title">During visit</h3>
+                        <ul class="tips-card-list">
+                            <li data-lang="tips-during-1">Signal if you need a break</li>
+                            <li data-lang="tips-during-2">Report any discomfort immediately</li>
+                            <li data-lang="tips-during-3">Ask questions anytime</li>
+                            <li data-lang="tips-during-4">Breathe slowly through your nose</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- After Treatment -->
+                <div class="tips-carousel-item">
+                    <div class="tips-image-section">
+                        <img class="left-image" src="./images/after.jpg" alt="After your appointment">
+                    </div>
+                    <div class="tips-text-section">
+                        <h3 class="tips-card-title" data-lang="tips-after-title">After visit</h3>
+                        <ul class="tips-card-list">
+                            <li data-lang="tips-after-1">Follow post-care instructions</li>
+                            <li data-lang="tips-after-2">Take medications as directed</li>
+                            <li data-lang="tips-after-3">Avoid smoking & alcohol 24h</li>
+                            <li data-lang="tips-after-4">Book your next appointment</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- General Wellness -->
+                <div class="tips-carousel-item">
+                    <div class="tips-image-section">
+                        <img class="left-image" src="./images/health.jpg" alt="Health and wellness">
+                    </div>
+                    <div class="tips-text-section">
+                        <h3 class="tips-card-title" data-lang="tips-general-title">General</h3>
+                        <ul class="tips-card-list">
+                            <li data-lang="tips-general-1">Drink plenty of water</li>
+                            <li data-lang="tips-general-2">Keep a regular sleep schedule</li>
+                            <li data-lang="tips-general-3">Update us on health or medications</li>
+                            <li data-lang="tips-general-4">Maintain daily dental care</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 导航箭头 -->
+            <button class="tips-carousel-nav tips-prev" onclick="changeTipsSlide(-1)" aria-label="Previous tip">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="tips-carousel-nav tips-next" onclick="changeTipsSlide(1)" aria-label="Next tip">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <!-- 轮播指示器 -->
+            <div class="tips-carousel-indicators">
+                <span class="tips-indicator active" onclick="goToTipsSlide(0)"></span>
+                <span class="tips-indicator" onclick="goToTipsSlide(1)"></span>
+                <span class="tips-indicator" onclick="goToTipsSlide(2)"></span>
+                <span class="tips-indicator" onclick="goToTipsSlide(3)"></span>
+            </div>
+        </div>
+    </div>
+</section>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <!-- Contact Info -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-contact-title">CONTACT INFO</h3>
+                <div class="contact-details">
+                    <div class="address">
+                        <p class="address-line">65 N First Ave # 203,</p>
+                        <p class="address-line">Arcadia,</p>
+                        <p class="address-line">CA 91006</p>
+                    </div>
+                    <div class="email-contact">
+                        <a href="mailto:XXXXXXXXXXX@gmail.com" class="email-link">XXXXXXXXXXX@gmail.com</a>
+                    </div>
+                    <div class="social-media">
+                        <a href="#" class="social-icon facebook" aria-label="Visit our Facebook page"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon spotify" aria-label="Listen to our Spotify playlist"><i class="fab fa-spotify"></i></a>
+                        <a href="#" class="social-icon instagram" aria-label="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon youtube" aria-label="Subscribe to our YouTube channel"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opening Hours -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-hours-title">OPENING HOURS</h3>
+                <div class="hours-list">
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-monday">Monday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-tuesday">Tuesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-wednesday">Wednesday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-thursday">Thursday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-friday">Friday</span>
+                        <span class="time">9:00am - 5:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-saturday">Saturday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                    <div class="hours-item">
+                        <span class="day" data-lang="day-sunday">Sunday</span>
+                        <span class="time">9:00am - 2:00pm</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="footer-column">
+                <h3 class="footer-title" data-lang="footer-nav-title">NAVIGATION</h3>
+                <div class="nav-links">
+                    <a href="service.html" class="nav-link" data-lang="footer-nav-services">Services</a>
+                    <a href="faq.html" class="nav-link" data-lang="footer-nav-faq">FAQ</a>
+                    <a href="#" class="nav-link" data-lang="footer-nav-contact">Contact us</a>
+                    <a href="#" class="nav-link book-now" data-lang="footer-nav-book">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to top">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <p class="copyright">© 2025 XXXXX - All rights reserved • <i class="fas fa-heart"></i> to all our amazing patients</p>
+            </div>
+        </div>
+    </footer>
+    
+        <script src="languages.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+        <script src="shared-navigation.js"></script>
+        <script src="shared-utils.js"></script>
+        <script src="faq.js"></script>
+        <script src="static-pages.js"></script>
+    </body>
+</html>

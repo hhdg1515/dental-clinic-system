@@ -1,0 +1,943 @@
+// languages.js - 双语数据文件 (精简版)
+const languages = {
+    en: {
+        'amenity-accessibility-1': 'Elevator access',
+        'amenity-accessibility-2': 'Accessible parking spaces',
+        'amenity-accessibility-3': 'Wheelchair-friendly paths',
+        'amenity-accessibility-4': 'Accessible restrooms',
+        'amenity-accessibility-title': 'Accessibility',
+        'amenity-dining-1': 'Soup & soft-food cafes',
+        'amenity-dining-2': 'Ice cream shops',
+        'amenity-dining-3': 'Drive-throughs',
+        'amenity-dining-title': 'Dining',
+        'amenity-parking-1': 'Free patient parking',
+        'amenity-parking-2': 'limited duration',
+        'amenity-parking-3': 'Accessible parking',
+        'amenity-parking-title': 'Parking',
+        'amenity-pharmacy-1': 'CVS, Walgreens, Vons pharmacy',
+        'amenity-pharmacy-2': 'Insurance accepted',
+        'amenity-pharmacy-3': 'Drive-through services',
+        'amenity-pharmacy-title': 'Pharmacies',
+        'amenity-transport-1': 'Bus stops',
+        'amenity-transport-2': 'Metro stations',
+        'amenity-transport-3': 'Uber/Lyft pickup zones',
+        'amenity-transport-4': 'Bicycle parking',
+        'amenity-transport-title': 'Transportation',
+        'amenity-waiting-1': 'Coffee shops',
+        'amenity-waiting-2': 'Parks and seating areas',
+        'amenity-waiting-3': 'Free WiFi',
+        'amenity-waiting-title': 'Waiting Areas',
+        'breadcrumb-faq': '> Patient Care Guide',
+        'comfort-blanket': 'Comfort blanket or pillow',
+        'comfort-clothing': 'Comfortable clothing',
+        'comfort-entertainment': 'Reading material or tablet',
+        'comfort-headphones': 'Headphones for relaxation',
+        'comfort-snacks': 'Post-treatment soft snacks',
+        'comfort-sunglasses': 'Sunglasses (for after treatment)',
+        'comfort-water': 'Water',
+        'convenience-childcare': 'Companion',
+        'convenience-forms': 'Pre-registered online',
+        'convenience-payment': 'Payment(card/cash/others)',
+        'convenience-questions': 'Reason for visit',
+        'convenience-transport': 'Your travel plans',
+        'convenience-work': 'Work schedule flexibility',
+        'cosmetic-card-title': 'Aesthetic Treatments',
+        'cosmetic-detail-1': 'Professional teeth whitening',
+        'cosmetic-detail-2': 'Porcelain veneers',
+        'cosmetic-detail-3': 'Dental bonding',
+        'cosmetic-detail-4': 'Smile makeovers',
+        'cosmetic-detail-5': 'Gum contouring',
+        'cosmetic-detail-6': 'Tooth reshaping',
+        'cosmetic-package-1-item1': 'In-office whitening',
+        'cosmetic-package-1-item2': 'Take-home kit included',
+        'cosmetic-package-1-item3': 'Up to 8 shades lighter',
+        'cosmetic-package-1-name': 'Whitening Package',
+        'cosmetic-package-2-item1': 'Custom porcelain veneers',
+        'cosmetic-package-2-item2': 'Natural appearance',
+        'cosmetic-package-2-item3': '15-20 year lifespan',
+        'cosmetic-package-2-item4': 'Color-matched',
+        'cosmetic-package-2-name': 'Veneers',
+        'cosmetic-package-3-item1': 'Complete smile design',
+        'cosmetic-package-3-item2': 'Multiple procedures',
+        'cosmetic-package-3-item3': 'Personalized treatment plan',
+        'cosmetic-package-3-name': 'Smile Makeover',
+        'cosmetic-service-subtitle': 'TRANSFORM YOUR SMILE',
+        'cosmetic-service-title': 'Cosmetic Dentistry',
+        'data-clinic-arcadia': 'Arcadia',
+        'data-clinic-eastvale': 'Eastvale',
+        'data-clinic-irvine': 'Irvine',
+        'data-clinic-rowland-heights': 'Rowland Heights',
+        'data-clinic-south-pasadena': 'South Pasadena',
+        'day-friday': 'Friday',
+        'day-monday': 'Monday',
+        'day-saturday': 'Saturday',
+        'day-sunday': 'Sunday',
+        'day-thursday': 'Thursday',
+        'day-tuesday': 'Tuesday',
+        'day-wednesday': 'Wednesday',
+        'detail-1-desc': 'Comprehensive dental care for every member of your family. From routine cleanings to advanced treatments, our expert team provides quality care with compassion and precision.',
+        'detail-1-title': 'Core Dental Services',
+        'detail-2-desc': 'Advanced treatments and specialized procedures performed by our expert team. From prevention to complex restorations and surgical procedures, we provide comprehensive specialized care.',
+        'detail-2-title': 'Specialized Dental Care',
+        'detail-breadcrumb': '> Core Services',
+        'detail-breadcrumb-2': '> Specialized Care',
+        'faq-page-desc': 'Everything you need to know for a smooth and comfortable dental experience. From preparation tips to nearby amenities, we\',
+        'faq-page-title': 'Patient Care Guide',
+        'flexible-payment': 'Flexible',
+        'footer-contact-title': 'CONTACT INFO',
+        'footer-hours-title': 'OPENING HOURS',
+        'footer-nav-book': 'Book Now',
+        'footer-nav-contact': 'Contact us',
+        'footer-nav-faq': 'FAQ',
+        'footer-nav-services': 'Services',
+        'footer-nav-title': 'NAVIGATION',
+        'for-comfort-title': 'FOR COMFORT',
+        'for-convenience-title': 'FOR CONVENIENCE',
+        'for-safety-title': 'FOR SAFETY',
+        'for-your-visit': 'FOR YOUR VISIT',
+        'form-description': 'Schedule Your Appointment',
+        'form-detail': 'Schedule your appointment with our specialists today and experience the highest standard of personalized dental care. We are committed to support your journey towards your well-being.',
+        'form-email': 'Email Address',
+        'form-link': 'Register here',
+        'form-login': 'Login',
+        'form-no-account': 'Don't have an account?',
+        'form-password': 'Password',
+        'form-title': 'Schedule Your Appointment',
+        'general-card-title': 'Family Dental Care',
+        'general-detail-1': 'Comprehensive dental exams',
+        'general-detail-2': 'Professional teeth cleaning',
+        'general-detail-3': 'Digital X-rays and diagnostics',
+        'general-detail-4': 'Cavity fillings and repairs',
+        'general-detail-5': 'Children\',
+        'general-detail-6': 'Senior dental care',
+        'general-package-1-item1': 'Exam & X-rays',
+        'general-package-1-item2': 'Professional cleaning',
+        'general-package-1-item3': 'Fluoride treatment',
+        'general-package-1-name': 'Individual Care',
+        'general-package-2-item1': 'For family of 4',
+        'general-package-2-item2': '2 cleanings per year',
+        'general-package-2-item3': 'Priority scheduling',
+        'general-package-2-name': 'Family Package',
+        'general-package-3-item1': 'Unlimited cleanings',
+        'general-package-3-item2': 'AI Assistant Access',
+        'general-package-3-item3': 'Priority scheduling',
+        'general-package-3-name': 'Annual Membership',
+        'general-service-subtitle': 'COMPREHENSIVE CARE FOR ALL AGES',
+        'general-service-title': 'General & Family',
+        'hero-cta': 'Book Now',
+        'hero-subtitle': 'Your Dental Journey',
+        'hero-title1': 'Your',
+        'hero-title2': 'Best Smile',
+        'hero-title3': 'Awaits You',
+        'nav-faq': 'FAQ',
+        'nav-home': 'Home',
+        'nav-logo': 'FIRST AVE DENTAL & ORTHODONTICS',
+        'nav-services': 'Services',
+        'nearby-amenities': 'NEARBY AMENITIES',
+        'oral-surgery-card-title': 'Surgical Procedures',
+        'oral-surgery-detail-1': 'Wisdom tooth extraction',
+        'oral-surgery-detail-2': 'Dental implant placement',
+        'oral-surgery-detail-3': 'Bone grafting',
+        'oral-surgery-detail-4': 'Complex extractions',
+        'oral-surgery-detail-5': 'Sedation options',
+        'oral-surgery-detail-6': '3D imaging & planning',
+        'oral-surgery-package-1-item1': 'Tooth removal',
+        'oral-surgery-package-1-item2': 'Local anesthesia',
+        'oral-surgery-package-1-item3': 'Post-op care',
+        'oral-surgery-package-1-name': 'Simple Extraction',
+        'oral-surgery-package-2-item1': 'Impacted tooth removal',
+        'oral-surgery-package-2-item2': 'Sedation available',
+        'oral-surgery-package-2-item3': '3D imaging',
+        'oral-surgery-package-2-item4': 'Pain management',
+        'oral-surgery-package-2-name': 'Wisdom Teeth',
+        'oral-surgery-package-3-item1': 'Implant + crown',
+        'oral-surgery-package-3-item2': 'Permanent solution',
+        'oral-surgery-package-3-item3': 'Lifetime warranty',
+        'oral-surgery-package-3-name': 'Dental Implant',
+        'oral-surgery-service-subtitle': 'EXPERT SURGICAL CARE',
+        'oral-surgery-service-title': 'Oral Surgery',
+        'orthodontics-card-title': 'Teeth Alignment',
+        'orthodontics-detail-1': 'Traditional metal braces',
+        'orthodontics-detail-2': 'Ceramic braces',
+        'orthodontics-detail-3': 'Clear aligners (Invisalign)',
+        'orthodontics-detail-4': 'Retainers',
+        'orthodontics-detail-5': 'Bite correction',
+        'orthodontics-detail-6': 'Teen & adult treatment',
+        'orthodontics-package-1-item1': 'Metal or ceramic',
+        'orthodontics-package-1-item2': '12-24 months treatment',
+        'orthodontics-package-1-item3': 'Monthly adjustments',
+        'orthodontics-package-1-name': 'Traditional Braces',
+        'orthodontics-package-2-item1': 'Invisalign treatment',
+        'orthodontics-package-2-item2': 'Removable & invisible',
+        'orthodontics-package-2-item3': '12-18 months average',
+        'orthodontics-package-2-item4': 'Retainers included',
+        'orthodontics-package-2-name': 'Clear Aligners',
+        'orthodontics-package-3-item1': '0% interest available',
+        'orthodontics-package-3-item2': 'Monthly installments',
+        'orthodontics-package-3-item3': 'Insurance accepted',
+        'orthodontics-package-3-name': 'Payment Plans',
+        'orthodontics-service-subtitle': 'STRAIGHTEN YOUR SMILE',
+        'orthodontics-service-title': 'Orthodontics',
+        'per-quadrant': 'per quadrant',
+        'per-tooth': 'per tooth',
+        'per-visit': 'per visit',
+        'periodontics-card-title': 'Gum Health',
+        'periodontics-detail-1': 'Deep scaling & root planing',
+        'periodontics-detail-2': 'Laser gum therapy',
+        'periodontics-detail-3': 'Gum grafting',
+        'periodontics-detail-4': 'Periodontal maintenance',
+        'periodontics-detail-5': 'Antibiotic treatment',
+        'periodontics-detail-6': 'Pocket reduction surgery',
+        'periodontics-package-1-item1': 'Deep cleaning',
+        'periodontics-package-1-item2': 'Root planing',
+        'periodontics-package-1-item3': 'Local anesthesia',
+        'periodontics-package-1-name': 'Scaling & Planing',
+        'periodontics-package-2-item1': 'All quadrants treated',
+        'periodontics-package-2-item2': 'Antibiotic therapy',
+        'periodontics-package-2-item3': 'Follow-up visits',
+        'periodontics-package-2-name': 'Full Mouth',
+        'periodontics-package-3-item1': 'Quarterly cleanings',
+        'periodontics-package-3-item2': 'Pocket monitoring',
+        'periodontics-package-3-item3': 'Preventive care',
+        'periodontics-package-3-name': 'Maintenance Plan',
+        'periodontics-service-subtitle': 'GUM DISEASE TREATMENT',
+        'periodontics-service-title': 'Periodontics',
+        'popular-badge': 'Most Popular',
+        'preventive-card-title': 'Prevention Programs',
+        'preventive-detail-1': 'Regular cleanings & exams',
+        'preventive-detail-2': 'Fluoride treatments',
+        'preventive-detail-3': 'Dental sealants',
+        'preventive-detail-4': 'Oral cancer screening',
+        'preventive-detail-5': 'Bite analysis',
+        'preventive-detail-6': 'Hygiene education',
+        'preventive-package-1-item1': 'Exam & cleaning',
+        'preventive-package-1-item2': 'X-rays (if needed)',
+        'preventive-package-1-item3': 'Oral health assessment',
+        'preventive-package-1-name': 'Basic Package',
+        'preventive-package-2-item1': 'Kid-friendly exam',
+        'preventive-package-2-item2': 'Fluoride treatment',
+        'preventive-package-2-item3': 'Sealants included',
+        'preventive-package-2-item4': 'Fun experience',
+        'preventive-package-2-name': 'Children\',
+        'preventive-package-3-item1': '2 cleanings per year',
+        'preventive-package-3-item2': 'All X-rays included',
+        'preventive-package-3-item3': 'AI Assistant Access',
+        'preventive-package-3-name': 'Annual Membership',
+        'preventive-service-subtitle': 'PREVENTION IS KEY',
+        'preventive-service-title': 'Preventive Care',
+        'pricing-title': 'Pricing & Packages',
+        'restorations-card-title': 'Dental Restorations',
+        'restorations-detail-1': 'Dental crowns (all-ceramic)',
+        'restorations-detail-2': 'Bridges (fixed & removable)',
+        'restorations-detail-3': 'Full & partial dentures',
+        'restorations-detail-4': 'Inlays & onlays',
+        'restorations-detail-5': 'Same-day restorations',
+        'restorations-detail-6': 'Digital impressions',
+        'restorations-package-1-item1': 'All-ceramic crown',
+        'restorations-package-1-item2': 'Natural appearance',
+        'restorations-package-1-item3': '10-15 year warranty',
+        'restorations-package-1-name': 'Single Crown',
+        'restorations-package-2-item1': 'Fixed bridge',
+        'restorations-package-2-item2': 'Permanent solution',
+        'restorations-package-2-item3': 'Color-matched',
+        'restorations-package-2-item4': 'Precision fit',
+        'restorations-package-2-name': '3-Unit Bridge',
+        'restorations-package-3-item1': 'Complete dentures',
+        'restorations-package-3-item2': 'Custom fit',
+        'restorations-package-3-item3': 'Adjustments included',
+        'restorations-package-3-name': 'Full Dentures',
+        'restorations-service-subtitle': 'RESTORE FUNCTION & BEAUTY',
+        'restorations-service-title': 'Restorations',
+        'rootcanal-card-title': 'Endodontic Treatment',
+        'rootcanal-detail-1': 'Pain-free procedures',
+        'rootcanal-detail-2': 'Advanced diagnostics',
+        'rootcanal-detail-3': 'Single-visit options',
+        'rootcanal-detail-4': 'Root canal retreatment',
+        'rootcanal-detail-5': 'Crown restoration',
+        'rootcanal-detail-6': 'Emergency care available',
+        'rootcanal-package-1-item1': 'Root canal treatment',
+        'rootcanal-package-1-item2': 'Digital imaging',
+        'rootcanal-package-1-item3': 'Follow-up included',
+        'rootcanal-package-1-name': 'Front Tooth',
+        'rootcanal-package-2-item1': 'Molar root canal',
+        'rootcanal-package-2-item2': 'Advanced treatment',
+        'rootcanal-package-2-item3': 'Pain management',
+        'rootcanal-package-2-item4': 'Post-op care',
+        'rootcanal-package-2-name': 'Back Tooth',
+        'rootcanal-package-3-item1': 'Root canal + crown',
+        'rootcanal-package-3-item2': 'Complete restoration',
+        'rootcanal-package-3-item3': '5-year warranty',
+        'rootcanal-package-3-name': 'With Crown',
+        'rootcanal-service-subtitle': 'SAVE YOUR NATURAL TEETH',
+        'rootcanal-service-title': 'Root Canal Therapy',
+        'safety-allergies': 'Known allergies information',
+        'safety-emergency': 'Emergency contacts',
+        'safety-history': 'Your old records',
+        'safety-insurance': 'Insurance card and photo ID',
+        'safety-medical': 'Current medications list',
+        'safety-referral': 'Referral letters (if applicable)',
+        'service-breadcrumb-current': 'Our Services',
+        'service-breadcrumb-home': 'Home',
+        'service-cosmetic-bonding': 'Dental Bonding',
+        'service-cosmetic-cta': 'Service Info',
+        'service-cosmetic-title': 'Cosmetic',
+        'service-cosmetic-veneers': 'Veneers',
+        'service-cosmetic-whitening': 'Teeth Whitening',
+        'service-general-cleanings': 'Cleanings',
+        'service-general-cta': 'Service Info',
+        'service-general-exams': 'Exams & X-rays',
+        'service-general-fillings': 'Fillings & more',
+        'service-general-title': 'General & Family',
+        'service-hero-desc': 'At FIRST AVE DENTAL & ORTHODONTICS, we\',
+        'service-oral-surgery-item1': 'Tooth Extractions',
+        'service-oral-surgery-item2': 'Dental Implant Placement',
+        'service-oral-surgery-item3': 'Bone Grafting',
+        'service-oral-surgery-title': 'Oral Surgery',
+        'service-orthodontics-item1': 'Braces',
+        'service-orthodontics-item2': 'Clear Aligners',
+        'service-orthodontics-item3': 'Retainers',
+        'service-orthodontics-title': 'Orthodontics',
+        'service-page-title': 'Our Services',
+        'service-periodontics-item1': 'Deep Cleanings',
+        'service-periodontics-item2': 'Gum Disease Treatment',
+        'service-periodontics-item3': 'Periodontal Maintenance',
+        'service-periodontics-title': 'Periodontics',
+        'service-preventive-item1': 'Regular Cleanings & Exams',
+        'service-preventive-item2': 'Fluoride Treatments',
+        'service-preventive-item3': 'Dental Sealants',
+        'service-preventive-title': 'Preventive Care',
+        'service-restorations-item1': 'Crowns & Bridges',
+        'service-restorations-item2': 'Dentures (Full & Partial)',
+        'service-restorations-item3': 'Inlays & Onlays',
+        'service-restorations-title': 'Restorations',
+        'service-rootcanal-diagnosis': 'Diagnosis',
+        'service-rootcanal-procedures': 'Root Canal Procedures',
+        'service-rootcanal-retreatment': 'Endodontic Retreatment',
+        'service-rootcanal-title': 'Root Canals',
+        'story-subtitle': 'WE LOVE HEARING FROM PATIENTS',
+        'things-to-bring-elegant': 'Things to Bring',
+        'things-to-know-title': 'Things to Know',
+        'tip-aftercare-text': 'Plan for soft foods after procedures and arrange transportation if sedation is involved.',
+        'tip-aftercare-title': 'Post-Treatment Care',
+        'tip-comfort-text': 'Eat a light meal beforehand, arrive 15 minutes early, and let us know about any dental anxiety.',
+        'tip-comfort-title': 'Comfort & Preparation',
+        'tip-insurance-text': 'Bring your insurance card, photo ID, and current medication list for a smooth check-in process.',
+        'tip-insurance-title': 'Insurance & Documentation',
+        'tips-after-1': 'Follow post-care instructions',
+        'tips-after-2': 'Take medications as directed',
+        'tips-after-3': 'Avoid smoking & alcohol 24h',
+        'tips-after-4': 'Book your next appointment',
+        'tips-after-title': 'After visit',
+        'tips-appointment-1': 'Arrive 15 minutes early',
+        'tips-appointment-2': 'Bring headphones for music',
+        'tips-appointment-3': 'Use the restroom beforehand',
+        'tips-appointment-4': 'Set your phone to silent',
+        'tips-appointment-title': 'Appointment',
+        'tips-comfort-guide': 'YOUR COMFORT GUIDE',
+        'tips-during-1': 'Signal if you need a break',
+        'tips-during-2': 'Report any discomfort immediately',
+        'tips-during-3': 'Ask questions anytime',
+        'tips-during-4': 'Breathe slowly through your nose',
+        'tips-during-title': 'During visit',
+        'tips-general-1': 'Drink plenty of water',
+        'tips-general-2': 'Keep a regular sleep schedule',
+        'tips-general-3': 'Update us on health or medications',
+        'tips-general-4': 'Maintain daily dental care',
+        'tips-general-title': 'General',
+    },
+
+    zh: {
+        'amenity-accessibility-1': '电梯',
+        'amenity-accessibility-2': '无障碍停车位',
+        'amenity-accessibility-3': '轮椅通道',
+        'amenity-accessibility-4': '无障碍洗手间',
+        'amenity-accessibility-title': '无障碍设施',
+        'amenity-dining-1': '软食简餐',
+        'amenity-dining-2': '冰淇淋店',
+        'amenity-dining-3': '得来速窗口',
+        'amenity-dining-title': '餐饮',
+        'amenity-parking-1': '患者免费停车',
+        'amenity-parking-2': '限时停留',
+        'amenity-parking-3': '无障碍停车位',
+        'amenity-parking-title': '停车',
+        'amenity-pharmacy-1': 'CVS、Walgreens、Vons药房',
+        'amenity-pharmacy-2': '接受保险',
+        'amenity-pharmacy-3': '得来速服务',
+        'amenity-pharmacy-title': '药房',
+        'amenity-transport-1': '公交站',
+        'amenity-transport-2': '轻轨站',
+        'amenity-transport-3': 'Uber/Lyft接客区',
+        'amenity-transport-4': '自行车停放处',
+        'amenity-transport-title': '交通',
+        'amenity-waiting-1': '咖啡店',
+        'amenity-waiting-2': '户外休息区',
+        'amenity-waiting-3': '免费WiFi',
+        'amenity-waiting-title': '家属等候区',
+        'breadcrumb-faq': '> 患者护理指南',
+        'comfort-blanket': '毯子或靠垫',
+        'comfort-clothing': '宽松衣服',
+        'comfort-entertainment': '读物',
+        'comfort-headphones': '耳机（等待）',
+        'comfort-snacks': '术后流食',
+        'comfort-sunglasses': '墨镜（术后）',
+        'comfort-water': '饮用水',
+        'convenience-childcare': '家属陪同',
+        'convenience-forms': '在线预约（推荐）',
+        'convenience-payment': '付款方式（卡/现金/其他）',
+        'convenience-questions': '预约详情描述',
+        'convenience-transport': '出行',
+        'convenience-work': '请假调整',
+        'cosmetic-card-title': '美学治疗',
+        'cosmetic-detail-1': '专业牙齿美白',
+        'cosmetic-detail-2': '瓷贴面',
+        'cosmetic-detail-3': '牙齿粘接',
+        'cosmetic-detail-4': '笑容改造',
+        'cosmetic-detail-5': '牙龈美容',
+        'cosmetic-detail-6': '牙齿塑形',
+        'cosmetic-package-1-item1': '诊所美白',
+        'cosmetic-package-1-item2': '含居家套装',
+        'cosmetic-package-1-item3': '提亮8个色阶',
+        'cosmetic-package-1-name': '美白套餐',
+        'cosmetic-package-2-item1': '定制瓷贴面',
+        'cosmetic-package-2-item2': '自然外观',
+        'cosmetic-package-2-item3': '15-20年寿命',
+        'cosmetic-package-2-item4': '颜色匹配',
+        'cosmetic-package-2-name': '瓷贴面',
+        'cosmetic-package-3-item1': '完整笑容设计',
+        'cosmetic-package-3-item2': '多项治疗',
+        'cosmetic-package-3-item3': '个性化方案',
+        'cosmetic-package-3-name': '笑容改造',
+        'cosmetic-service-subtitle': '焕新您的笑容',
+        'cosmetic-service-title': '美容牙科',
+        'data-clinic-arcadia': '阿卡迪亚',
+        'data-clinic-eastvale': '东谷',
+        'data-clinic-irvine': '尔湾',
+        'data-clinic-rowland-heights': '罗兰岗',
+        'data-clinic-south-pasadena': '南帕萨迪纳',
+        'day-friday': '周五',
+        'day-monday': '周一',
+        'day-saturday': '周六',
+        'day-sunday': '周日',
+        'day-thursday': '周四',
+        'day-tuesday': '周二',
+        'day-wednesday': '周三',
+        'detail-1-desc': '为您全家提供全方位牙科护理。从常规清洁到高级治疗，我们经验丰富的团队以同情心和专业度为您提供优质护理。',
+        'detail-1-title': '核心牙科服务',
+        'detail-2-desc': '由我们专家团队执行的高级治疗和专科手术。从预防到复杂修复和外科手术，我们提供全面的专科护理。',
+        'detail-2-title': '专科牙科护理',
+        'detail-breadcrumb': '> 核心服务',
+        'detail-breadcrumb-2': '> 专科服务',
+        'faq-page-desc': '为您提供顺利舒适的牙科体验所需的一切信息。从准备贴士到周边便民设施，我们全程支持您的口腔健康之旅。',
+        'faq-page-title': '患者护理指南',
+        'flexible-payment': '灵活',
+        'footer-contact-title': '联系信息',
+        'footer-hours-title': '营业时间',
+        'footer-nav-book': '立即预约',
+        'footer-nav-contact': '联系我们',
+        'footer-nav-faq': '常见问题',
+        'footer-nav-services': '服务项目',
+        'footer-nav-title': '网站导航',
+        'for-comfort-title': '方便看诊',
+        'for-convenience-title': '便利准备',
+        'for-safety-title': '个人信息',
+        'for-your-visit': '推荐准备',
+        'form-description': '安排您的看诊时间',
+        'form-detail': '立即预约我们的专家，体验最高标准的个性化牙科护理。我们致力于支持您迈向健康之旅。',
+        'form-email': '邮箱',
+        'form-link': '点击注册',
+        'form-login': '登录',
+        'form-no-account': '还没有账户？',
+        'form-password': '密码',
+        'form-title': '在线预约',
+        'general-card-title': '家庭牙科护理',
+        'general-detail-1': '全面牙科检查',
+        'general-detail-2': '专业洁牙',
+        'general-detail-3': '数字化X光与诊断',
+        'general-detail-4': '龋齿填充与修复',
+        'general-detail-5': '儿童牙科护理',
+        'general-detail-6': '老年牙科护理',
+        'general-package-1-item1': '检查与X光',
+        'general-package-1-item2': '专业洁牙',
+        'general-package-1-item3': '氟化物治疗',
+        'general-package-1-name': '个人护理',
+        'general-package-2-item1': '4人家庭',
+        'general-package-2-item2': '每年2次洁牙',
+        'general-package-2-item3': '优先预约',
+        'general-package-2-name': '家庭套餐',
+        'general-package-3-item1': '无限次洁牙',
+        'general-package-3-item2': 'AI在线助理',
+        'general-package-3-item3': '优先预约',
+        'general-package-3-name': '年度会员',
+        'general-service-subtitle': '全年龄段综合护理',
+        'general-service-title': '全科与家庭',
+        'hero-cta': '立即预约',
+        'hero-subtitle': '与微笑同行',
+        'hero-title1': '您的',
+        'hero-title2': '笑容',
+        'hero-title3': '正在绽放',
+        'nav-faq': '常见问题',
+        'nav-home': '首页',
+        'nav-logo': 'FIRST AVE DENTAL & ORTHODONTICS',
+        'nav-services': '服务项目',
+        'nearby-amenities': '便民设施',
+        'oral-surgery-card-title': '外科手术',
+        'oral-surgery-detail-1': '智齿拔除',
+        'oral-surgery-detail-2': '种植牙植入',
+        'oral-surgery-detail-3': '植骨手术',
+        'oral-surgery-detail-4': '复杂拔牙',
+        'oral-surgery-detail-5': '镇静选项',
+        'oral-surgery-detail-6': '3D成像与规划',
+        'oral-surgery-package-1-item1': '拔牙',
+        'oral-surgery-package-1-item2': '局部麻醉',
+        'oral-surgery-package-1-item3': '术后护理',
+        'oral-surgery-package-1-name': '简单拔牙',
+        'oral-surgery-package-2-item1': '阻生牙拔除',
+        'oral-surgery-package-2-item2': '可选镇静',
+        'oral-surgery-package-2-item3': '3D成像',
+        'oral-surgery-package-2-item4': '疼痛管理',
+        'oral-surgery-package-2-name': '智齿拔除',
+        'oral-surgery-package-3-item1': '种植体+牙冠',
+        'oral-surgery-package-3-item2': '永久解决方案',
+        'oral-surgery-package-3-item3': '终身质保',
+        'oral-surgery-package-3-name': '种植牙',
+        'oral-surgery-service-subtitle': '专业外科护理',
+        'oral-surgery-service-title': '口腔外科',
+        'orthodontics-card-title': '牙齿矫正',
+        'orthodontics-detail-1': '传统金属矫正',
+        'orthodontics-detail-2': '陶瓷矫正',
+        'orthodontics-detail-3': '隐形矫正 (Invisalign)',
+        'orthodontics-detail-4': '保持器',
+        'orthodontics-detail-5': '咬合矫正',
+        'orthodontics-detail-6': '青少年与成人治疗',
+        'orthodontics-package-1-item1': '金属或陶瓷',
+        'orthodontics-package-1-item2': '12-24个月疗程',
+        'orthodontics-package-1-item3': '每月调整',
+        'orthodontics-package-1-name': '传统矫正',
+        'orthodontics-package-2-item1': 'Invisalign治疗',
+        'orthodontics-package-2-item2': '可摘取隐形',
+        'orthodontics-package-2-item3': '平均12-18个月',
+        'orthodontics-package-2-item4': '含保持器',
+        'orthodontics-package-2-name': '隐形矫正',
+        'orthodontics-package-3-item1': '0%利息可选',
+        'orthodontics-package-3-item2': '月度分期',
+        'orthodontics-package-3-item3': '接受保险',
+        'orthodontics-package-3-name': '分期付款',
+        'orthodontics-service-subtitle': '矫正您的笑容',
+        'orthodontics-service-title': '正畸治疗',
+        'per-quadrant': '每象限',
+        'per-tooth': '每颗',
+        'per-visit': '每次',
+        'periodontics-card-title': '牙龈健康',
+        'periodontics-detail-1': '深度洁治与根面平整',
+        'periodontics-detail-2': '激光牙龈治疗',
+        'periodontics-detail-3': '牙龈移植',
+        'periodontics-detail-4': '牙周维护',
+        'periodontics-detail-5': '抗生素治疗',
+        'periodontics-detail-6': '牙周袋缩减手术',
+        'periodontics-package-1-item1': '深度清洁',
+        'periodontics-package-1-item2': '根面平整',
+        'periodontics-package-1-item3': '局部麻醉',
+        'periodontics-package-1-name': '洁治平整',
+        'periodontics-package-2-item1': '所有象限治疗',
+        'periodontics-package-2-item2': '抗生素疗法',
+        'periodontics-package-2-item3': '复诊服务',
+        'periodontics-package-2-name': '全口治疗',
+        'periodontics-package-3-item1': '季度洁牙',
+        'periodontics-package-3-item2': '牙周袋监测',
+        'periodontics-package-3-item3': '预防护理',
+        'periodontics-package-3-name': '维护计划',
+        'periodontics-service-subtitle': '牙龈疾病治疗',
+        'periodontics-service-title': '牙周治疗',
+        'popular-badge': '最受欢迎',
+        'preventive-card-title': '预防计划',
+        'preventive-detail-1': '定期洁牙与检查',
+        'preventive-detail-2': '氟化物治疗',
+        'preventive-detail-3': '窝沟封闭',
+        'preventive-detail-4': '口腔癌筛查',
+        'preventive-detail-5': '咬合分析',
+        'preventive-detail-6': '口腔卫生教育',
+        'preventive-package-1-item1': '检查与洁牙',
+        'preventive-package-1-item2': 'X光（如需）',
+        'preventive-package-1-item3': '口腔健康评估',
+        'preventive-package-1-name': '基础套餐',
+        'preventive-package-2-item1': '儿童友好检查',
+        'preventive-package-2-item2': '氟化物治疗',
+        'preventive-package-2-item3': '含窝沟封闭',
+        'preventive-package-2-item4': '有趣体验',
+        'preventive-package-2-name': '儿童套餐',
+        'preventive-package-3-item1': '每年2次洁牙',
+        'preventive-package-3-item2': '含所有X光',
+        'preventive-package-3-item3': 'AI在线助理',
+        'preventive-package-3-name': '年度会员',
+        'preventive-service-subtitle': '预防为上',
+        'preventive-service-title': '预防护理',
+        'pricing-title': '定价与套餐',
+        'restorations-card-title': '牙齿修复',
+        'restorations-detail-1': '全瓷牙冠',
+        'restorations-detail-2': '固定与活动牙桥',
+        'restorations-detail-3': '全口与局部假牙',
+        'restorations-detail-4': '嵌体与高嵌体',
+        'restorations-detail-5': '当日修复',
+        'restorations-detail-6': '数字化取模',
+        'restorations-package-1-item1': '全瓷牙冠',
+        'restorations-package-1-item2': '自然外观',
+        'restorations-package-1-item3': '10-15年质保',
+        'restorations-package-1-name': '单颗牙冠',
+        'restorations-package-2-item1': '固定牙桥',
+        'restorations-package-2-item2': '永久解决方案',
+        'restorations-package-2-item3': '颜色匹配',
+        'restorations-package-2-item4': '精准贴合',
+        'restorations-package-2-name': '3单位牙桥',
+        'restorations-package-3-item1': '完整假牙',
+        'restorations-package-3-item2': '定制贴合',
+        'restorations-package-3-item3': '含调整服务',
+        'restorations-package-3-name': '全口假牙',
+        'restorations-service-subtitle': '恢复功能与美观',
+        'restorations-service-title': '修复治疗',
+        'rootcanal-card-title': '牙髓治疗',
+        'rootcanal-detail-1': '无痛操作',
+        'rootcanal-detail-2': '先进诊断',
+        'rootcanal-detail-3': '单次就诊可选',
+        'rootcanal-detail-4': '根管再治疗',
+        'rootcanal-detail-5': '牙冠修复',
+        'rootcanal-detail-6': '提供急诊服务',
+        'rootcanal-package-1-item1': '根管治疗',
+        'rootcanal-package-1-item2': '数字成像',
+        'rootcanal-package-1-item3': '含复诊',
+        'rootcanal-package-1-name': '前牙治疗',
+        'rootcanal-package-2-item1': '磨牙根管',
+        'rootcanal-package-2-item2': '高级治疗',
+        'rootcanal-package-2-item3': '疼痛管理',
+        'rootcanal-package-2-item4': '术后护理',
+        'rootcanal-package-2-name': '后牙治疗',
+        'rootcanal-package-3-item1': '根管+牙冠',
+        'rootcanal-package-3-item2': '完整修复',
+        'rootcanal-package-3-item3': '5年质保',
+        'rootcanal-package-3-name': '含牙冠',
+        'rootcanal-service-subtitle': '保留您的天然牙齿',
+        'rootcanal-service-title': '根管治疗',
+        'safety-allergies': '过敏情况',
+        'safety-emergency': '紧急联系人',
+        'safety-history': '以往病史',
+        'safety-insurance': '保险和带照片的ID',
+        'safety-medical': '当前用药信息',
+        'safety-referral': '转诊推荐',
+        'service-breadcrumb-current': '我们的服务',
+        'service-breadcrumb-home': '首页',
+        'service-cosmetic-bonding': '树脂美学修复',
+        'service-cosmetic-cta': '服务详情',
+        'service-cosmetic-title': '美学牙科',
+        'service-cosmetic-veneers': '牙齿贴面 ',
+        'service-cosmetic-whitening': '牙齿美白',
+        'service-general-cleanings': '洗牙',
+        'service-general-cta': '服务详情',
+        'service-general-exams': 'X光检查',
+        'service-general-fillings': '补牙及更多',
+        'service-general-title': '家庭牙科',
+        'service-hero-desc': '在 FIRST AVE DENTAL & ORTHODONTICS，我们致力于帮助您实现终身卓越的口腔健康。从预防护理和定期检查，到修复治疗和美容牙科，我们经验丰富的团队随时为您服务。',
+        'service-oral-surgery-item1': '拔牙',
+        'service-oral-surgery-item2': '种植牙植入',
+        'service-oral-surgery-item3': '植骨手术',
+        'service-oral-surgery-title': '口腔外科',
+        'service-orthodontics-item1': '牙套',
+        'service-orthodontics-item2': '隐形矫正器',
+        'service-orthodontics-item3': '保持器',
+        'service-orthodontics-title': '正畸治疗',
+        'service-page-title': '我们的服务',
+        'service-periodontics-item1': '深度洁牙',
+        'service-periodontics-item2': '牙龈疾病治疗',
+        'service-periodontics-item3': '牙周维护',
+        'service-periodontics-title': '牙周治疗',
+        'service-preventive-item1': '定期洁牙与检查',
+        'service-preventive-item2': '氟化物治疗',
+        'service-preventive-item3': '窝沟封闭',
+        'service-preventive-title': '预防护理',
+        'service-restorations-item1': '牙冠与牙桥',
+        'service-restorations-item2': '全口/部分假牙',
+        'service-restorations-item3': '嵌体与高嵌体',
+        'service-restorations-title': '修复治疗',
+        'service-rootcanal-diagnosis': '根管诊断',
+        'service-rootcanal-procedures': '根管治疗操作',
+        'service-rootcanal-retreatment': '根管再治疗',
+        'service-rootcanal-title': '根管治疗',
+        'story-subtitle': '我们倾听每一位患者',
+        'things-to-bring-elegant': '看诊携带',
+        'things-to-know-title': '周边信息',
+        'tip-aftercare-text': '治疗后请准备软食，如涉及镇静，请安排交通工具。',
+        'tip-aftercare-title': '治疗后护理',
+        'tip-comfort-text': '提前进食清淡餐食，提早15分钟到达，并告知我们您的任何牙科焦虑。',
+        'tip-comfort-title': '舒适与准备',
+        'tip-insurance-text': '请携带您的保险卡、带照片的身份证件和当前用药清单，以便顺利办理入院手续。',
+        'tip-insurance-title': '保险与文件',
+        'tips-after-1': '遵循护理指导',
+        'tips-after-2': '按医嘱服药',
+        'tips-after-3': '24小时内避免吸烟饮酒',
+        'tips-after-4': '预约复诊回访',
+        'tips-after-title': '就诊后',
+        'tips-appointment-1': '提前15分钟到达',
+        'tips-appointment-2': '等待区休闲放松',
+        'tips-appointment-3': '提前使用洗手间',
+        'tips-appointment-4': '将手机调至静音',
+        'tips-appointment-title': '预约就诊',
+        'tips-comfort-guide': '舒适就诊指南',
+        'tips-during-1': '需要休息时请示意',
+        'tips-during-2': '不适请告知',
+        'tips-during-3': '交流沟通',
+        'tips-during-4': '深呼吸',
+        'tips-during-title': '就诊中',
+        'tips-general-1': '多喝水',
+        'tips-general-2': '保持规律作息',
+        'tips-general-3': '健康或用药变化请告知',
+        'tips-general-4': '保持口腔卫生',
+        'tips-general-title': '日常保健',
+    }
+};
+
+// 默认语言
+let currentLanguage = localStorage.getItem('preferred-language') || 'en';
+
+// 切换语言函数
+function switchLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('preferred-language', lang);
+    updatePageLanguage();
+    updateLanguageButton();
+}
+
+// 更新页面所有文本
+function updatePageLanguage() {
+    const elements = document.querySelectorAll('[data-lang]');
+    elements.forEach(element => {
+        const key = element.getAttribute('data-lang');
+        if (languages[currentLanguage] && languages[currentLanguage][key]) {
+            element.textContent = languages[currentLanguage][key];
+        }
+    });
+    
+    // 更新HTML lang属性
+    document.documentElement.lang = currentLanguage;
+}
+
+// 更新语言按钮显示
+function updateLanguageButton() {
+    const langButton = document.getElementById('language-toggle');
+    if (langButton) {
+        langButton.textContent = currentLanguage === 'en' ? '中文' : 'English';
+    }
+}
+
+// 浏览器语言自动检测
+function detectBrowserLanguage() {
+    if (!localStorage.getItem('preferred-language')) {
+        const browserLang = navigator.language || navigator.userLanguage;
+        if (browserLang.startsWith('zh')) {
+            currentLanguage = 'zh';
+            localStorage.setItem('preferred-language', 'zh');
+        }
+    }
+}
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded', function() {
+    detectBrowserLanguage();
+    updatePageLanguage();
+    updateLanguageButton();
+});
+
+// 导出函数供全局使用
+window.switchLanguage = switchLanguage;
+
+// 极简语言切换逻辑
+// 保留现有的 switchLanguage 函数，只需确保它能正常工作
+
+function switchLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('preferred-language', lang);
+    updatePageLanguage();
+}
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded', function() {
+    detectBrowserLanguage();
+    updatePageLanguage();
+});
+
+// 保留现有的其他函数：updatePageLanguage(), detectBrowserLanguage() 等
+
+// 语言切换数据（添加到你现有的languages.js文件）
+const mapTexts = {
+    en: {
+        'distance-title-fancy': 'Distance from',
+        'distance-title-regular': 'NEARBY CITIES',
+        'visit-california': 'Visit California'
+    },
+    zh: {
+        'distance-title-fancy': '距离',
+        'distance-title-regular': '周边城市',
+        'visit-california': '访问加州'
+    }
+};
+
+// 合并到现有的 languages 对象
+if (typeof languages !== 'undefined') {
+    Object.keys(mapTexts).forEach(lang => {
+        if (languages[lang]) {
+            Object.assign(languages[lang], mapTexts[lang]);
+        }
+    });
+}
+
+// 更新的语言切换数据 - 添加到你的languages.js文件中对应的位置
+const updatedVisitAmenitiesTexts = {
+    en: {
+        // Local Amenities 卡片
+        'amenities-title': 'LOCAL AMENITIES',
+        'amenities-description': 'Find nearby pharmacies, cafes, and parking options to make your visit stress-free.',
+        'amenities-button': 'Things to know',
+        
+        // Plan Your Visit 卡片
+        'plan-title': 'PLAN YOUR VISIT',
+        'plan-description': 'Before you arrive, check out our guide of what to expect and how to prepare for your treatment.',
+        'plan-button': 'Things to bring',
+        
+        // Tips 卡片 - 只保留标题
+        'tips-title': 'TIPS FOR SMOOTH & COMFORTABLE VISITS',
+        
+        // Share Your Journey 卡片 - 简化版本
+        'story-title-new': 'SHARE YOUR JOURNEY',
+        'story-button': 'ONLINE FORM',
+
+        // Community Showcase Section
+        'community-main-title': 'Making Connections',
+        'community-subtitle': 'WITH COMMUNITY, CITY, AND ACHIEVEMENTS',
+        'story-title': 'SHARE YOUR JOURNEY',
+        'map-trip-title': 'MAP YOUR TRIP'
+    },
+    zh: {
+        // Local Amenities 卡片
+        'amenities-title': '周边便民设施',
+        'amenities-description': '寻找附近的药房、舒适的咖啡厅供家属等候，以及便利的停车选择，让您的就诊无忧无虑。',
+        'amenities-button': '了解详情',
+        
+        // Plan Your Visit 卡片
+        'plan-title': '规划您的就诊',
+        'plan-description': '在您到达预约之前，查看我们的指南，了解预期情况以及如何为治疗做准备。',
+        'plan-button': '准备事项',
+        
+        // Tips 卡片 - 只保留标题
+        'tips-title': '顺利舒适就诊小贴士',
+        
+        // Share Your Journey 卡片 - 简化版本
+        'story-title-new': '分享您的历程',
+        'story-button': '在线表单',
+
+        // Community Showcase Section
+        'community-main-title': '携手共进',
+        'community-subtitle': '与社区、城市及荣誉同行',
+        'story-title': '分享您的历程',
+        'map-trip-title': '规划您的路线'
+    }
+};
+
+// 使用方法：将上面的内容合并到你现有的languages对象中
+// 如果你现有的languages.js文件中已经有类似的结构，
+// 请将这些新的键值对添加到对应的语言对象中
+
+// 示例合并代码（添加到languages.js文件末尾）：
+if (typeof languages !== 'undefined') {
+    Object.keys(updatedVisitAmenitiesTexts).forEach(lang => {
+        if (languages[lang]) {
+            Object.assign(languages[lang], updatedVisitAmenitiesTexts[lang]);
+        }
+    });
+}
+
+// Things to Bring部分双语内容 - 添加到languages.js文件
+
+const thingsToBringLanguageContent = {
+    en: {
+        // Hero Section
+        'faq-hero-title': 'Patient Care Guide',
+        'faq-hero-subtitle': 'Everything you need to know for a smooth dental experience',
+        
+        // Things to Bring Section
+        'things-to-bring-title': 'THINGS TO BRING',
+        'plan-your-visit-title': 'Plan Your Visit',
+        'checklist-title': 'Visit Preparation Checklist',
+        
+        // Checklist Items
+        'item-insurance': 'Insurance Information',
+        'item-insurance-desc': 'Bring your dental insurance card and photo ID',
+        
+        'item-medical-history': 'Medical History',
+        'item-medical-history-desc': 'Complete list of current medications and medical conditions',
+        
+        'item-previous-records': 'Previous Dental Records',
+        'item-previous-records-desc': 'X-rays and treatment history from previous dentist',
+        
+        'item-payment': 'Payment Method',
+        'item-payment-desc': 'Credit card, insurance co-pay, or CareCredit information',
+        
+        'item-comfort': 'Comfort Items',
+        'item-comfort-desc': 'Headphones, comfort toy for children, or anxiety medication',
+        
+        // Section Placeholders
+        'tips-section-title': 'VISIT TIPS',
+        'tips-section-subtitle': 'For a Smooth Experience',
+        
+        'amenities-section-title': 'NEARBY AMENITIES',
+        'amenities-section-subtitle': 'Convenient Services'
+    },
+    
+    zh: {
+        // Hero Section
+        'faq-hero-title': '患者护理指南',
+        'faq-hero-subtitle': '为您提供顺利就诊体验所需的一切信息',
+        
+        // Things to Bring Section
+        'things-to-bring-title': '必备物品',
+        'plan-your-visit-title': '规划您的就诊',
+        'checklist-title': '就诊准备清单',
+        
+        // Checklist Items
+        'item-insurance': '保险信息',
+        'item-insurance-desc': '携带您的牙科保险卡和有效身份证件',
+        
+        'item-medical-history': '病史资料',
+        'item-medical-history-desc': '当前用药清单和完整的疾病史',
+        
+        'item-previous-records': '既往牙科病历',
+        'item-previous-records-desc': '来自前任牙医的X光片和治疗记录',
+        
+        'item-payment': '付款方式',
+        'item-payment-desc': '信用卡、保险共付额或CareCredit信息',
+        
+        'item-comfort': '舒适物品',
+        'item-comfort-desc': '耳机、儿童安抚玩具或焦虑缓解药物',
+        
+        // Section Placeholders
+        'tips-section-title': '就诊贴士',
+        'tips-section-subtitle': '顺利体验指南',
+        
+        'amenities-section-title': '周边便民设施',
+        'amenities-section-subtitle': '便利服务'
+    }
+};
+
+// 合并到现有的languages对象
+if (typeof languages !== 'undefined') {
+    Object.keys(thingsToBringLanguageContent).forEach(lang => {
+        if (languages[lang]) {
+            Object.assign(languages[lang], thingsToBringLanguageContent[lang]);
+        } else {
+            languages[lang] = thingsToBringLanguageContent[lang];
+        }
+    });
+}
+
+// 导出语言内容（如果需要单独使用）
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = thingsToBringLanguageContent;
+} else {
+    window.thingsToBringLanguageContent = thingsToBringLanguageContent;
+}

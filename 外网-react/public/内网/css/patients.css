@@ -1,0 +1,991 @@
+/* Patients page styles */
+.patients-content {
+    padding: 30px 16px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 双光源系统 - 左上和右上 - 使用主题色纯蓝 */
+.patients-content::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: -200px;
+    right: -200px;
+    height: 1000px;
+    background:
+        /* 右上光源 */
+        radial-gradient(
+            circle 700px at 85% 15%,
+            rgba(37, 99, 235, 0.24) 0%,
+            rgba(37, 99, 235, 0.15) 30%,
+            transparent 60%
+        ),
+        /* 左上光源 */
+        radial-gradient(
+            circle 800px at 15% 10%,
+            rgba(37, 99, 235, 0.20) 0%,
+            rgba(37, 99, 235, 0.12) 30%,
+            transparent 60%
+        );
+    filter: blur(120px);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 左下绿色球体装饰 */
+.patients-content::after {
+    content: '';
+    position: absolute;
+    bottom: 100px;
+    left: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(82, 196, 160, 0.2), transparent 60%);
+    filter: blur(100px);
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.page-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.tab-navigation {
+    display: flex;
+}
+
+.tab-button {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-button.active {
+    color: var(--color-primary);
+    outline: none;
+}
+
+.tab-button:focus {
+    outline: none;
+}
+
+.tab-button:hover {
+    color: var(--color-primary);
+}
+
+.new-appointment-btn {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.new-appointment-btn:hover {
+    background: var(--color-primary-dark);
+}
+
+
+/* Patients Table */
+.patients-table-container {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    box-shadow:
+        3px 0 8px 0 rgba(37, 99, 235, 0.03),
+        0 4px 10px 0 rgba(37, 99, 235, 0.04);
+}
+
+.patients-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.patients-table th:nth-child(1),
+.patients-table td:nth-child(1) { width: 20%; } /* Name */
+
+.patients-table th:nth-child(2),
+.patients-table td:nth-child(2) { width: 20%; } /* Date */
+
+.patients-table th:nth-child(3),
+.patients-table td:nth-child(3) { width: 15%; } /* Phone */
+
+.patients-table th:nth-child(4),
+.patients-table td:nth-child(4) { width: 20%; } /* Treatment */
+
+.patients-table th:nth-child(5),
+.patients-table td:nth-child(5) { width: 15%; } /* Location */
+
+.patients-table th:nth-child(6),
+.patients-table td:nth-child(6) { width: 10%; } /* Actions/Process */
+
+.patients-table th {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.patients-table th:last-child {
+    text-align: center;
+    width: 80px;
+}
+
+.patients-table td {
+    padding: 16px;
+    font-size: 14px;
+    color: var(--color-text-primary);
+}
+
+.patients-table tr:hover {
+    cursor: pointer;
+}
+
+.patients-table tr:hover .btn-icon:not(:hover) {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1);
+}
+
+.btn-icon:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.patients-table tr:hover .action-icon {
+    color: var(--color-primary);
+}
+
+.patients-table td:last-child {
+    text-align: center;
+    width: 80px;
+}
+
+.action-icon {
+    color: #4B5563;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 8px;
+}
+
+.action-icon:hover {
+    color: var(--color-primary);
+}
+
+.patient-name {
+    font-weight: 500;
+}
+
+.appointment-date {
+    color: var(--color-text-muted);
+}
+
+.treatment-type {
+    display: inline-block;
+    background: #f3f4f6;
+    color: var(--color-text-secondary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.location-cell {
+    color: var(--color-text-muted);
+}
+
+/* Pending Actions */
+.pending-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    border: 1px solid white;
+    background: var(--color-bg-light);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.btn-icon:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+/* Tooltip */
+.btn-icon::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: -32px;
+    right: 0;
+    background: rgba(107, 114, 128, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon:hover::after {
+    opacity: 1;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    min-height: calc(100vh - 250px); /* 确保内容区域至少填满视口高度，避免背景割裂 */
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.pagination button {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: var(--color-text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.pagination button:hover {
+    background: var(--color-bg-light);
+}
+
+.pagination button.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Patient Details Modal */
+.patient-section {
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.info-value {
+    font-size: 14px;
+    color: var(--color-text-primary);
+}
+
+.self-description {
+    background: rgba(248, 249, 250, 0.7);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(59, 130, 246, 0.3);
+    border-left: none;
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 4px 16px rgba(59, 130, 246, 0.1),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.self-description::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, transparent 50%, rgba(147, 197, 253, 0.05) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.self-description > * {
+    position: relative;
+    z-index: 1;
+}
+
+.self-description-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.self-description-text {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+.appointment-history {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.appointment-card {
+    border: 1.5px solid rgba(226, 232, 240, 0.6);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(20px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.06),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 内容均匀分布 */
+    width: 100%; /* 确保宽度一致 */
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.appointment-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(100, 150, 255, 0.08) 0%, transparent 50%, rgba(100, 150, 255, 0.05) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.appointment-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.appointment-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.1),
+        inset 0 1px 2px rgba(255, 255, 255, 1);
+}
+
+.appointment-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.appointment-date-time {
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+.appointment-details div:last-child {
+    text-align: right;
+    min-width: 80px; /* 与状态同宽 */
+}
+
+.appointment-status {
+    min-width: 80px;
+    text-align: right; /* 右对齐 */
+    padding: 0;
+    border-radius: 0;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    font-weight: 400;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 20px;
+}
+
+.btn-edit-profile {
+    background: var(--color-bg-light);
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.btn-edit-profile:hover {
+    background: var(--color-border-primary);
+    border-color: var(--color-border-primary);
+    color: var(--color-text-secondary);
+}
+
+.btn-new-appointment {
+    background: var(--color-primary);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.btn-new-appointment:hover {
+    background: var(--color-primary-dark);
+}
+
+/* Process Modal */
+.action-buttons-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.btn-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: var(--color-bg-light);
+    color: var(--color-text-muted);
+    position: relative;
+}
+
+.btn-action i {
+    position: absolute;
+    left: 16px;
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Secondary Actions */
+/* Action Buttons - iOS 26 Glass Style */
+.btn-arrived-action,
+.btn-no-show-action,
+.btn-modify-action,
+.btn-hold-action,
+.btn-completed-action,
+.btn-cancel-action {
+    background: rgba(248, 249, 250, 0.7);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(209, 213, 219, 0.6);
+    border-radius: 14px;
+    color: var(--color-text-muted);
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Arrived Button - Active/Selected State (Blue Glass) */
+.btn-arrived-action.active,
+.btn-arrived-action.selected {
+    background: rgba(219, 234, 254, 0.85);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(59, 130, 246, 0.5);
+    color: #1d4ed8;
+    box-shadow:
+        0 4px 16px rgba(59, 130, 246, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.btn-arrived-action.active::before,
+.btn-arrived-action.selected::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, transparent 50%, rgba(147, 197, 253, 0.1) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.btn-arrived-action.active > span,
+.btn-arrived-action.selected > span {
+    position: relative;
+    z-index: 1;
+}
+
+/* No-Show Button - Active/Selected State (Red Glass) */
+.btn-no-show-action.active,
+.btn-no-show-action.selected {
+    background: rgba(255, 242, 240, 0.85);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(255, 77, 79, 0.5);
+    color: #cf1322;
+    box-shadow:
+        0 4px 16px rgba(255, 77, 79, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.btn-no-show-action.active::before,
+.btn-no-show-action.selected::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255, 77, 79, 0.15) 0%, transparent 50%, rgba(255, 163, 158, 0.1) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.btn-no-show-action.active > span,
+.btn-no-show-action.selected > span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Hold Button - Active/Selected State (Purple Glass) */
+.btn-hold-action.active,
+.btn-hold-action.selected {
+    background: rgba(249, 240, 255, 0.85);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(146, 84, 222, 0.5);
+    color: #722ed1;
+    box-shadow:
+        0 4px 16px rgba(146, 84, 222, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.btn-hold-action.active::before,
+.btn-hold-action.selected::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(146, 84, 222, 0.15) 0%, transparent 50%, rgba(217, 190, 254, 0.1) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.btn-hold-action.active > span,
+.btn-hold-action.selected > span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Completed Button - Active/Selected State (Green Glass) */
+.btn-completed-action.active,
+.btn-completed-action.selected {
+    background: rgba(246, 255, 237, 0.85);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(82, 196, 26, 0.5);
+    color: #389e0d;
+    box-shadow:
+        0 4px 16px rgba(82, 196, 26, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.btn-completed-action.active::before,
+.btn-completed-action.selected::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(82, 196, 26, 0.15) 0%, transparent 50%, rgba(183, 235, 143, 0.1) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.btn-completed-action.active > span,
+.btn-completed-action.selected > span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Modify/Edit Button - Active/Selected State (Blue Glass) */
+.btn-modify-action.active,
+.btn-modify-action.selected {
+    background: rgba(219, 234, 254, 0.85);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(59, 130, 246, 0.5);
+    color: #1d4ed8;
+    box-shadow:
+        0 4px 16px rgba(59, 130, 246, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.btn-modify-action.active::before,
+.btn-modify-action.selected::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, transparent 50%, rgba(147, 197, 253, 0.1) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.btn-modify-action.active > span,
+.btn-modify-action.selected > span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Cancel Button - Active/Selected State (Red Glass) */
+.btn-cancel-action.active,
+.btn-cancel-action.selected {
+    background: rgba(255, 242, 240, 0.85);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1.5px solid rgba(239, 68, 68, 0.5);
+    color: #dc2626;
+    box-shadow:
+        0 4px 16px rgba(239, 68, 68, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.btn-cancel-action.active::before,
+.btn-cancel-action.selected::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, transparent 50%, rgba(252, 165, 165, 0.1) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.btn-cancel-action.active > span,
+.btn-cancel-action.selected > span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Hover States */
+.btn-arrived-action:hover,
+.btn-no-show-action:hover,
+.btn-modify-action:hover,
+.btn-hold-action:hover,
+.btn-completed-action:hover,
+.btn-cancel-action:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.08),
+        inset 0 1px 2px rgba(255, 255, 255, 1);
+}
+
+/* New Appointment Modal */
+.new-appointment-modal .form-group input[readonly],
+.new-appointment-modal .form-group select[readonly] {
+    background-color: var(--color-bg-light) !important;
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+}
+
+/* Edit Modal */
+.edit-basic-info-modal .form-group input:focus,
+.edit-basic-info-modal .form-group select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Table Interactions */
+.patients-table tbody tr {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+}
+
+.patients-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    box-shadow:
+        0 2px 8px 0 rgba(37, 99, 235, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+.patients-table .action-icon {
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.patients-table .action-icon:hover {
+    background: #f3f4f6;
+}
+
+.tab-content {
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.tab-content.active {
+    opacity: 1;
+}
+
+.patients-table.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.patients-table.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--color-border-primary);
+    border-top: 2px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-text-muted);
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: #d1d5db;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Pagination Styles for Patients Page */
+.patients-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.patients-pagination .pagination-btn {
+    background: var(--color-bg-light);
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.patients-pagination .pagination-btn:hover:not(:disabled) {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.patients-pagination .pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive Design for Patients Page */
+@media (max-width: 768px) {
+    .patients-content {
+        padding: 20px;
+    }
+    
+    .page-controls {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patients-table th,
+    .patients-table td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+    
+    .treatment-type {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .action-row {
+        grid-template-columns: 1fr;
+    }
+    
+}
+
+/* Fix Appointment Details layout */
+.appointment-details {
+    display: flex !important;
+    justify-content: space-between !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
+}
+
+.appointment-details div {
+    text-align: left;
+    min-width: 120px;
+}
+/* Fix button hover styles */
+.btn-secondary:hover {
+    background: var(--color-border-primary) !important;
+    border-color: var(--color-border-primary) !important;  
+    color: var(--color-text-secondary) !important;
+}
+
+
+/* Remove borders from pagination buttons */
+#pendingPrevBtn,
+#pendingNextBtn,
+#confirmedPrevBtn,
+#confirmedNextBtn {
+    border: none !important;
+}
+
+/* Hidden elements utility class */
+.hidden {
+    display: none;
+}
+
+/* Readonly input field styling */
+.readonly-field {
+    background-color: #f9fafb !important;
+}
