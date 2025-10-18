@@ -50,9 +50,18 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const handleAssistantReply = useCallback(
-    async (userInput: string) => {
+    async (userInput: string, requestId: string) => {
       try {
         const response = await infer({ locale: lang, message: userInput });
+        if (import.meta.env.DEV) {
+          console.debug('[chat] infer response', {
+            requestId,
+            toolUsed: response.toolUsed,
+            maxScore: response.maxScore,
+            hitsCount: response.hitsCount
+          });
+        }
+
         const assistantMessage: ChatMessage = {
           id: crypto.randomUUID(),
           role: 'assistant',
@@ -68,9 +77,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           messages: [...prev.messages, assistantMessage]
         }));
       } catch (_error) {
+        if (import.meta.env.DEV) {
+          console.debug('[chat] infer error', { requestId, error: _error });
+        }
+
         const fallbackText =
           lang === 'zh'
-            ? '目前遇到一点问题，请稍后再试。'
+            ? '�>r�%?�?؆^��,?�,1�-r��~��O�_��"?�?Z�+?�_a?,'
             : 'Something went wrong - please try again shortly.';
 
         const failedMessage: ChatMessage = {
@@ -91,25 +104,29 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     [lang]
   );
 
-  const sendUserMessage = useCallback((content: string) => {
-    if (!content.trim()) return;
+  const sendUserMessage = useCallback(
+    (content: string) => {
+      if (!content.trim()) return;
 
-    const newMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: content.trim(),
-      createdAt: new Date(),
-      status: 'delivered'
-    };
+      const requestId = crypto.randomUUID();
+      const newMessage: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: 'user',
+        content: content.trim(),
+        createdAt: new Date(),
+        status: 'delivered'
+      };
 
-    setState((prev) => ({
-      ...prev,
-      isBusy: true,
-      messages: [...prev.messages, newMessage]
-    }));
+      setState((prev) => ({
+        ...prev,
+        isBusy: true,
+        messages: [...prev.messages, newMessage]
+      }));
 
-    void handleAssistantReply(newMessage.content);
-  }, [handleAssistantReply]);
+      void handleAssistantReply(newMessage.content, requestId);
+    },
+    [handleAssistantReply]
+  );
 
   const addAssistantMessage = useCallback((content: string) => {
     const newMessage: ChatMessage = {
@@ -187,3 +204,4 @@ export const useChat = (): ChatContextValue => {
   }
   return context;
 };
+

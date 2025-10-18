@@ -52,24 +52,8 @@ class GlobalDataManager {
     // Default data structure - Fixed to use only hourly time slots
     getDefaultData() {
         return {
-            patientProfiles: {
-                 'Sarah Johnson': {
-                     detailedInfo: {
-                        address: '123 Main St',
-                         emergency: 'John Doe (626) 555-0111', 
-                         dateOfBirth: '1985-03-15',
-                         age: '39',
-                         gender: 'Female',
-                         firstVisit: '2023-01-12',
-                         allergies: 'Penicillin',
-                         medications: 'Lisinopril 10mg',
-                         conditions: 'Hypertension',
-                         medicalNotes: 'Patient notes from consultations'
-                     },
-                     lastUpdated: '2025-09-11T10:00:00Z'
-                 }
-            },
-            
+            patientProfiles: {},
+
             appointments: {
                 // Example appointment data structure:
                 // 'YYYY-MM-DD': [
@@ -380,9 +364,14 @@ class GlobalDataManager {
 
     // Get user clinics for Firebase filtering
     getUserClinics(user) {
+        // ✅ UPDATED: Support both 'owner' (new) and 'boss' (legacy) roles
         if (user.role === 'boss' || user.role === 'owner') {
             return ['arcadia', 'irvine', 'south-pasadena', 'rowland-heights', 'eastvale'];
+        } else if (user.clinics && Array.isArray(user.clinics)) {
+            // ✅ NEW: Use clinics array from user profile (from Firestore users/{uid})
+            return user.clinics;
         } else {
+            // Fallback: Use assignedLocation
             return user.assignedLocation ? [user.assignedLocation] : [];
         }
     }
@@ -592,21 +581,27 @@ class GlobalDataManager {
     }
      // New user management methods
     getCurrentUser() {
-    // First check localStorage for mock login user (from mock-login.html)
-    try {
-        const mockUser = localStorage.getItem('currentUser');
-        if (mockUser) {
-            const parsedUser = JSON.parse(mockUser);
-            console.log('🔍 Using mock login user:', parsedUser);
-            return parsedUser;
+    // ✅ UPDATED: Get user from intranet auth guard (Firebase Auth + Firestore users/{uid})
+    // No longer reads sensitive identity data from localStorage
+    if (window.intranetAuthGuard) {
+        const userProfile = window.intranetAuthGuard.getUserProfile();
+        if (userProfile) {
+            // Convert to data-manager compatible format
+            return {
+                name: userProfile.displayName || userProfile.email?.split('@')[0] || 'Admin',
+                role: userProfile.role, // 'owner' or 'admin'
+                clinics: userProfile.clinics || [],
+                assignedLocation: userProfile.assignedLocation || (userProfile.clinics?.[0]) || 'arcadia',
+                currentViewLocation: window.intranetAuthGuard.getCurrentViewLocation() || 'arcadia',
+                email: userProfile.email,
+                uid: userProfile.uid
+            };
         }
-    } catch (error) {
-        console.warn('Failed to parse mock user from localStorage:', error);
     }
 
-    // Fallback to internal data-manager config
+    // Fallback to internal data-manager config (for development/testing only)
     if (!this.data || !this.data.userConfig || !this.data.userConfig.users) {
-        console.warn('⚠️ No user config found, defaulting to boss');
+        console.warn('⚠️ No user config found and no auth guard, defaulting to boss');
         return {
             name: 'Sunny',
             role: 'boss',

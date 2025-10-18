@@ -7,120 +7,69 @@ let currentFirebaseUser = null;
 let userRole = null;
 let userClinics = [];
 
-// Basic Authentication Functions
-async function getCurrentUser() {
-    try {
-        // 使用与auth-check.js相同的逻辑获取用户数据
-        const possibleKeys = ['currentUser', 'user', 'userData', 'authUser'];
-
-        for (const key of possibleKeys) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const parsed = JSON.parse(data);
-                // 验证数据结构
-                if (parsed && (parsed.role || parsed.email)) {
-                    currentFirebaseUser = parsed;
-                    return parsed;
-                }
-            }
-        }
-        return null;
-    } catch (error) {
-        console.error('解析用户数据失败:', error);
-        return null;
-    }
-}
-
-async function getUserRole() {
-    const user = await getCurrentUser();
-    if (!user) return null;
-
-    try {
-        // 直接从localStorage用户数据获取角色
-        if (user.role) {
-            userRole = user.role;
-            // Support both 'clinics' and 'accessibleLocations' field names
-            userClinics = user.clinics || user.accessibleLocations || [];
-            return userRole;
-        }
-
-        // 备用：根据邮箱推断角色
-        if (user.email) {
-            if (user.email.includes('admin') || user.email.includes('boss') || user.email.includes('owner')) {
-                userRole = 'admin';
-                return userRole;
-            }
-        }
-
-        return null; // 没有找到admin角色
-    } catch (error) {
-        console.error('Error getting user role:', error);
-        return null;
-    }
-}
+// ✅ REMOVED: Old localStorage-based authentication functions are replaced by intranetAuthGuard
+// Authentication is handled by intranet-auth-guard.js using Firebase Auth + Firestore users/{uid}
+// The auth guard blocks page rendering until authentication completes, so this function is no longer needed
 
 async function redirectIfNotAdmin() {
-    const user = await getCurrentUser();
-    const role = await getUserRole();
-
-    if (!user) {
-        console.log('No user logged in, showing login message...');
-        showAuthError('Please login first through the external website to access the internal dashboard.');
+    // ✅ Wait for auth guard to complete initialization
+    if (!window.intranetAuthGuard) {
+        console.warn('⚠️ Auth guard not available');
         return false;
     }
 
-    if (!role || (role !== 'admin' && role !== 'boss' && role !== 'owner')) {
+    // ✅ Wait for authentication to complete (auth guard will handle redirects if needed)
+    if (!window.intranetAuthGuard.isAuthReady) {
+        console.log('⏳ Waiting for authentication to complete...');
+        try {
+            await window.intranetAuthGuard.waitForAuth();
+        } catch (error) {
+            console.error('❌ Auth wait failed:', error);
+            return false;
+        }
+    }
+
+    const userProfile = window.intranetAuthGuard.getUserProfile();
+
+    if (!userProfile) {
+        console.log('No user logged in');
+        return false;
+    }
+
+    const role = userProfile.role;
+    if (!role || (role !== 'admin' && role !== 'owner')) {
         console.log('User does not have admin privileges');
-        showAuthError('Access denied. Admin privileges required for internal dashboard.');
         return false;
     }
+
+    // Store in global variables for compatibility with existing code
+    currentFirebaseUser = userProfile;
+    userRole = userProfile.role;
+    userClinics = userProfile.clinics || [];
 
     console.log(`✅ User authenticated as ${role}`);
     return true;
 }
 
 // Permission Management Functions
+// ✅ UPDATED: Now uses intranet auth guard instead of localStorage
 function isOwner() {
-    // Get current user role from localStorage first
-    try {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.role) {
-            return currentUser.role === 'boss' || currentUser.role === 'owner';
-        }
-    } catch (error) {
-        console.warn('Failed to get user from localStorage:', error);
+    // ✅ Get from new auth guard (Firebase Auth + Firestore users/{uid})
+    if (window.intranetAuthGuard) {
+        return window.intranetAuthGuard.isOwner();
     }
 
-    // Fallback to global userRole
+    // Fallback for backward compatibility during development
     return userRole === 'boss' || userRole === 'owner';
 }
 
 function getAccessibleClinics() {
-    // Get current user from localStorage first
-    try {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.role) {
-            if (currentUser.role === 'boss' || currentUser.role === 'owner') {
-                // Owners can access all clinics
-                return [
-                    'arcadia',
-                    'irvine',
-                    'south-pasadena',
-                    'rowland-heights',
-                    'eastvale'
-                ];
-            } else {
-                // Admins can only access assigned clinics
-                // Support both 'clinics' and 'accessibleLocations' field names
-                const clinicsList = currentUser.clinics || currentUser.accessibleLocations || [];
-                return clinicsList.map(clinic => clinic.id || clinic);
-            }
-        }
-    } catch (error) {
-        console.warn('Failed to get user from localStorage:', error);
+    // ✅ Get from new auth guard (Firebase Auth + Firestore users/{uid})
+    if (window.intranetAuthGuard) {
+        return window.intranetAuthGuard.getAllowedClinics();
     }
 
-    // Fallback to global variables
+    // Fallback for backward compatibility during development
     if (isOwner()) {
         return [
             'arcadia',
@@ -307,36 +256,41 @@ function getStartOfWeek(date) {
     return startOfWeek;
 }
 
-// Safe dataManager access functions
+// ✅ UPDATED: Safe dataManager access functions (no longer reads from localStorage)
 function safeGetCurrentUser() {
     try {
-        // First try to get user from localStorage (same as test page)
-        const possibleKeys = ['currentUser', 'user', 'userData', 'authUser'];
-
-        for (const key of possibleKeys) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const parsed = JSON.parse(data);
-                if (parsed && (parsed.role || parsed.email)) {
-                    return parsed;
-                }
-            }
-        }
-
-        // Fallback to DataManager
+        // ✅ Get from DataManager which now uses intranetAuthGuard
         if (window.dataManager && dataManager.getCurrentUser) {
             return dataManager.getCurrentUser();
+        }
+
+        // ✅ Direct fallback to auth guard if dataManager not ready
+        if (window.intranetAuthGuard) {
+            const userProfile = window.intranetAuthGuard.getUserProfile();
+            if (userProfile) {
+                return {
+                    name: userProfile.displayName || userProfile.email?.split('@')[0] || 'Admin',
+                    role: userProfile.role,
+                    clinics: userProfile.clinics || [],
+                    assignedLocation: userProfile.assignedLocation || (userProfile.clinics?.[0]) || 'arcadia',
+                    currentViewLocation: window.intranetAuthGuard.getCurrentViewLocation() || 'arcadia',
+                    email: userProfile.email,
+                    uid: userProfile.uid
+                };
+            }
         }
     } catch (error) {
         console.warn('DataManager access failed:', error);
     }
 
-    // Fallback user
+    // Fallback user for development only
+    console.warn('⚠️ No auth data available, returning fallback user');
     return {
         name: 'Sunny',
-        role: 'boss',
+        role: 'owner',
         currentViewLocation: 'arcadia',
-        assignedLocation: 'arcadia'
+        assignedLocation: 'arcadia',
+        clinics: ['arcadia', 'irvine', 'south-pasadena', 'rowland-heights', 'eastvale']
     };
 }
 
@@ -1720,8 +1674,8 @@ async function pollPendingAppointments() {
             return;
         }
 
-        // Get user role and clinics
-        const role = await getUserRole();
+        // ✅ Get user role and clinics from auth guard
+        const role = userRole || window.intranetAuthGuard?.getUserProfile()?.role;
         const accessibleClinics = getAccessibleClinics();
 
         if (!role || accessibleClinics.length === 0) {
@@ -1846,8 +1800,8 @@ async function updateDashboardStats() {
             return;
         }
 
-        // Get user role and clinics
-        const role = await getUserRole();
+        // ✅ Get user role and clinics from auth guard
+        const role = userRole || window.intranetAuthGuard?.getUserProfile()?.role;
         const accessibleClinics = getAccessibleClinics();
 
         if (!role || accessibleClinics.length === 0) {

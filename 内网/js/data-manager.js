@@ -52,24 +52,8 @@ class GlobalDataManager {
     // Default data structure - Fixed to use only hourly time slots
     getDefaultData() {
         return {
-            patientProfiles: {
-                 'Sarah Johnson': {
-                     detailedInfo: {
-                        address: '123 Main St',
-                         emergency: 'John Doe (626) 555-0111', 
-                         dateOfBirth: '1985-03-15',
-                         age: '39',
-                         gender: 'Female',
-                         firstVisit: '2023-01-12',
-                         allergies: 'Penicillin',
-                         medications: 'Lisinopril 10mg',
-                         conditions: 'Hypertension',
-                         medicalNotes: 'Patient notes from consultations'
-                     },
-                     lastUpdated: '2025-09-11T10:00:00Z'
-                 }
-            },
-            
+            patientProfiles: {},
+
             appointments: {
                 // Example appointment data structure:
                 // 'YYYY-MM-DD': [
