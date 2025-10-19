@@ -343,22 +343,33 @@ async function renderPendingAppointments(forceReload = false) {
         // Just re-apply current filter without resetting page
         applyPendingFilter(false);
     }
-    
+
     // Clear existing rows
     tableBody.innerHTML = '';
-    
+
     // Calculate pagination
     const startIndex = (pendingCurrentPage - 1) * patientsItemsPerPage;
     const endIndex = startIndex + patientsItemsPerPage;
     const paginatedData = pendingFilteredData.slice(startIndex, endIndex);
-    
-    
+
+    // Get patient icons in batch (optimized)
+    let iconsMap = new Map();
+    if (window.dataManager && window.dataManager.getPatientIconsBatch) {
+        try {
+            iconsMap = await window.dataManager.getPatientIconsBatch(paginatedData);
+            console.log('👤 Patients: Got patient icons for', iconsMap.size, 'pending confirmations');
+        } catch (error) {
+            console.warn('Failed to get patient icons:', error);
+        }
+    }
+
     // Create table rows for pending confirmations
     paginatedData.forEach(confirmation => {
-        const row = createPatientTableRow(confirmation, 'pending');
+        const icon = iconsMap.get(confirmation.id) || '';
+        const row = createPatientTableRow(confirmation, 'pending', icon);
         tableBody.appendChild(row);
     });
-    
+
     // Update pagination controls (no notification badge update needed - bell is always active)
     updatePendingPaginationControls();
 }
@@ -414,29 +425,40 @@ async function renderConfirmedAppointments(forceReload = false) {
     
     // Clear existing rows
     tableBody.innerHTML = '';
-    
+
     // Calculate pagination
     const startIndex = (confirmedCurrentPage - 1) * patientsItemsPerPage;
     const endIndex = startIndex + patientsItemsPerPage;
     const paginatedData = confirmedFilteredData.slice(startIndex, endIndex);
-    
-    
+
+    // Get patient icons in batch (optimized)
+    let iconsMap = new Map();
+    if (window.dataManager && window.dataManager.getPatientIconsBatch) {
+        try {
+            iconsMap = await window.dataManager.getPatientIconsBatch(paginatedData);
+            console.log('👤 Patients: Got patient icons for', iconsMap.size, 'confirmed appointments');
+        } catch (error) {
+            console.warn('Failed to get patient icons:', error);
+        }
+    }
+
     // Create table rows for confirmed appointments
     paginatedData.forEach(appointment => {
-        const row = createPatientTableRow(appointment, 'confirmed');
+        const icon = iconsMap.get(appointment.id) || '';
+        const row = createPatientTableRow(appointment, 'confirmed', icon);
         tableBody.appendChild(row);
     });
-    
+
     // Update pagination controls
     updateConfirmedPaginationControls();
 }
 
 // Create patient table row
-function createPatientTableRow(data, type) {
+function createPatientTableRow(data, type, icon = '') {
     const row = document.createElement('tr');
     row.dataset.patientId = data.id;
     row.dataset.patientType = type;
-    
+
     // Format date and time for display
     let displayDateTime;
     if (type === 'pending') {
@@ -459,10 +481,10 @@ function createPatientTableRow(data, type) {
         const formattedTime = formatTime(data.time);
         displayDateTime = `${formattedDate} ${formattedTime}`;
     }
-    
+
     // Create the basic row structure
     row.innerHTML = `
-        <td class="patient-name">${data.patientName}</td>
+        <td class="patient-name">${data.patientName}${icon}</td>
         <td class="appointment-date">${displayDateTime}</td>
         <td>${data.phone || '(XXX) XXX-XXXX'}</td>
         <td><span class="treatment-type">${data.service || data.serviceType || data.serviceName || data.treatment || 'Not specified'}</span></td>

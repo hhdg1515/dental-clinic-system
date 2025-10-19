@@ -251,6 +251,31 @@
                                 <canvas id="trendChart" width="600" ></canvas>
                             </div>
                         </div>
+
+                        <!-- Service Success Rate Analysis -->
+                        <div class="service-success-section">
+                            <div class="section-header">
+                                <h2>
+                                    <i class="fas fa-check-double"></i>
+                                    Service Success Rate (This Month)
+                                </h2>
+                            </div>
+                            <div class="service-success-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Service</th>
+                                            <th>Total</th>
+                                            <th>Completed</th>
+                                            <th>Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="serviceSuccessRateList">
+                                        <!-- Service success rates will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Right Side: Pending Confirmations and Service Chart -->
@@ -306,6 +331,47 @@
                             </div>
                             <div class="chart-legend" id="chartLegend">
                                 <!-- Legend will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Service Upgrade Rate -->
+                        <div class="service-upgrade-section">
+                            <div class="section-header">
+                                <h3>Service Upgrade Rate (All Time)</h3>
+                            </div>
+                            <div class="service-upgrade-table">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Initial</th>
+                                            <th>Total</th>
+                                            <th>Up</th>
+                                            <th>Rate</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="serviceUpgradeRateList">
+                                        <!-- Service upgrade rates will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="service-upgrade-legend">
+                                <div class="legend-column">
+                                    <div class="legend-title">Initial Services</div>
+                                    <ul class="legend-list">
+                                        <li>General</li>
+                                        <li>Preventive</li>
+                                    </ul>
+                                </div>
+                                <div class="legend-column">
+                                    <div class="legend-title">Upgrade Targets</div>
+                                    <ul class="legend-list">
+                                        <li>Root Canal</li>
+                                        <li>Periodontics</li>
+                                        <li>Extraction</li>
+                                        <li>Implant</li>
+                                        <li>Orthodontics</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

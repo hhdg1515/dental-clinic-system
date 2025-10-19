@@ -1149,6 +1149,99 @@ class FirebaseDataService {
             throw error;
         }
     }
+
+    // === USER PROFILES METHODS (for VIP status) ===
+
+    /**
+     * Batch get user profiles for VIP status check
+     * @param {Array<string>} userIds - Array of user IDs to fetch
+     * @returns {Promise<Map<string, object>>} Map of userId to user profile
+     */
+    async getUserProfilesBatch(userIds) {
+        try {
+            await this.ensureReady();
+            const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+            if (!userIds || userIds.length === 0) {
+                return new Map();
+            }
+
+            const db = this.validateDatabase();
+            const profiles = new Map();
+
+            // Fetch all user profiles in parallel
+            const promises = userIds.map(async (userId) => {
+                try {
+                    const userRef = doc(db, 'users', userId);
+                    const userSnap = await getDoc(userRef);
+
+                    if (userSnap.exists()) {
+                        const userData = userSnap.data();
+                        profiles.set(userId, {
+                            uid: userId,
+                            isVIP: userData.isVIP === true,
+                            displayName: userData.displayName || '',
+                            email: userData.email || ''
+                        });
+                    }
+                } catch (error) {
+                    console.warn(`Failed to fetch profile for user ${userId}:`, error);
+                    // Set default profile on error
+                    profiles.set(userId, {
+                        uid: userId,
+                        isVIP: false,
+                        displayName: '',
+                        email: ''
+                    });
+                }
+            });
+
+            await Promise.all(promises);
+
+            console.log(`📊 Fetched ${profiles.size} user profiles for VIP check`);
+            return profiles;
+
+        } catch (error) {
+            console.error('Error batch fetching user profiles:', error);
+            return new Map();
+        }
+    }
+
+    /**
+     * Get single user profile (with caching handled by data-manager)
+     * @param {string} userId - User ID to fetch
+     * @returns {Promise<object|null>} User profile or null
+     */
+    async getUserProfile(userId) {
+        try {
+            await this.ensureReady();
+            const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+            if (!userId) {
+                return null;
+            }
+
+            const db = this.validateDatabase();
+            const userRef = doc(db, 'users', userId);
+            const userSnap = await getDoc(userRef);
+
+            if (userSnap.exists()) {
+                const userData = userSnap.data();
+                return {
+                    uid: userId,
+                    isVIP: userData.isVIP === true,
+                    displayName: userData.displayName || '',
+                    email: userData.email || ''
+                };
+            }
+
+            return null;
+
+        } catch (error) {
+            console.error(`Error fetching user profile for ${userId}:`, error);
+            return null;
+        }
+    }
 }
 
 // Create global instance

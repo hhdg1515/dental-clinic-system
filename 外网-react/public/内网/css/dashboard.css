@@ -563,6 +563,95 @@
     border-radius: 8px;
 }
 
+/* Service Success Rate Section */
+.service-success-section {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    margin-top: 12px;
+    box-shadow:
+        3px 0 8px 0 rgba(37, 99, 235, 0.03),
+        0 4px 10px 0 rgba(37, 99, 235, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+.service-success-table {
+    overflow-x: auto;
+}
+
+.service-success-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.service-success-table th {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+}
+
+.service-success-table td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.05);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.service-success-table tbody tr {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.service-success-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    box-shadow:
+        0 2px 8px 0 rgba(37, 99, 235, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+.service-success-rate {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.service-success-rate.excellent {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.service-success-rate.good {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.service-success-rate.fair {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.service-success-rate.poor {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
 /* Right Side Components */
 .pending-section {
     background: rgba(255, 255, 255, 0.75);
@@ -776,6 +865,176 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
+}
+
+/* Service Upgrade Rate Section */
+.service-upgrade-section {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 12px;
+    padding: 16px;
+    box-shadow:
+        3px 0 8px 0 rgba(37, 99, 235, 0.03),
+        0 4px 10px 0 rgba(37, 99, 235, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.service-upgrade-section .section-header {
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--color-border-secondary);
+    margin-bottom: 12px;
+}
+
+.service-upgrade-section .section-header h3 {
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.service-upgrade-section .section-header i {
+    color: var(--color-primary);
+    font-size: 14px;
+}
+
+.service-upgrade-table {
+    overflow-x: auto;
+}
+
+.service-upgrade-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.service-upgrade-table th {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+}
+
+.service-upgrade-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.05);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+}
+
+.service-upgrade-table tbody tr {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.service-upgrade-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    box-shadow:
+        0 2px 8px 0 rgba(37, 99, 235, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Overall row styling */
+.service-upgrade-table tbody tr.overall-row {
+    border-top: 2px solid rgba(37, 99, 235, 0.2);
+    font-weight: 600;
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.service-upgrade-table tbody tr.overall-row:hover {
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.service-upgrade-rate {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.service-upgrade-rate.excellent {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.service-upgrade-rate.good {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+}
+
+.service-upgrade-rate.fair {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.service-upgrade-rate.poor {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Service Upgrade Legend */
+.service-upgrade-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.legend-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legend-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.legend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.legend-list li {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    padding-left: 12px;
+    position: relative;
+}
+
+.legend-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
 }
 
 /* Responsive Design */

@@ -7,14 +7,17 @@ class GlobalCacheManager {
         this.dateCache = new Map();              // 单日期查询缓存 {dateKey: appointments[]}
         this.allAppointmentsCache = null;        // getAllAppointments 缓存
         this.cancelledAppointmentsCache = null;  // 取消的预约缓存
+        this.serviceSuccessRateCache = null;      // 服务成功率缓存 (24小时)
 
         // 时间戳管理
         this.dateCacheTimestamps = new Map();    // {dateKey: timestamp}
         this.allAppointmentsTimestamp = null;
         this.cancelledAppointmentsTimestamp = null;
+        this.serviceSuccessRateTimestamp = null;
 
         // 缓存配置
         this.CACHE_DURATION = 5 * 60 * 1000;     // 5分钟过期
+        this.SERVICE_SUCCESS_RATE_DURATION = 24 * 60 * 60 * 1000; // 24小时过期
         this.MAX_DATE_CACHE = 30;                 // 最多缓存30个日期
 
         // 统计数据 (可选 - 用于监控)
@@ -250,6 +253,53 @@ class GlobalCacheManager {
         console.log(`🔄 Cache invalidated after deleting appointment on ${dateKey}`);
     }
 
+    // ========== 服务成功率缓存 (24小时) ==========
+
+    /**
+     * 获取服务成功率缓存
+     */
+    getServiceSuccessRateCache() {
+        if (!this.isServiceSuccessRateCacheValid()) {
+            this.stats.misses++;
+            return null;
+        }
+
+        this.stats.hits++;
+        this.stats.savedReads++;
+        console.log('📦 Cache HIT: serviceSuccessRate (saved computation)');
+        return this.serviceSuccessRateCache;
+    }
+
+    /**
+     * 设置服务成功率缓存
+     */
+    setServiceSuccessRateCache(data) {
+        this.serviceSuccessRateCache = data;
+        this.serviceSuccessRateTimestamp = Date.now();
+        console.log(`💾 Cached: serviceSuccessRate (${Object.keys(data).length} services)`);
+    }
+
+    /**
+     * 检查服务成功率缓存是否有效
+     */
+    isServiceSuccessRateCacheValid() {
+        if (!this.serviceSuccessRateCache || !this.serviceSuccessRateTimestamp) {
+            return false;
+        }
+
+        const age = Date.now() - this.serviceSuccessRateTimestamp;
+        return age < this.SERVICE_SUCCESS_RATE_DURATION;
+    }
+
+    /**
+     * 使服务成功率缓存失效
+     */
+    invalidateServiceSuccessRate() {
+        this.serviceSuccessRateCache = null;
+        this.serviceSuccessRateTimestamp = null;
+        console.log('❌ Invalidated cache: serviceSuccessRate');
+    }
+
     // ========== 工具方法 ==========
 
     /**
@@ -262,6 +312,8 @@ class GlobalCacheManager {
         this.allAppointmentsTimestamp = null;
         this.cancelledAppointmentsCache = null;
         this.cancelledAppointmentsTimestamp = null;
+        this.serviceSuccessRateCache = null;
+        this.serviceSuccessRateTimestamp = null;
 
         console.log('🗑️ All caches cleared');
     }
@@ -294,6 +346,12 @@ class GlobalCacheManager {
             cleanedCount++;
         }
 
+        // 清理过期的服务成功率缓存 (24小时)
+        if (this.serviceSuccessRateTimestamp && now - this.serviceSuccessRateTimestamp >= this.SERVICE_SUCCESS_RATE_DURATION) {
+            this.invalidateServiceSuccessRate();
+            cleanedCount++;
+        }
+
         if (cleanedCount > 0) {
             console.log(`🧹 Cleaned ${cleanedCount} expired cache entries`);
         }
@@ -315,7 +373,8 @@ class GlobalCacheManager {
             dateCacheSize: this.dateCache.size,
             hasAllCache: !!this.allAppointmentsCache,
             hasCancelledCache: !!this.cancelledAppointmentsCache,
-            totalCacheSize: this.dateCache.size + (this.allAppointmentsCache ? 1 : 0) + (this.cancelledAppointmentsCache ? 1 : 0)
+            hasServiceSuccessRateCache: !!this.serviceSuccessRateCache,
+            totalCacheSize: this.dateCache.size + (this.allAppointmentsCache ? 1 : 0) + (this.cancelledAppointmentsCache ? 1 : 0) + (this.serviceSuccessRateCache ? 1 : 0)
         };
     }
 

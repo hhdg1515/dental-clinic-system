@@ -679,6 +679,8 @@ async function refreshDashboardData() {
     await renderTodaysAppointments();
     await renderServiceChart();
     await renderTrendChart();
+    await renderServiceSuccessRate();
+    await renderServiceUpgradeRate();
 
     // Render asynchronous pending confirmations
     await renderPendingConfirmations();
@@ -977,12 +979,26 @@ async function renderPendingConfirmations() {
 
         const displayItems = pendingConfirmations.slice(0, 3);
 
+        // Get patient icons in batch (optimized)
+        let iconsMap = new Map();
+        if (window.dataManager && window.dataManager.getPatientIconsBatch) {
+            try {
+                iconsMap = await window.dataManager.getPatientIconsBatch(displayItems);
+                console.log('👤 Dashboard: Got patient icons for', iconsMap.size, 'confirmations');
+            } catch (error) {
+                console.warn('Failed to get patient icons:', error);
+            }
+        }
+
         displayItems.forEach(confirmation => {
+            // Get patient icon
+            const icon = iconsMap.get(confirmation.id) || '';
+
             const item = document.createElement('div');
             item.className = 'pending-item';
             item.innerHTML = `
                 <div class="pending-info">
-                    <div class="pending-patient-name">${confirmation.patientName}</div>
+                    <div class="pending-patient-name">${confirmation.patientName}${icon}</div>
                     <div class="pending-details">
                         ${confirmation.dateTime}<br>
                         ${confirmation.service} • ${confirmation.location}
@@ -1590,6 +1606,255 @@ async function renderTrendChart() {
     ctx.stroke();
 }
 
+/**
+ * Renders service success rate analysis for the current month
+ * Success rate = completed appointments / total appointments for each service
+ */
+async function renderServiceSuccessRate() {
+    const tbody = document.getElementById('serviceSuccessRateList');
+    if (!tbody) {
+        console.error('serviceSuccessRateList not found');
+        return;
+    }
+
+    try {
+        // Get current location and all appointments
+        const currentLocation = safeGetCurrentLocation();
+        let allAppointments = [];
+
+        try {
+            allAppointments = await dataManager.getAllAppointments() || [];
+            // Apply role-based filtering
+            allAppointments = filterDataByRole(allAppointments, 'appointments');
+        } catch (error) {
+            console.warn('Failed to get all appointments for service success rate:', error);
+            allAppointments = [];
+        }
+
+        // Filter by location
+        const filteredAppointments = allAppointments.filter(app => {
+            if (currentLocation === 'all') return true;
+            return app.location.toLowerCase().replace(/\s+/g, '-') === currentLocation;
+        });
+
+        // Filter for current month only
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth();
+        const currentYear = currentDate.getFullYear();
+
+        const monthAppointments = filteredAppointments.filter(app => {
+            const appDate = new Date(app.dateKey);
+            const isCurrentMonth = appDate.getMonth() === currentMonth && appDate.getFullYear() === currentYear;
+
+            // 排除 pending 状态的预约（未确认的不算入成功率统计）
+            const isConfirmed = app.status !== 'pending';
+
+            return isCurrentMonth && isConfirmed;
+        });
+
+        // Group by service
+        const serviceStats = {};
+        monthAppointments.forEach(appointment => {
+            const mappedService = mapServiceName(appointment.service);
+            if (!serviceStats[mappedService]) {
+                serviceStats[mappedService] = {
+                    total: 0,
+                    completed: 0
+                };
+            }
+
+            serviceStats[mappedService].total++;
+            if (appointment.status === 'completed') {
+                serviceStats[mappedService].completed++;
+            }
+        });
+
+        // Clear existing rows
+        tbody.innerHTML = '';
+
+        // Check if there's data
+        if (Object.keys(serviceStats).length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280; padding: 20px;">No appointments this month</td></tr>';
+            return;
+        }
+
+        // Create rows sorted by success rate (descending)
+        const sortedServices = Object.entries(serviceStats).sort(([, a], [, b]) => {
+            const rateA = a.total > 0 ? (a.completed / a.total) * 100 : 0;
+            const rateB = b.total > 0 ? (b.completed / b.total) * 100 : 0;
+            return rateB - rateA;
+        });
+
+        sortedServices.forEach(([service, stats]) => {
+            const rate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+
+            // Determine rate class
+            let rateClass = 'poor';
+            if (rate >= 90) rateClass = 'excellent';
+            else if (rate >= 75) rateClass = 'good';
+            else if (rate >= 60) rateClass = 'fair';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${service}</td>
+                <td>${stats.total}</td>
+                <td>${stats.completed}</td>
+                <td>${rate}%</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        console.log('📊 Service success rate rendered:', Object.keys(serviceStats).length, 'services');
+
+    } catch (error) {
+        console.error('Error rendering service success rate:', error);
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc2626; padding: 20px;">Error loading data</td></tr>';
+    }
+}
+
+/**
+ * Renders service upgrade rate analysis (All Time)
+ * Shows conversion from low-value services (General, Preventive) to high-value services
+ */
+async function renderServiceUpgradeRate() {
+    const tbody = document.getElementById('serviceUpgradeRateList');
+    if (!tbody) {
+        console.error('serviceUpgradeRateList not found');
+        return;
+    }
+
+    try {
+        // Get current location and all appointments
+        const currentLocation = safeGetCurrentLocation();
+        let allAppointments = [];
+
+        try {
+            allAppointments = await dataManager.getAllAppointments() || [];
+            // Apply role-based filtering
+            allAppointments = filterDataByRole(allAppointments, 'appointments');
+        } catch (error) {
+            console.warn('Failed to get all appointments for service upgrade rate:', error);
+            allAppointments = [];
+        }
+
+        // Filter by location
+        const filteredAppointments = allAppointments.filter(app => {
+            if (currentLocation === 'all') return true;
+            return app.location.toLowerCase().replace(/\s+/g, '-') === currentLocation;
+        });
+
+        // Only include confirmed appointments (status !== 'pending')
+        const confirmedAppointments = filteredAppointments.filter(app => app.status !== 'pending');
+
+        // Define service categories
+        const lowValueServices = ['General', 'Preventive'];
+        const highValueServices = ['Root Canal', 'Periodontics', 'Extraction', 'Implant', 'Orthodontics'];
+
+        // Group appointments by userId
+        const userGroups = {};
+        confirmedAppointments.forEach(app => {
+            if (!app.userId) return; // Skip appointments without userId
+            if (!userGroups[app.userId]) {
+                userGroups[app.userId] = [];
+            }
+            userGroups[app.userId].push(app);
+        });
+
+        // Calculate upgrade statistics
+        const stats = {
+            'General': { total: 0, upgraded: 0 },
+            'Preventive': { total: 0, upgraded: 0 }
+        };
+
+        Object.values(userGroups).forEach(appointments => {
+            // Sort by date to find first appointment
+            appointments.sort((a, b) => new Date(a.dateKey) - new Date(b.dateKey));
+            const firstAppointment = appointments[0];
+
+            // Check if first appointment is low-value service
+            const mappedFirstService = mapServiceName(firstAppointment.service);
+            if (!lowValueServices.includes(mappedFirstService)) {
+                return; // First appointment is not a low-value service, skip
+            }
+
+            // Count this user for the initial service
+            stats[mappedFirstService].total++;
+
+            // Check if user has any high-value service appointments after the first one
+            const hasUpgraded = appointments.some(app => {
+                const mappedService = mapServiceName(app.service);
+                return highValueServices.includes(mappedService) &&
+                       new Date(app.dateKey) > new Date(firstAppointment.dateKey);
+            });
+
+            if (hasUpgraded) {
+                stats[mappedFirstService].upgraded++;
+            }
+        });
+
+        // Calculate Overall statistics
+        const overallTotal = stats['General'].total + stats['Preventive'].total;
+        const overallUpgraded = stats['General'].upgraded + stats['Preventive'].upgraded;
+        const overallRate = overallTotal > 0 ? Math.round((overallUpgraded / overallTotal) * 100) : 0;
+
+        // Clear existing rows
+        tbody.innerHTML = '';
+
+        // Check if there's data
+        if (overallTotal === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280; padding: 20px;">No patient data available</td></tr>';
+            return;
+        }
+
+        // Helper function to determine rate class
+        const getRateClass = (rate) => {
+            if (rate >= 60) return 'excellent';
+            if (rate >= 45) return 'good';
+            if (rate >= 30) return 'fair';
+            return 'poor';
+        };
+
+        // Render General row
+        const generalRate = stats['General'].total > 0 ? Math.round((stats['General'].upgraded / stats['General'].total) * 100) : 0;
+        const generalRow = document.createElement('tr');
+        generalRow.innerHTML = `
+            <td>General</td>
+            <td>${stats['General'].total}</td>
+            <td>${stats['General'].upgraded}</td>
+            <td>${generalRate}%</td>
+        `;
+        tbody.appendChild(generalRow);
+
+        // Render Preventive row
+        const preventiveRate = stats['Preventive'].total > 0 ? Math.round((stats['Preventive'].upgraded / stats['Preventive'].total) * 100) : 0;
+        const preventiveRow = document.createElement('tr');
+        preventiveRow.innerHTML = `
+            <td>Prevent</td>
+            <td>${stats['Preventive'].total}</td>
+            <td>${stats['Preventive'].upgraded}</td>
+            <td>${preventiveRate}%</td>
+        `;
+        tbody.appendChild(preventiveRow);
+
+        // Render Overall row
+        const overallRow = document.createElement('tr');
+        overallRow.className = 'overall-row';
+        overallRow.innerHTML = `
+            <td>Overall</td>
+            <td>${overallTotal}</td>
+            <td>${overallUpgraded}</td>
+            <td>${overallRate}%</td>
+        `;
+        tbody.appendChild(overallRow);
+
+        console.log('📈 Service upgrade rate rendered:', overallTotal, 'total patients');
+
+    } catch (error) {
+        console.error('Error rendering service upgrade rate:', error);
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc2626; padding: 20px;">Error loading data</td></tr>';
+    }
+}
+
 // Render calendar
 function renderDashboardCalendar() {
     const calendarDates = document.getElementById('calendarDates');
@@ -1650,7 +1915,21 @@ function mapServiceName(serviceName) {
         'Restorative': 'Restorations',
         'Extraction': 'Extraction',
         'Implant': 'Implant',
-        // Add any other old names here
+
+        // External booking page service names (kebab-case) -> Internal categories
+        'general-family': 'General',
+        'general-treatment': 'General',
+        'general-consultation': 'General',
+        'preventive-care': 'Preventive',
+        'preventive-cleaning': 'Preventive',
+        'root-canals': 'Root Canal',
+        'implant-crown': 'Implant',
+        'implant-consultation': 'Implant',
+        'cosmetic': 'Cosmetic',
+        'orthodontics': 'Orthodontics',
+        'periodontics': 'Periodontics',
+        'restorations': 'Restorations',
+        'extraction': 'Extraction'
     };
 
     // Return mapped name or original if not in map

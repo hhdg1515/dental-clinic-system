@@ -6,6 +6,10 @@ class GlobalDataManager {
         this.storageKey = 'dental_clinic_data';
         this.useFirebase = true;
         this.firebaseService = null;
+        // User profiles cache for VIP status (in-memory, 5 min TTL)
+        this.userProfilesCache = new Map();
+        this.userProfilesCacheTime = new Map();
+        this.USER_PROFILE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
         this.init();
     }
 
@@ -975,6 +979,182 @@ class GlobalDataManager {
             breakdown[appointment.location] = (breakdown[appointment.location] || 0) + 1;
         });
         return breakdown;
+    }
+
+    // === USER PROFILES CACHE METHODS (for VIP status) ===
+
+    /**
+     * Get user profiles with caching
+     * @param {Array<string>} userIds - Array of user IDs
+     * @returns {Promise<Map<string, object>>} Map of userId to profile
+     */
+    async getUserProfiles(userIds) {
+        if (!userIds || userIds.length === 0) {
+            return new Map();
+        }
+
+        if (!this.firebaseService) {
+            console.warn('Firebase service not available for getUserProfiles');
+            return new Map();
+        }
+
+        const now = Date.now();
+        const uncachedIds = [];
+        const result = new Map();
+
+        // Check cache first
+        for (const userId of userIds) {
+            if (this.userProfilesCache.has(userId)) {
+                const cacheTime = this.userProfilesCacheTime.get(userId);
+                // Check if cache is still valid (within TTL)
+                if (now - cacheTime < this.USER_PROFILE_CACHE_TTL) {
+                    result.set(userId, this.userProfilesCache.get(userId));
+                } else {
+                    // Cache expired
+                    uncachedIds.push(userId);
+                }
+            } else {
+                uncachedIds.push(userId);
+            }
+        }
+
+        // Fetch uncached profiles
+        if (uncachedIds.length > 0) {
+            try {
+                const freshProfiles = await this.firebaseService.getUserProfilesBatch(uncachedIds);
+
+                // Update cache
+                freshProfiles.forEach((profile, userId) => {
+                    this.userProfilesCache.set(userId, profile);
+                    this.userProfilesCacheTime.set(userId, now);
+                    result.set(userId, profile);
+                });
+
+                console.log(`👤 Fetched ${uncachedIds.length} user profiles, ${result.size - freshProfiles.size} from cache`);
+            } catch (error) {
+                console.error('Error fetching user profiles:', error);
+                // Return cached results even if fetch fails
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Get patient icon based on VIP status and history
+     * @param {object} appointment - Appointment object with userId and other info
+     * @param {Map<string, object>} userProfilesMap - Map of userId to profile (optional, for batch operations)
+     * @returns {Promise<string>} Icon string (e.g., ' 👑' or ' 🔄' or '')
+     */
+    async getPatientIcon(appointment, userProfilesMap = null) {
+        try {
+            // Check VIP status first (priority)
+            if (appointment.userId) {
+                let userProfile = null;
+
+                // Use provided map if available (for batch operations)
+                if (userProfilesMap && userProfilesMap.has(appointment.userId)) {
+                    userProfile = userProfilesMap.get(appointment.userId);
+                } else {
+                    // Fetch single profile with cache
+                    const profiles = await this.getUserProfiles([appointment.userId]);
+                    userProfile = profiles.get(appointment.userId);
+                }
+
+                // If VIP, return crown icon
+                if (userProfile && userProfile.isVIP === true) {
+                    return ' 👑';
+                }
+            }
+
+            // Check if old patient (has history)
+            // For pending confirmations, we need to check appointment history
+            if (appointment.userId) {
+                const allAppointments = await this.getAllAppointments();
+                const patientHistory = allAppointments.filter(apt =>
+                    apt.userId === appointment.userId &&
+                    apt.id !== appointment.id // Exclude current appointment
+                );
+
+                if (patientHistory.length > 0) {
+                    return ' 🔄';
+                }
+            }
+
+            // New patient - no icon
+            return '';
+
+        } catch (error) {
+            console.warn('Error getting patient icon:', error);
+            return '';
+        }
+    }
+
+    /**
+     * Batch get patient icons for multiple appointments (optimized)
+     * @param {Array<object>} appointments - Array of appointment objects
+     * @returns {Promise<Map<string, string>>} Map of appointment ID to icon
+     */
+    async getPatientIconsBatch(appointments) {
+        if (!appointments || appointments.length === 0) {
+            return new Map();
+        }
+
+        const icons = new Map();
+
+        // Collect all unique userIds
+        const userIds = [...new Set(
+            appointments
+                .filter(apt => apt.userId)
+                .map(apt => apt.userId)
+        )];
+
+        // Fetch all user profiles in one batch
+        const userProfilesMap = await this.getUserProfiles(userIds);
+
+        // Get all appointments for history check
+        const allAppointments = await this.getAllAppointments();
+
+        // Process each appointment
+        for (const appointment of appointments) {
+            let icon = '';
+
+            // Check VIP first
+            if (appointment.userId && userProfilesMap.has(appointment.userId)) {
+                const profile = userProfilesMap.get(appointment.userId);
+                if (profile && profile.isVIP === true) {
+                    icon = ' 👑';
+                    icons.set(appointment.id, icon);
+                    continue; // VIP takes priority, skip history check
+                }
+            }
+
+            // Check history for old patients
+            if (appointment.userId) {
+                const patientHistory = allAppointments.filter(apt =>
+                    apt.userId === appointment.userId &&
+                    apt.id !== appointment.id
+                );
+
+                if (patientHistory.length > 0) {
+                    icon = ' 🔄';
+                }
+            }
+
+            icons.set(appointment.id, icon);
+        }
+
+        console.log(`👤 Generated icons for ${icons.size} appointments`);
+        return icons;
+    }
+
+    /**
+     * Clear user profiles cache (for manual refresh)
+     */
+    clearUserProfilesCache() {
+        this.userProfilesCache.clear();
+        this.userProfilesCacheTime.clear();
+        console.log('👤 User profiles cache cleared');
     }
 }
 
