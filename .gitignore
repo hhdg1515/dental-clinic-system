@@ -10,3 +10,7 @@ coverage/
 .firebase/
 nul
 export/
+
+# Firebase configuration files (contain sensitive API keys)
+内网/firebase-config.js
+外网-react/.env.local
