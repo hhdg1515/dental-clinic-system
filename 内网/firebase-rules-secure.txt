@@ -210,8 +210,8 @@ service cloud.firestore {
       allow read: if isOwner();
 
       // No one can update or delete logs (immutable)
-      allow update: false;
-      allow delete: false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     // ============================================
