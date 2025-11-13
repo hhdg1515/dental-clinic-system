@@ -406,47 +406,123 @@ async function checkTimeConflict(
 
 /**
  * Validate appointment data
+ * Enhanced validation to prevent injection and ensure data integrity
  */
 function validateAppointmentData(data: AppointmentData): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
+  // Validate patient name - allow letters, spaces, hyphens, apostrophes, Chinese characters
   if (!data.patientName || data.patientName.trim().length === 0) {
     errors.push('患者姓名不能为空');
+  } else {
+    const patientName = data.patientName.trim();
+
+    // Length validation
+    if (patientName.length < 2) {
+      errors.push('患者姓名至少需要2个字符');
+    } else if (patientName.length > 100) {
+      errors.push('患者姓名不能超过100个字符');
+    }
+
+    // Format validation - allow letters (including Chinese), spaces, hyphens, apostrophes
+    const nameRegex = /^[\u4e00-\u9fa5a-zA-Z\s\-']+$/;
+    if (!nameRegex.test(patientName)) {
+      errors.push('患者姓名只能包含字母、汉字、空格、连字符和撇号');
+    }
+
+    // Check for XSS attempts
+    if (/<|>|&lt;|&gt;|script|javascript|onclick|onerror/i.test(patientName)) {
+      errors.push('患者姓名包含非法字符');
+    }
   }
 
+  // Validate phone number
   if (!data.patientPhone || data.patientPhone.trim().length === 0) {
     errors.push('联系电话不能为空');
+  } else {
+    const phone = data.patientPhone.trim();
+
+    // Phone format validation - allow digits, spaces, parentheses, hyphens, plus sign
+    const phoneRegex = /^\+?[\d\s\(\)\-]{10,20}$/;
+    if (!phoneRegex.test(phone)) {
+      errors.push('联系电话格式不正确 (10-20位数字，可包含空格、括号、连字符)');
+    }
+
+    // Count only digits
+    const digitCount = phone.replace(/\D/g, '').length;
+    if (digitCount < 10 || digitCount > 15) {
+      errors.push('电话号码应包含10-15位数字');
+    }
   }
 
+  // Validate email if provided
+  if (data.patientEmail && data.patientEmail.trim().length > 0) {
+    const email = data.patientEmail.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      errors.push('邮箱格式不正确');
+    } else if (email.length > 254) {
+      errors.push('邮箱地址过长');
+    }
+  }
+
+  // Validate appointment date
   if (!data.appointmentDate) {
     errors.push('预约日期不能为空');
   }
 
+  // Validate appointment time
   if (!data.appointmentTime) {
     errors.push('预约时间不能为空');
   }
 
+  // Validate clinic location against whitelist
   if (!data.clinicLocation || !CLINIC_LOCATIONS[data.clinicLocation]) {
     errors.push('请选择有效的诊所位置');
+  } else {
+    // Additional check - ensure it's in the allowed list
+    const validClinics = ['arcadia', 'irvine', 'south-pasadena', 'rowland-heights', 'eastvale'];
+    if (!validClinics.includes(data.clinicLocation)) {
+      errors.push('诊所位置不在允许列表中');
+    }
   }
 
+  // Validate service type against whitelist
   if (!data.serviceType || !SERVICE_TYPES[data.serviceType]) {
     errors.push('请选择有效的服务类型');
   }
 
+  // Validate description/notes if provided
+  if (data.description && data.description.trim().length > 0) {
+    const description = data.description.trim();
+
+    if (description.length > 500) {
+      errors.push('预约备注不能超过500个字符');
+    }
+
+    // Check for XSS attempts in description
+    if (/<script|javascript:|on\w+=/i.test(description)) {
+      errors.push('预约备注包含非法内容');
+    }
+  }
+
+  // Date range validation
   if (data.appointmentDate) {
     const appointmentDate = new Date(data.appointmentDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (appointmentDate < today) {
+    if (isNaN(appointmentDate.getTime())) {
+      errors.push('预约日期格式无效');
+    } else if (appointmentDate < today) {
       errors.push('预约日期不能是过去的日期');
-    }
-
-    const maxDate = new Date();
-    maxDate.setMonth(maxDate.getMonth() + 3);
-    if (appointmentDate > maxDate) {
-      errors.push('预约日期不能超过3个月');
+    } else {
+      const maxDate = new Date();
+      maxDate.setMonth(maxDate.getMonth() + 3);
+      if (appointmentDate > maxDate) {
+        errors.push('预约日期不能超过3个月');
+      }
     }
   }
 
