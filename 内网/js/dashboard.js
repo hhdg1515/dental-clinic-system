@@ -1,5 +1,8 @@
 // Dashboard functionality - Complete rewrite to fix all issues
 
+// Import security utilities to prevent XSS
+import { escapeHtml } from './security-utils.js';
+
 // ==================== AUTHENTICATION & PERMISSIONS SYSTEM ====================
 
 // Global variables for auth state
@@ -975,10 +978,10 @@ for (let i = 0; i < 6; i++) {
         const statusFormatted = getStatusDisplayName(appointment.status);
         
         row.innerHTML = `
-            <td>${appointment.patientName}</td>
-            <td>${timeFormatted}</td>
-            <td>${appointment.service}</td>
-            <td><span class="status-badge ${appointment.status}">${statusFormatted}</span></td>
+            <td>${escapeHtml(appointment.patientName)}</td>
+            <td>${escapeHtml(timeFormatted)}</td>
+            <td>${escapeHtml(appointment.service)}</td>
+            <td><span class="status-badge ${escapeHtml(appointment.status)}">${escapeHtml(statusFormatted)}</span></td>
         `;
     } else {
         // Empty rows
@@ -1028,10 +1031,10 @@ async function renderPendingConfirmations() {
             item.className = 'pending-item';
             item.innerHTML = `
                 <div class="pending-info">
-                    <div class="pending-patient-name">${confirmation.patientName}</div>
+                    <div class="pending-patient-name">${escapeHtml(confirmation.patientName)}</div>
                     <div class="pending-details">
-                        ${confirmation.dateTime}<br>
-                        ${confirmation.service} • ${confirmation.location}
+                        ${escapeHtml(confirmation.dateTime)}<br>
+                        ${escapeHtml(confirmation.service)} • ${escapeHtml(confirmation.location)}
                     </div>
                 </div>
                 <div class="pending-actions">
