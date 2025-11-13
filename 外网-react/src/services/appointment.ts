@@ -447,13 +447,14 @@ function validateAppointmentData(data: AppointmentData): { isValid: boolean; err
       errors.push('患者姓名不能超过100个字符');
     }
 
-    // Format validation - allow letters (including Chinese), spaces, hyphens, apostrophes
-    const nameRegex = /^[\u4e00-\u9fa5a-zA-Z\s\-']+$/;
+    // Format validation - allow letters (including Chinese), numbers, spaces, hyphens, apostrophes, periods
+    // More permissive to support test accounts and edge cases
+    const nameRegex = /^[\u4e00-\u9fa5a-zA-Z0-9\s\-'.]+$/;
     if (!nameRegex.test(patientName)) {
-      errors.push('患者姓名只能包含字母、汉字、空格、连字符和撇号');
+      errors.push('患者姓名只能包含字母、汉字、数字、空格、连字符、撇号和句点');
     }
 
-    // Check for XSS attempts
+    // Check for XSS attempts - this is the critical security check
     if (/<|>|&lt;|&gt;|script|javascript|onclick|onerror/i.test(patientName)) {
       errors.push('患者姓名包含非法字符');
     }

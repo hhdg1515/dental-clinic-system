@@ -63,7 +63,10 @@ service cloud.firestore {
         request.resource.data.role == resource.data.role &&
         request.resource.data.clinics == resource.data.clinics &&
         request.resource.data.uid == resource.data.uid &&
-        request.resource.data.email == resource.data.email;
+        request.resource.data.email == resource.data.email &&
+        // Allow modification of non-critical fields (lastLogin, displayName, photoURL, etc.)
+        // The above checks ensure security-critical fields remain unchanged
+        true;
 
       // Only owner can delete users
       allow delete: if isOwner();
