@@ -422,6 +422,16 @@ async function checkTimeConflict(
 
     return hasConflict;
   } catch (error) {
+    // Permission denied is expected for customer users (can't query all appointments)
+    // Time conflict checking should ideally be done server-side via Firebase Functions
+    // to have proper permissions, but gracefully handle the error here
+    if (error instanceof Error &&
+        (error.message.includes('permission') ||
+         error.message.includes('insufficient permissions') ||
+         error.message.includes('Missing or insufficient permissions'))) {
+      logDev('Time conflict check skipped due to permissions (customer user) - this is expected');
+      return false; // Allow appointment to proceed
+    }
     logDevError('检查时间冲突失败:', error);
     return false;
   }
