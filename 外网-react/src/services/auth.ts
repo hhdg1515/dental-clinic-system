@@ -50,6 +50,102 @@ const logDevError = (...args: unknown[]) => {
   }
 };
 
+// ========== RATE LIMITING CONFIGURATION ==========
+const LOGIN_ATTEMPT_LIMIT = 5;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
+const RATE_LIMIT_STORAGE_KEY = 'auth_rate_limit';
+
+interface RateLimitData {
+  attempts: number;
+  lockoutUntil: number | null;
+  email: string;
+}
+
+/**
+ * Get rate limit data for a specific email from localStorage
+ */
+function getRateLimitData(email: string): RateLimitData {
+  try {
+    const stored = localStorage.getItem(`${RATE_LIMIT_STORAGE_KEY}_${email.toLowerCase()}`);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    logDevError('Error reading rate limit data:', error);
+  }
+  return { attempts: 0, lockoutUntil: null, email: email.toLowerCase() };
+}
+
+/**
+ * Save rate limit data for a specific email to localStorage
+ */
+function saveRateLimitData(data: RateLimitData): void {
+  try {
+    localStorage.setItem(
+      `${RATE_LIMIT_STORAGE_KEY}_${data.email.toLowerCase()}`,
+      JSON.stringify(data)
+    );
+  } catch (error) {
+    logDevError('Error saving rate limit data:', error);
+  }
+}
+
+/**
+ * Reset rate limit for a specific email
+ */
+function resetRateLimit(email: string): void {
+  try {
+    localStorage.removeItem(`${RATE_LIMIT_STORAGE_KEY}_${email.toLowerCase()}`);
+  } catch (error) {
+    logDevError('Error resetting rate limit:', error);
+  }
+}
+
+/**
+ * Check if account is locked and return remaining time
+ */
+function checkRateLimit(email: string): { isLocked: boolean; remainingMinutes?: number } {
+  const data = getRateLimitData(email);
+
+  if (data.lockoutUntil && Date.now() < data.lockoutUntil) {
+    const remainingMs = data.lockoutUntil - Date.now();
+    const remainingMinutes = Math.ceil(remainingMs / 1000 / 60);
+    return { isLocked: true, remainingMinutes };
+  }
+
+  // Lockout expired, reset
+  if (data.lockoutUntil && Date.now() >= data.lockoutUntil) {
+    resetRateLimit(email);
+  }
+
+  return { isLocked: false };
+}
+
+/**
+ * Record a failed login attempt
+ */
+function recordFailedAttempt(email: string): void {
+  const data = getRateLimitData(email);
+  data.attempts += 1;
+
+  if (data.attempts >= LOGIN_ATTEMPT_LIMIT) {
+    data.lockoutUntil = Date.now() + LOCKOUT_DURATION;
+    logDev(`Account locked for ${email} until`, new Date(data.lockoutUntil));
+  }
+
+  saveRateLimitData(data);
+}
+
+/**
+ * Get remaining attempts before lockout
+ */
+export function getRemainingAttempts(email: string): number {
+  const data = getRateLimitData(email);
+  const remaining = LOGIN_ATTEMPT_LIMIT - data.attempts;
+  return Math.max(0, remaining);
+}
+// ========== END RATE LIMITING ==========
+
 /**
  * Get user role and clinic configuration
  */
@@ -133,9 +229,19 @@ export async function signInUser(
   email: string,
   password: string
 ): Promise<{ user: User; userData: UserData | null }> {
+  // Check rate limit BEFORE attempting authentication
+  const rateLimitCheck = checkRateLimit(email);
+  if (rateLimitCheck.isLocked) {
+    const message = `账号已被锁定。请在 ${rateLimitCheck.remainingMinutes} 分钟后重试。\n\nAccount locked. Please try again in ${rateLimitCheck.remainingMinutes} minutes.`;
+    throw new Error(message);
+  }
+
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+
+    // Successful login - reset rate limit
+    resetRateLimit(email);
 
     // Get user data from Firestore
     const userData = await getUserData(user.uid);
@@ -149,6 +255,23 @@ export async function signInUser(
     return { user, userData };
   } catch (error) {
     logDevError('Sign in failed:', error);
+
+    // Record failed attempt for rate limiting
+    recordFailedAttempt(email);
+
+    // Get remaining attempts and add to error message
+    const remaining = getRemainingAttempts(email);
+    if (remaining > 0 && remaining < LOGIN_ATTEMPT_LIMIT) {
+      const originalMessage = error instanceof Error ? error.message : '登录失败 / Login failed';
+      const enhancedMessage = `${originalMessage}\n\n剩余尝试次数: ${remaining}\nRemaining attempts: ${remaining}`;
+      const enhancedError = new Error(enhancedMessage);
+      // Preserve original error properties
+      if (error instanceof Error) {
+        Object.assign(enhancedError, error);
+      }
+      throw enhancedError;
+    }
+
     throw error;
   }
 }
