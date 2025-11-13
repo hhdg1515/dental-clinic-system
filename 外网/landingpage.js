@@ -1,5 +1,6 @@
 // landingpage.js - 重构版
 // 使用共享模块减少代码重复
+import { escapeHtml } from './js/security-utils.js';
 
 // 导入DOM工具函数
 const get = element => document.getElementById(element);
@@ -533,9 +534,9 @@ function initializeClinicMap() {
         if (clinicData) {
             distanceList.innerHTML = clinicData.distances.map(item => `
                 <div class="distance-item">
-                    <span class="city-name">${item.city}</span>
+                    <span class="city-name">${escapeHtml(item.city)}</span>
                     <div class="distance-details">
-                        <div class="distance-miles">${item.miles}</div>
+                        <div class="distance-miles">${escapeHtml(item.miles)}</div>
                     </div>
                 </div>
             `).join('');
