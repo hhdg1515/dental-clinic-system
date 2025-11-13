@@ -318,14 +318,59 @@ export function validateEmail(email: string): boolean {
 
 /**
  * Validate password strength
+ * Enforces strong password requirements to prevent brute force attacks
  */
 export function validatePassword(password: string): { isValid: boolean; errors: string[] } {
-  const minLength = 6;
-  const isValid = password.length >= minLength;
+  const errors: string[] = [];
+
+  // Minimum length requirement (industry standard)
+  const minLength = 12;
+  if (password.length < minLength) {
+    errors.push(`Password must be at least ${minLength} characters long`);
+  }
+
+  // Uppercase letter requirement
+  if (!/[A-Z]/.test(password)) {
+    errors.push('Password must contain at least one uppercase letter (A-Z)');
+  }
+
+  // Lowercase letter requirement
+  if (!/[a-z]/.test(password)) {
+    errors.push('Password must contain at least one lowercase letter (a-z)');
+  }
+
+  // Number requirement
+  if (!/\d/.test(password)) {
+    errors.push('Password must contain at least one number (0-9)');
+  }
+
+  // Special character requirement
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    errors.push('Password must contain at least one special character (!@#$%^&*...)');
+  }
+
+  // Check against common passwords
+  const commonPasswords = [
+    'password', 'password123', '12345678', '123456789', '1234567890',
+    'qwerty', 'qwerty123', 'abc123', 'password1', 'admin123',
+    'letmein', 'welcome', 'monkey', '1234', '12345', '123456', '1234567',
+    'password!', 'password@', 'passw0rd', 'p@ssword', 'pass123',
+    'admin', 'root', 'user', 'test', 'guest'
+  ];
+
+  if (commonPasswords.includes(password.toLowerCase())) {
+    errors.push('Password is too common. Please choose a more unique password');
+  }
+
+  // Check for sequential characters
+  const hasSequential = /012|123|234|345|456|567|678|789|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz/i.test(password);
+  if (hasSequential) {
+    errors.push('Password should not contain sequential characters (e.g., 123, abc)');
+  }
 
   return {
-    isValid,
-    errors: isValid ? [] : [`Password must be at least ${minLength} characters`]
+    isValid: errors.length === 0,
+    errors
   };
 }
 
