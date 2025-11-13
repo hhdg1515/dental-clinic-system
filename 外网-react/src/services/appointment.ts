@@ -290,25 +290,48 @@ export async function getUpcomingAppointments(userId: string): Promise<Appointme
 }
 
 /**
- * Get appointment by ID
+ * Get appointment by ID with ownership verification
+ * Prevents IDOR (Insecure Direct Object Reference) attacks
+ *
+ * @param appointmentId - The appointment ID to fetch
+ * @param userId - The current user's ID (for ownership check)
+ * @param userRole - Optional user role for admin bypass
+ * @returns AppointmentDoc if authorized
+ * @throws Error if not found or access denied
  */
-export async function getAppointmentById(appointmentId: string): Promise<AppointmentDoc> {
+export async function getAppointmentById(
+  appointmentId: string,
+  userId?: string,
+  userRole?: 'owner' | 'admin' | 'customer'
+): Promise<AppointmentDoc> {
   try {
     const docRef = doc(db, 'appointments', appointmentId);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      return {
-        id: docSnap.id,
-        ...data,
-        appointmentDateTime: normalizeDate(data.appointmentDateTime),
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt
-      } as AppointmentDoc;
-    } else {
+    if (!docSnap.exists()) {
       throw new Error('预约不存在');
     }
+
+    const data = docSnap.data();
+
+    // Authorization check - prevent IDOR
+    if (userId) {
+      const isOwner = data.userId === userId;
+      const isAdmin = userRole === 'owner' || userRole === 'admin';
+
+      if (!isOwner && !isAdmin) {
+        logDevError('Unauthorized access attempt to appointment:', appointmentId, 'by user:', userId);
+        throw new Error('无权限访问此预约');
+      }
+    }
+
+    return {
+      id: docSnap.id,
+      ...data,
+      appointmentDateTime: normalizeDate(data.appointmentDateTime),
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt
+    } as AppointmentDoc;
   } catch (error) {
     logDevError('获取预约详情失败:', error);
     throw error;
@@ -324,11 +347,11 @@ export async function cancelAppointment(
   reason: string = ''
 ): Promise<void> {
   try {
-    const appointment = await getAppointmentById(appointmentId);
+    // Use secure getAppointmentById with ownership check
+    const appointment = await getAppointmentById(appointmentId, userId, 'customer');
 
-    if (appointment.userId !== userId) {
-      throw new Error('无权限取消此预约');
-    }
+    // Ownership is already verified by getAppointmentById
+    // No need for duplicate check
 
     if (appointment.status === APPOINTMENT_STATUS.COMPLETED) {
       throw new Error('已完成的预约无法取消');
