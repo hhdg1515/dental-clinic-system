@@ -2982,10 +2982,13 @@ function showPatientAccountModal(patientData) {
     
     // Load appointment history - pass full patient data for userId access
     loadAccountHistory(patientData);
-    
+
     // Load medical records
     loadAccountRecords(patientData);
-    
+
+    // Load dental chart
+    loadDentalChart(patientData);
+
     // Load next treatments - pass full patient data for userId access
     loadNextTreatments(patientData);
     
@@ -3892,5 +3895,214 @@ function applyLocationPermissionsToNewAppointmentModal() {
         locationSelect.style.backgroundColor = 'white';
         locationSelect.style.cursor = 'pointer';
         console.log('🔓 Boss mode: All locations accessible');
+    }
+}
+
+// ==================== DENTAL CHART FUNCTIONS ====================
+
+let currentDentalChart = null;
+
+/**
+ * Load and render dental chart for patient
+ */
+async function loadDentalChart(patientData) {
+    try {
+        const userId = patientData.userId || `patient_${patientData.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+        console.log('📊 Loading dental chart for userId:', userId);
+
+        // Check cache first
+        let chartData = window.cacheManager.getDentalChartCache(userId);
+
+        if (!chartData) {
+            // Fetch from Firebase
+            chartData = await window.firebaseDataService.getDentalChart(userId);
+
+            if (!chartData) {
+                // Initialize new chart if doesn't exist
+                console.log('ℹ️ Dental chart not found, initializing new one...');
+                await window.firebaseDataService.initializeDentalChart(userId, patientData.patientName);
+                chartData = await window.firebaseDataService.getDentalChart(userId);
+            }
+
+            // Cache the chart
+            if (chartData) {
+                window.cacheManager.setDentalChartCache(userId, chartData);
+            }
+        }
+
+        // Render dental chart
+        const container = document.getElementById('dentalChartContainer');
+        if (container && chartData) {
+            currentDentalChart = new DentalChart('dentalChartContainer', {
+                mode: 'edit',
+                teethData: chartData.teeth || {},
+                onToothSelect: (toothNum, toothData) => {
+                    showToothDetails(userId, toothNum, toothData);
+                }
+            });
+            console.log('✅ Dental chart rendered successfully');
+        }
+    } catch (error) {
+        console.error('❌ Error loading dental chart:', error);
+    }
+}
+
+/**
+ * Show tooth details panel when tooth is selected
+ */
+function showToothDetails(userId, toothNum, toothData) {
+    const panel = document.getElementById('toothDetailsPanel');
+    const title = document.getElementById('selectedToothTitle');
+    const statusSelect = document.getElementById('toothStatusSelect');
+    const treatmentsList = document.getElementById('treatmentsList');
+
+    // Update title
+    title.textContent = `Tooth ${toothNum}`;
+
+    // Update status select
+    statusSelect.value = toothData.status || 'healthy';
+
+    // Clear and populate treatments list
+    treatmentsList.innerHTML = '';
+
+    if (toothData.treatments && toothData.treatments.length > 0) {
+        toothData.treatments.forEach((treatment, idx) => {
+            const treatmentEl = document.createElement('div');
+            treatmentEl.className = 'treatment-item';
+            treatmentEl.innerHTML = `
+                <div class="treatment-date">${new Date(treatment.date).toLocaleDateString()}</div>
+                <div class="treatment-type">${treatment.type || 'Note'}</div>
+                <div class="treatment-notes">${treatment.notes || ''}</div>
+                <button class="btn-small btn-danger" onclick="deleteToothTreatment('${userId}', ${toothNum}, '${treatment.id}')">Delete</button>
+            `;
+            treatmentsList.appendChild(treatmentEl);
+        });
+    } else {
+        treatmentsList.innerHTML = '<p style="color: #999;">No treatment records yet</p>';
+    }
+
+    // Store current values for update
+    window.currentToothData = {
+        userId: userId,
+        toothNum: toothNum
+    };
+
+    // Show panel
+    panel.style.display = 'block';
+}
+
+/**
+ * Close tooth details panel
+ */
+function closeToothDetails() {
+    const panel = document.getElementById('toothDetailsPanel');
+    panel.style.display = 'none';
+    window.currentToothData = null;
+}
+
+/**
+ * Update tooth status
+ */
+async function updateToothStatus() {
+    if (!window.currentToothData) return;
+
+    const { userId, toothNum } = window.currentToothData;
+    const status = document.getElementById('toothStatusSelect').value;
+
+    try {
+        await window.firebaseDataService.updateToothStatus(userId, toothNum, { status });
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        // Update UI
+        if (currentDentalChart) {
+            const toothData = currentDentalChart.getToothData(toothNum);
+            if (toothData) {
+                toothData.status = status;
+                currentDentalChart.updateToothData(toothNum, toothData);
+            }
+        }
+
+        showNotification('✅ Tooth status updated successfully');
+    } catch (error) {
+        console.error('❌ Error updating tooth status:', error);
+        showNotification('❌ Failed to update tooth status');
+    }
+}
+
+/**
+ * Add treatment record to tooth
+ */
+async function addTreatmentRecord() {
+    if (!window.currentToothData) return;
+
+    const { userId, toothNum } = window.currentToothData;
+    const notes = document.getElementById('treatmentNotes').value;
+    const fileInput = document.getElementById('treatmentAttachment');
+    const file = fileInput.files[0];
+
+    if (!notes && !file) {
+        showNotification('⚠️ Please add notes or upload a file');
+        return;
+    }
+
+    try {
+        // Upload attachment if exists
+        let attachmentData = null;
+        if (file) {
+            attachmentData = await window.firebaseDataService.uploadToothAttachment(userId, toothNum, file);
+        }
+
+        // Create treatment record
+        const treatment = {
+            type: file ? file.type.split('/')[0] : 'note',
+            notes: notes,
+            ...attachmentData
+        };
+
+        await window.firebaseDataService.addToothTreatment(userId, toothNum, treatment);
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        // Refresh chart
+        await loadDentalChart({ userId });
+
+        // Clear form
+        document.getElementById('treatmentNotes').value = '';
+        fileInput.value = '';
+
+        showNotification('✅ Treatment record added successfully');
+    } catch (error) {
+        console.error('❌ Error adding treatment record:', error);
+        showNotification('❌ Failed to add treatment record');
+    }
+}
+
+/**
+ * Delete treatment record
+ */
+async function deleteToothTreatment(userId, toothNum, treatmentId) {
+    if (!confirm('Are you sure you want to delete this treatment record?')) return;
+
+    try {
+        await window.firebaseDataService.deleteToothTreatment(userId, toothNum, treatmentId);
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        // Refresh details
+        const chartData = await window.firebaseDataService.getDentalChart(userId);
+        if (chartData) {
+            const toothData = chartData.teeth[toothNum.toString()];
+            showToothDetails(userId, toothNum, toothData);
+        }
+
+        showNotification('✅ Treatment record deleted');
+    } catch (error) {
+        console.error('❌ Error deleting treatment record:', error);
+        showNotification('❌ Failed to delete treatment record');
     }
 }

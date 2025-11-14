@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/glass-effects.css">
     <link rel="stylesheet" href="css/appointments.css">
     <link rel="stylesheet" href="css/liquid-glass-modal.css">
+    <link rel="stylesheet" href="css/dental-chart.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <!-- 认证检查由各页面的 JS 文件处理 -->
@@ -578,6 +579,7 @@
                 <div class="account-tab-item active" data-tab="information">Patient Information</div>
                 <div class="account-tab-item" data-tab="history">Appointment History</div>
                 <div class="account-tab-item" data-tab="records">Medical Records</div>
+                <div class="account-tab-item" data-tab="dental-chart">Dental Chart</div>
                 <div class="account-tab-item" data-tab="treatment">Next Treatment</div>
             </div>
         </div>
@@ -702,6 +704,55 @@
                 </div>
             </div>
 
+            <!-- Dental Chart Tab -->
+            <div class="account-tab-content" id="dental-chart">
+                <div class="dental-chart-section">
+                    <div class="section-header">
+                        <span>Dental Chart</span>
+                        <div class="chart-controls">
+                            <button class="btn-small" id="addTreatmentBtn" style="display: none;" title="Add treatment record">
+                                <i class="fas fa-plus"></i> Add Treatment
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dental-chart-container" id="dentalChartContainer">
+                        <!-- Dental chart will be rendered here -->
+                    </div>
+                    <div class="tooth-details-panel" id="toothDetailsPanel" style="display: none;">
+                        <div class="details-header">
+                            <h4 id="selectedToothTitle">Select a tooth</h4>
+                            <button class="details-close" onclick="closeToothDetails()">&times;</button>
+                        </div>
+                        <div class="details-content">
+                            <div class="tooth-status" id="toothStatus">
+                                <label>Status:</label>
+                                <select id="toothStatusSelect" class="tooth-status-select">
+                                    <option value="healthy">Healthy</option>
+                                    <option value="monitor">Monitor</option>
+                                    <option value="cavity">Cavity</option>
+                                    <option value="filled">Filled</option>
+                                    <option value="missing">Missing</option>
+                                    <option value="implant">Implant</option>
+                                    <option value="root-canal">Root Canal</option>
+                                    <option value="post-op">Post-op</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                                <button class="btn-small btn-primary" id="updateStatusBtn" onclick="updateToothStatus()">Update Status</button>
+                            </div>
+                            <div class="treatment-history" id="treatmentHistory">
+                                <h5>Treatment History</h5>
+                                <div id="treatmentsList" class="treatments-list"></div>
+                                <div class="add-treatment">
+                                    <textarea id="treatmentNotes" placeholder="Treatment notes..." style="width: 100%; min-height: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px;"></textarea>
+                                    <input type="file" id="treatmentAttachment" accept=".pdf,.jpg,.jpeg,.png" style="margin-bottom: 8px;">
+                                    <button class="btn-small btn-primary" id="addTreatmentRecordBtn" onclick="addTreatmentRecord()">Add Record</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Next Treatment Tab -->
             <div class="account-tab-content" id="treatment">
                 <div class="treatment-list" id="accountTreatmentList">
@@ -722,6 +773,7 @@
     <script src="js/shared.js"></script>
     <script type="module" src="firebase-config.js"></script>
     <script src="js/firebase-data-service.js"></script>
+    <script src="js/dental-chart.js"></script>
     <script src="js/appointments.js"></script>
 </body>
 </html>

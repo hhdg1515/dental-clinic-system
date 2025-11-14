@@ -46,7 +46,8 @@
       "Bash(do if [ -f \"$f.webp\" ])",
       "Bash(then echo \"$f: ✅ has WebP\")",
       "Bash(else echo \"$f: ❌ NO WebP\")",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
