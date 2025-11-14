@@ -30,7 +30,7 @@ const adminRedirectCopy = (isZh: boolean) => ({
 });
 
 export const UserDashboard = () => {
-  const { currentUser, userData, signOut, isAdmin } = useAuth();
+  const { currentUser, userData, signOut, isAdmin, requestAuthInit } = useAuth();
   const { currentLanguage } = useLanguage();
   const { openChat } = useChat();
 
@@ -42,6 +42,10 @@ export const UserDashboard = () => {
   const [appointments, setAppointments] = useState<AppointmentDoc[]>([]);
   const [loadingAppointments, setLoadingAppointments] = useState(true);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  useEffect(() => {
+    requestAuthInit();
+  }, [requestAuthInit]);
 
   const displayName = useMemo(
     () => currentUser?.displayName || currentUser?.email?.split('@')[0] || (isZh ? '会员' : 'Member'),

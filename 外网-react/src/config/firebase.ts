@@ -1,7 +1,7 @@
 // Firebase configuration and initialization
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import type { FirebaseApp } from 'firebase/app';
+import type { Auth, GoogleAuthProvider } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
 // Using environment variables for security
@@ -29,13 +29,46 @@ if (missingVars.length > 0) {
   );
 }
 
-// Initialize Firebase services
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+interface FirebaseDependencies {
+  app: FirebaseApp;
+  auth: Auth;
+  db: Firestore;
+  googleProvider: GoogleAuthProvider;
+  authModule: typeof import('firebase/auth');
+  firestoreModule: typeof import('firebase/firestore');
+}
 
-// Initialize Auth Providers
-const googleProvider = new GoogleAuthProvider();
+let firebasePromise: Promise<FirebaseDependencies> | null = null;
 
-// Export the initialized services and providers
-export { app, auth, db, googleProvider };
+async function loadFirebase(): Promise<FirebaseDependencies> {
+  const [appModule, authModule, firestoreModule] = await Promise.all([
+    import('firebase/app'),
+    import('firebase/auth'),
+    import('firebase/firestore')
+  ]);
+
+  const app =
+    appModule.getApps && appModule.getApps().length > 0
+      ? appModule.getApps()[0]!
+      : appModule.initializeApp(firebaseConfig);
+
+  const auth = authModule.getAuth(app);
+  const db = firestoreModule.getFirestore(app);
+  const googleProvider = new authModule.GoogleAuthProvider();
+
+  return {
+    app,
+    auth,
+    db,
+    googleProvider,
+    authModule,
+    firestoreModule
+  };
+}
+
+export async function getFirebaseDependencies(): Promise<FirebaseDependencies> {
+  if (!firebasePromise) {
+    firebasePromise = loadFirebase();
+  }
+  return firebasePromise;
+}

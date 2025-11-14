@@ -14,6 +14,22 @@ export default defineConfig({
     strictPort: false
   },
   build: {
-    sourcemap: false
+    sourcemap: false,
+    // Code splitting and optimization
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor chunks
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
+        }
+      }
+    },
+    // Minification (esbuild is faster and works well)
+    minify: 'esbuild',
+    // Chunk size warning limit
+    chunkSizeWarningLimit: 600,
+    // CSS code splitting
+    cssCodeSplit: true
   }
 });

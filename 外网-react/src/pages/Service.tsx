@@ -1,5 +1,6 @@
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
+import { OptimizedImage } from '../components/OptimizedImage';
 import { useLanguage, type TranslationKey } from '../context/LanguageContext';
 
 type ServiceCard = {
@@ -18,9 +19,10 @@ export const Service = () => {
     return (
       <li key={service.id} className="w-full text-left">
         <a href={service.detailLink} aria-label={`${t(service.titleKey)} services`} className="block overflow-hidden rounded-[10px]">
-          <img
+          <OptimizedImage
             src={service.image}
             alt={t(service.titleKey)}
+            loading="lazy"
             className="h-[288px] w-full rounded-[10px] object-cover shadow-[10px_10px_10px_rgba(0,0,0,0.2)] transition duration-300 hover:scale-[1.02]"
           />
         </a>
