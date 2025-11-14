@@ -1,15 +1,6 @@
 // Authentication service
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-  updateProfile
-} from 'firebase/auth';
 import type { User } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db, googleProvider } from '../config/firebase';
+import { getFirebaseDependencies } from '../config/firebase';
 
 // User data interface
 export interface UserData {
@@ -167,6 +158,10 @@ export async function signUpUser(
   additionalInfo: Partial<UserData> = {}
 ): Promise<{ user: User; userData: UserData }> {
   try {
+    const { auth, db, authModule, firestoreModule } = await getFirebaseDependencies();
+    const { createUserWithEmailAndPassword, updateProfile } = authModule;
+    const { doc, setDoc, getDoc } = firestoreModule;
+
     logDev('=== Starting user registration ===');
     logDev('Email:', email);
 
@@ -237,6 +232,8 @@ export async function signInUser(
   }
 
   try {
+    const { auth, authModule } = await getFirebaseDependencies();
+    const { signInWithEmailAndPassword } = authModule;
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
@@ -281,6 +278,9 @@ export async function signInUser(
  */
 export async function signInWithGoogle(): Promise<{ user: User; userData: UserData }> {
   try {
+    const { auth, db, googleProvider, authModule, firestoreModule } = await getFirebaseDependencies();
+    const { signInWithPopup } = authModule;
+    const { doc, setDoc } = firestoreModule;
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
 
@@ -324,6 +324,8 @@ export async function signInWithGoogle(): Promise<{ user: User; userData: UserDa
  */
 export async function signOutUser(): Promise<void> {
   try {
+    const { auth, authModule } = await getFirebaseDependencies();
+    const { signOut } = authModule;
     await signOut(auth);
     logDev('User signed out successfully.');
   } catch (error) {
@@ -338,14 +340,28 @@ export async function signOutUser(): Promise<void> {
 export function listenForAuthStateChange(
   callback: (authData: { user: User; userData: UserData | null } | null) => void
 ): () => void {
-  return onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userData = await getUserData(user.uid);
-      callback({ user, userData });
-    } else {
-      callback(null);
-    }
+  let unsubscribe: (() => void) | undefined;
+
+  void getFirebaseDependencies().then(async ({ auth, db, authModule, firestoreModule }) => {
+    const { onAuthStateChanged } = authModule;
+    const { doc, getDoc } = firestoreModule;
+
+    unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userData = userDoc.exists() ? (userDoc.data() as UserData) : null;
+        callback({ user, userData });
+      } else {
+        callback(null);
+      }
+    });
   });
+
+  return () => {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  };
 }
 
 /**
@@ -353,10 +369,12 @@ export function listenForAuthStateChange(
  */
 export async function updateUserProfile(displayName: string): Promise<void> {
   try {
+    const { auth, authModule } = await getFirebaseDependencies();
     if (!auth.currentUser) {
       throw new Error('No user is currently signed in');
     }
 
+    const { updateProfile } = authModule;
     await updateProfile(auth.currentUser, { displayName });
 
     // Also update Firestore user document
@@ -374,6 +392,8 @@ export async function updateUserProfile(displayName: string): Promise<void> {
  */
 export async function getUserData(uid: string): Promise<UserData | null> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { doc, getDoc } = firestoreModule;
     const userDoc = await getDoc(doc(db, 'users', uid));
     if (userDoc.exists()) {
       return userDoc.data() as UserData;
@@ -390,6 +410,8 @@ export async function getUserData(uid: string): Promise<UserData | null> {
  */
 export async function updateUserData(uid: string, updateData: Partial<UserData>): Promise<void> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { doc, setDoc } = firestoreModule;
     const userRef = doc(db, 'users', uid);
     await setDoc(userRef, updateData, { merge: true });
     logDev('User data updated successfully.');
@@ -501,6 +523,7 @@ export function validatePassword(password: string): { isValid: boolean; errors: 
  * Get current user info
  */
 export async function getCurrentUserInfo(): Promise<{ user: User; userData: UserData | null } | null> {
+  const { auth } = await getFirebaseDependencies();
   const user = auth.currentUser;
   if (!user) return null;
 

@@ -1,19 +1,6 @@
 // Appointment service for React app
-import {
-  collection,
-  doc,
-  addDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  query,
-  where,
-  orderBy,
-  limit,
-  serverTimestamp,
-  Timestamp
-} from 'firebase/firestore';
-import { db } from '../config/firebase';
+import type { Timestamp } from 'firebase/firestore';
+import { getFirebaseDependencies } from '../config/firebase';
 
 const logDev = (...args: unknown[]) => {
   if (import.meta.env.DEV) {
@@ -28,8 +15,12 @@ const logDevError = (...args: unknown[]) => {
 };
 
 const normalizeDate = (value: unknown): Date => {
-  if (value instanceof Timestamp) {
-    return value.toDate();
+  if (
+    value &&
+    typeof value === 'object' &&
+    typeof (value as { toDate?: () => Date }).toDate === 'function'
+  ) {
+    return (value as { toDate: () => Date }).toDate();
   }
 
   if (value instanceof Date) {
@@ -117,6 +108,9 @@ export async function createAppointment(
   userId: string
 ): Promise<string> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { collection, addDoc, Timestamp } = firestoreModule;
+
     // Validate appointment data
     const validationResult = validateAppointmentData(appointmentData);
     if (!validationResult.isValid) {
@@ -197,6 +191,9 @@ export async function getUserAppointments(
   limitCount: number = 10
 ): Promise<AppointmentDoc[]> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { collection, query, where, orderBy, limit, getDocs } = firestoreModule;
+
     const q = query(
       collection(db, 'appointments'),
       where('userId', '==', userId),
@@ -230,6 +227,8 @@ export async function getUserAppointments(
  */
 export async function getUpcomingAppointments(userId: string): Promise<AppointmentDoc[]> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { collection, query, where, orderBy, limit, getDocs } = firestoreModule;
     logDev('Fetching upcoming appointments for user:', userId);
 
     // Simplified query - just get all user appointments and filter in memory
@@ -305,6 +304,9 @@ export async function getAppointmentById(
   userRole?: 'owner' | 'admin' | 'customer'
 ): Promise<AppointmentDoc> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { doc, getDoc } = firestoreModule;
+
     const docRef = doc(db, 'appointments', appointmentId);
     const docSnap = await getDoc(docRef);
 
@@ -347,6 +349,9 @@ export async function cancelAppointment(
   reason: string = ''
 ): Promise<void> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { doc, updateDoc, serverTimestamp } = firestoreModule;
+
     // Use secure getAppointmentById with ownership check
     const appointment = await getAppointmentById(appointmentId, userId, 'customer');
 
@@ -381,6 +386,9 @@ async function checkTimeConflict(
   clinicLocation: string
 ): Promise<boolean> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { collection, query, where, getDocs, Timestamp } = firestoreModule;
+
     const appointmentDateTime = createAppointmentDateTime(date, time);
 
     if (!appointmentDateTime || isNaN(appointmentDateTime.getTime())) {
@@ -602,6 +610,9 @@ function createAppointmentDateTime(date: string, time: string): Date {
  */
 export async function getLastUserAppointment(userId: string): Promise<AppointmentDoc | null> {
   try {
+    const { db, firestoreModule } = await getFirebaseDependencies();
+    const { collection, query, where, orderBy, limit, getDocs } = firestoreModule;
+
     const q = query(
       collection(db, 'appointments'),
       where('userId', '==', userId),

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
+import { OptimizedImage } from '../components/OptimizedImage';
 import { useLanguage } from '../context/LanguageContext';
 
 export const ServicesDetail1 = () => {
@@ -58,7 +59,7 @@ export const ServicesDetail1 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/family.jpg" alt={t('general-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/family.jpg" alt={t('general-card-title')} loading="lazy" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('general-card-title')}</h3>
@@ -122,7 +123,7 @@ export const ServicesDetail1 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/cosmetic.jpg" alt={t('cosmetic-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/cosmetic.jpg" alt={t('cosmetic-card-title')} loading="lazy" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('cosmetic-card-title')}</h3>
@@ -187,7 +188,7 @@ export const ServicesDetail1 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/or.jpg" alt={t('orthodontics-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/or.jpg" alt={t('orthodontics-card-title')} loading="lazy" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('orthodontics-card-title')}</h3>
@@ -251,7 +252,7 @@ export const ServicesDetail1 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/ro.jpg" alt={t('rootcanal-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/ro.jpg" alt={t('rootcanal-card-title')} loading="lazy" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('rootcanal-card-title')}</h3>

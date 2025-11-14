@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
+import { OptimizedImage } from '../components/OptimizedImage';
 import { LoginForm } from '../components/LoginForm';
 import { UserDashboard } from '../components/UserDashboard';
 import { useLanguage } from '../context/LanguageContext';
@@ -12,7 +13,8 @@ import { useCommunityCarousel } from '../hooks/useCommunityCarousel';
 
 export const Landing = () => {
   const { t } = useLanguage();
-  const { currentUser } = useAuth();
+  const { currentUser, requestAuthInit } = useAuth();
+  const [loginToolsVisible, setLoginToolsVisible] = useState(false);
 
   const heroServices: Array<{
     id: string;
@@ -86,6 +88,39 @@ export const Landing = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (loginToolsVisible) {
+      return;
+    }
+
+    const section = document.getElementById('login-section');
+    if (!section || typeof IntersectionObserver === 'undefined') {
+      setLoginToolsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setLoginToolsVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { rootMargin: '200px 0px' }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [loginToolsVisible]);
+
+  useEffect(() => {
+    if (loginToolsVisible) {
+      requestAuthInit();
+    }
+  }, [loginToolsVisible, requestAuthInit]);
+
   // Handle scroll to login section
   const scrollToLogin = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -100,10 +135,26 @@ export const Landing = () => {
       <div className="flex-1">
       {/* Hero Section */}
     <section
-      className="relative isolate overflow-hidden bg-cover bg-center text-white"
-      style={{ backgroundImage: "url('/images/forest.jpg')" }}
+      className="relative isolate overflow-hidden text-white"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/45" />
+      {/* Background Image using OptimizedImage */}
+      <div className="absolute inset-0" style={{ zIndex: 0 }}>
+        <OptimizedImage
+          src="/images/forest-hero.jpg"
+          alt="Hero Background"
+          loading="eager"
+          fetchPriority="high"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center'
+          }}
+        />
+      </div>
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/45" style={{ zIndex: 1 }} />
 
       <div className="relative z-10">
         <Navigation variant="overlay" />
@@ -133,10 +184,11 @@ export const Landing = () => {
             {heroServices.map((service) => (
               <li key={service.id} className="w-full text-left">
                 <Link to={service.link} aria-label={service.ariaLabel}>
-                  <img
+                  <OptimizedImage
                     src={service.image}
                     alt={t(service.titleKey)}
                     className="h-[288px] w-full rounded-[10px] object-cover shadow-[10px_10px_10px_rgba(0,0,0,0.2)] transition duration-300 hover:scale-[1.02]"
+                    loading="lazy"
                   />
                 </Link>
                 <p className="mt-5 font-display text-sm uppercase tracking-[0.16em] text-white md:text-base md:tracking-[0.18em]">
@@ -180,16 +232,27 @@ export const Landing = () => {
           <p className="text-sm leading-relaxed text-neutral-600">
             {t('form-detail')}
           </p>
-          <img
+          <OptimizedImage
             src="/images/blue.jpg"
             alt="Dental clinic interior"
             className="w-full max-w-[360px] object-cover"
+            loading="lazy"
           />
         </div>
 
         <div className="flex w-full justify-center text-left lg:w-[45%]">
           <div className="w-full max-w-[400px]">
-            {currentUser ? <UserDashboard /> : <LoginForm />}
+            {loginToolsVisible ? (
+              currentUser ? (
+                <UserDashboard />
+              ) : (
+                <LoginForm />
+              )
+            ) : (
+              <div className="rounded-2xl border border-dashed border-neutral-200 bg-white/80 p-8 text-sm text-neutral-600">
+                {t('form-description')}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -319,7 +382,7 @@ export const Landing = () => {
             <div className="image-cards-row">
               <div className="image-card amenities-card">
                 <div className="image-container">
-                  <img src="/images/local.jpg" alt="Local Amenities" className="card-image" />
+                  <OptimizedImage src="/images/local.jpg" alt="Local Amenities" className="card-image" loading="lazy" />
                   <div className="image-overlay">
                     <div className="image-content">
                       <h2 className="card-title">{t('amenities-title')}</h2>
@@ -332,7 +395,7 @@ export const Landing = () => {
 
               <div className="image-card plan-card">
                 <div className="image-container">
-                  <img src="/images/todo.jpg" alt="Plan Your Visit" className="card-image" />
+                  <OptimizedImage src="/images/todo.jpg" alt="Plan Your Visit" className="card-image" loading="lazy" />
                   <div className="image-overlay">
                     <div className="image-content">
                       <h2 className="card-title">{t('plan-title')}</h2>
@@ -406,7 +469,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=Arcadia,CA" target="_blank" className="map-link" rel="noreferrer">
                       <div className="city-image-container">
-                        <img src="/images/arcadia2.jpg" alt="Arcadia" className="city-image" />
+                        <OptimizedImage src="/images/arcadia2.jpg" alt="Arcadia" className="city-image" loading="lazy" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-arcadia')}</h3>
@@ -422,7 +485,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=Rowland+Heights,CA" target="_blank" className="map-link" rel="noreferrer">
                       <div className="city-image-container">
-                        <img src="/images/rowland.jpg" alt="Rowland Heights" className="city-image" />
+                        <OptimizedImage src="/images/rowland.jpg" alt="Rowland Heights" className="city-image" loading="lazy" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-rowland-heights')}</h3>
@@ -438,7 +501,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=Irvine,CA" target="_blank" className="map-link" rel="noreferrer">
                       <div className="city-image-container">
-                        <img src="/images/irvine2.jpg" alt="Irvine" className="city-image" />
+                        <OptimizedImage src="/images/irvine2.jpg" alt="Irvine" className="city-image" loading="lazy" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-irvine')}</h3>
@@ -454,7 +517,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=South+Pasadena,CA" target="_blank" className="map-link" rel="noreferrer">
                       <div className="city-image-container">
-                        <img src="/images/pasadena2.jpg" alt="South Pasadena" className="city-image" />
+                        <OptimizedImage src="/images/pasadena2.jpg" alt="South Pasadena" className="city-image" loading="lazy" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-south-pasadena')}</h3>
@@ -470,7 +533,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://www.google.com/maps/place/Eastvale,+CA" target="_blank" className="map-link" rel="noreferrer">
                       <div className="city-image-container">
-                        <img src="/images/eastvale.jpg" alt="Eastvale" className="city-image" />
+                        <OptimizedImage src="/images/eastvale.jpg" alt="Eastvale" className="city-image" loading="lazy" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-eastvale')}</h3>
