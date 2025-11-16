@@ -1,6 +1,7 @@
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
 import { OptimizedImage } from '../components/OptimizedImage';
+import { SEO } from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 import { useAmenitiesCarousel } from '../hooks/useAmenitiesCarousel';
 import { useTipsCarousel } from '../hooks/useTipsCarousel';
@@ -126,9 +127,17 @@ export const FAQ = () => {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex-1">
-      {/* Hero Section - 使用OptimizedImage替代CSS background */}
+    <>
+      <SEO
+        title="FAQ - Frequently Asked Questions | First Ave Dental"
+        description="常见问题解答：了解牙科治疗、预约流程、保险覆盖、诊所设施等信息。提供专业牙科建议，解答您的疑问。"
+        keywords="牙科FAQ, 牙科常见问题, 牙科预约, 牙科保险, 治疗费用, 洗牙问题"
+        ogTitle="牙科常见问题 - First Ave Dental & Orthodontics"
+        ogDescription="专业解答牙科相关问题，提供详细的治疗说明和建议"
+      />
+      <div className="flex min-h-screen flex-col">
+        <div className="flex-1">
+        {/* Hero Section - 使用OptimizedImage替代CSS background */}
       <section className="hero-section" style={{ position: 'relative', overflow: 'hidden' }}>
         {/* Background Image using OptimizedImage */}
         <div style={{
@@ -159,7 +168,7 @@ export const FAQ = () => {
           <div className="hero-content">
             <div className="breadcrumb-wrapper">
               <ul className="breadcrumbs">
-                <li><a href="/">{t('nav-home')}</a></li>
+                <li><a href="/" aria-label="Go to home page">{t('nav-home')}</a></li>
                 <li>{t('breadcrumb-faq')}</li>
               </ul>
             </div>
@@ -454,6 +463,7 @@ export const FAQ = () => {
 
       {/* Footer */}
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };

@@ -2,6 +2,7 @@ import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
 import { OptimizedImage } from '../components/OptimizedImage';
 import { useLanguage, type TranslationKey } from '../context/LanguageContext';
+import { SEO } from '../components/SEO';
 
 type ServiceCard = {
   id: string;
@@ -152,6 +153,16 @@ export const Service = () => {
   ] satisfies ServiceCard[];
 
   return (
+
+
+    <>
+      <SEO
+        title="Our Services - Comprehensive Dental Care | First Ave Dental"
+        description="提供全方位牙科服务：家庭牙科、美容牙科、根管治疗、口腔正畸、牙周病治疗、儿童牙科等。专业团队，先进设备，5个便利地点。"
+        keywords="牙科服务, 牙科治疗, 美容牙科, 根管治疗, 口腔正畸, 牙周病, 儿童牙科"
+        ogTitle="牙科服务项目 - First Ave Dental & Orthodontics"
+        ogDescription="专业牙科服务：家庭、美容、正畸、根管治疗等"
+      />
     <div className="flex min-h-screen flex-col">
       <div className="flex-1">
         {/* Sub Hero Section with Navigation */}
@@ -165,7 +176,7 @@ export const Service = () => {
             {/* Breadcrumbs */}
             <div className="bread-wrapper">
               <ul className="breadcrumbs">
-                <li><a href="/">{t('service-breadcrumb-home')}</a></li>
+                <li><a href="/" aria-label="Go to home page">{t('service-breadcrumb-home')}</a></li>
                 <li>&gt; <span>{t('service-breadcrumb-current')}</span></li>
               </ul>
             </div>
@@ -198,6 +209,7 @@ export const Service = () => {
 
       {/* Footer */}
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };

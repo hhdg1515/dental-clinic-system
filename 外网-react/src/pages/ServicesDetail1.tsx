@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
 import { OptimizedImage } from '../components/OptimizedImage';
+import { SEO } from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 
 export const ServicesDetail1 = () => {
@@ -24,6 +25,16 @@ export const ServicesDetail1 = () => {
   }, []);
 
   return (
+
+
+    <>
+      <SEO
+        title="General & Family Dentistry | First Ave Dental"
+        description="家庭牙科服务：定期检查、洗牙、补牙、拔牙等基础牙科护理。提供温和、专业的家庭式牙科服务，适合全家人。"
+        keywords="家庭牙科, 综合牙科, 定期检查, 洗牙, 补牙, 预防性护理"
+        ogTitle="家庭与综合牙科 - First Ave Dental"
+        ogDescription="温和专业的家庭牙科服务，适合全家人的口腔健康"
+      />
     <div className="flex min-h-screen flex-col">
       <div className="flex-1">
       {/* Hero Section */}
@@ -33,8 +44,8 @@ export const ServicesDetail1 = () => {
         <div className="hero-content">
           <div className="breadcrumb-wrapper">
             <ul className="breadcrumbs">
-              <li><a href="/">{t('nav-home')}</a></li>
-              <li>&gt; <a href="/service">{t('nav-services')}</a></li>
+              <li><a href="/" aria-label="Go to home page">{t('nav-home')}</a></li>
+              <li>&gt; <a href="/service" aria-label="Go to services page">{t('nav-services')}</a></li>
               <li>{t('detail-breadcrumb')}</li>
             </ul>
           </div>
@@ -311,6 +322,7 @@ export const ServicesDetail1 = () => {
 
       {/* Footer */}
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };

@@ -5,6 +5,7 @@ import { Footer } from '../components/Footer';
 import { OptimizedImage } from '../components/OptimizedImage';
 import { LoginForm } from '../components/LoginForm';
 import { UserDashboard } from '../components/UserDashboard';
+import { SEO } from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 import type { TranslationKey } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -131,9 +132,18 @@ export const Landing = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex-1">
-      {/* Hero Section */}
+    <>
+      <SEO
+        title="First Ave Dental & Orthodontics - Professional Dental Care"
+        description="专业牙科诊所，提供家庭牙科、美容牙科、根管治疗、口腔正畸等全方位牙科服务。服务地点：Arcadia, Rowland Heights, Irvine, Pasadena, Eastvale。预约电话咨询，享受专业护理。"
+        keywords="牙科诊所, 牙医, 美容牙科, 根管治疗, 洗牙, 口腔正畸, Arcadia牙科, Irvine牙医, Pasadena牙科"
+        ogTitle="First Ave Dental & Orthodontics - 家庭与美容牙科服务"
+        ogDescription="提供全方位牙科服务，5个便利地点。专业团队，先进设备，温馨环境。"
+        ogImage="/images/og-image.jpg"
+      />
+      <div className="flex min-h-screen flex-col">
+        <div className="flex-1">
+        {/* Hero Section */}
     <section
       className="relative isolate overflow-hidden text-white"
     >
@@ -459,7 +469,7 @@ export const Landing = () => {
               <div className="trip-contact">
                 <p className="trip-phone">XXX-XXX-XXXX</p>
               </div>
-              <a href="#login-section" className="trip-book-btn" onClick={scrollToLogin}>Book Now</a>
+              <a href="#login-section" className="trip-book-btn" onClick={scrollToLogin} aria-label="Book appointment now">Book Now</a>
             </div>
 
             <div className="map-slider-area">
@@ -467,7 +477,7 @@ export const Landing = () => {
                 {/* Arcadia */}
                 <div className={`map-slide ${clinicSlide === 0 ? 'active' : ''} ${clinicSlide > 0 ? 'prev' : ''}`} data-clinic="arcadia">
                   <div className="map-display">
-                    <a href="https://maps.google.com/maps?q=Arcadia,CA" target="_blank" className="map-link" rel="noreferrer">
+                    <a href="https://maps.google.com/maps?q=Arcadia,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Arcadia location on Google Maps">
                       <div className="city-image-container">
                         <OptimizedImage src="/images/arcadia2.jpg" alt="Arcadia" className="city-image" loading="lazy" />
                         <div className="city-overlay">
@@ -483,7 +493,7 @@ export const Landing = () => {
                 {/* Rowland Heights */}
                 <div className={`map-slide ${clinicSlide === 1 ? 'active' : ''} ${clinicSlide > 1 ? 'prev' : ''}`} data-clinic="rowland">
                   <div className="map-display">
-                    <a href="https://maps.google.com/maps?q=Rowland+Heights,CA" target="_blank" className="map-link" rel="noreferrer">
+                    <a href="https://maps.google.com/maps?q=Rowland+Heights,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Rowland Heights location on Google Maps">
                       <div className="city-image-container">
                         <OptimizedImage src="/images/rowland.jpg" alt="Rowland Heights" className="city-image" loading="lazy" />
                         <div className="city-overlay">
@@ -499,7 +509,7 @@ export const Landing = () => {
                 {/* Irvine */}
                 <div className={`map-slide ${clinicSlide === 2 ? 'active' : ''} ${clinicSlide > 2 ? 'prev' : ''}`} data-clinic="irvine">
                   <div className="map-display">
-                    <a href="https://maps.google.com/maps?q=Irvine,CA" target="_blank" className="map-link" rel="noreferrer">
+                    <a href="https://maps.google.com/maps?q=Irvine,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Irvine location on Google Maps">
                       <div className="city-image-container">
                         <OptimizedImage src="/images/irvine2.jpg" alt="Irvine" className="city-image" loading="lazy" />
                         <div className="city-overlay">
@@ -515,7 +525,7 @@ export const Landing = () => {
                 {/* South Pasadena */}
                 <div className={`map-slide ${clinicSlide === 3 ? 'active' : ''} ${clinicSlide > 3 ? 'prev' : ''}`} data-clinic="south-pasadena">
                   <div className="map-display">
-                    <a href="https://maps.google.com/maps?q=South+Pasadena,CA" target="_blank" className="map-link" rel="noreferrer">
+                    <a href="https://maps.google.com/maps?q=South+Pasadena,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View South Pasadena location on Google Maps">
                       <div className="city-image-container">
                         <OptimizedImage src="/images/pasadena2.jpg" alt="South Pasadena" className="city-image" loading="lazy" />
                         <div className="city-overlay">
@@ -531,7 +541,7 @@ export const Landing = () => {
                 {/* Eastvale */}
                 <div className={`map-slide ${clinicSlide === 4 ? 'active' : ''}`} data-clinic="eastvale">
                   <div className="map-display">
-                    <a href="https://www.google.com/maps/place/Eastvale,+CA" target="_blank" className="map-link" rel="noreferrer">
+                    <a href="https://www.google.com/maps/place/Eastvale,+CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Eastvale location on Google Maps">
                       <div className="city-image-container">
                         <OptimizedImage src="/images/eastvale.jpg" alt="Eastvale" className="city-image" loading="lazy" />
                         <div className="city-overlay">
@@ -609,7 +619,7 @@ export const Landing = () => {
                   ))}
                 </div>
                 <div className="visit-california-container">
-                  <a href="https://www.visitcalifornia.com" target="_blank" className="visit-california-btn" rel="noreferrer">
+                  <a href="https://www.visitcalifornia.com" target="_blank" className="visit-california-btn" rel="noreferrer" aria-label="Visit California tourism website">
                     <span>{t('visit-california')}</span>
                   </a>
                 </div>
@@ -621,6 +631,7 @@ export const Landing = () => {
       </div>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };

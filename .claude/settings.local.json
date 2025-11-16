@@ -50,7 +50,8 @@
       "Bash(cat:*)",
       "Bash(node scripts/compress-intranet.js:*)",
       "Bash(node scripts/update-html-references.js:*)",
-      "Bash(node -c:*)"
+      "Bash(node -c:*)",
+      "Bash(node scripts/add-seo-to-pages.js:*)"
     ],
     "deny": [],
     "ask": []
