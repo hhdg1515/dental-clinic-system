@@ -1,0 +1,170 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if user is admin (by email domain)
+    function isAdminByEmail() {
+      return isAuthenticated() &&
+        request.auth.token.email.matches('.*@firstavedental.com');
+    }
+
+    // Get user data safely (returns null if not exists)
+    function getUserData() {
+      return isAuthenticated() ?
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data :
+        null;
+    }
+
+    // Check if user has admin or owner role (with fallback)
+    function hasAdminRole() {
+      let userData = getUserData();
+      return isAdminByEmail() ||
+        (userData != null && userData.get('role', 'customer') in ['admin', 'owner']);
+    }
+
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
+    match /users/{userId} {
+      // Users can read their own profile, admins can read all
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId ||
+        isAdminByEmail()
+      );
+
+      // Users can create their own profile
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+
+      // Users can update their own profile, BUT cannot change role/clinics
+      allow update: if isAuthenticated() && request.auth.uid == userId && (
+        // If role or clinics fields exist in current document, prevent changes
+        !resource.data.keys().hasAny(['role', 'clinics']) ||
+        (
+          request.resource.data.get('role', resource.data.get('role', 'customer')) == resource.data.get('role', 'customer') &&
+          request.resource.data.get('clinics', resource.data.get('clinics', [])) == resource.data.get('clinics', [])
+        )
+      );
+
+      // Only admins can delete
+      allow delete: if isAdminByEmail();
+    }
+
+    // ============================================
+    // APPOINTMENTS COLLECTION
+    // ============================================
+    match /appointments/{appointmentId} {
+      // Read: All authenticated users can read
+      // (This matches your current working behavior)
+      allow read: if isAuthenticated();
+
+      // Create/Update: All authenticated users, with required fields
+      allow create, update: if isAuthenticated() &&
+        request.resource.data.keys().hasAll(['userId', 'clinicLocation', 'patientName', 'patientPhone']);
+
+      // Delete: Owner of appointment or admins
+      allow delete: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        isAdminByEmail()
+      );
+    }
+
+    // ============================================
+    // NESTED APPOINTMENTS (if used)
+    // ============================================
+    match /appointments/{clinicId}/dates/{dateKey}/appointments/{appointmentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /appointments/{clinicId}/appointments/{appointmentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // CANCELLED APPOINTMENTS
+    // ============================================
+    match /cancelledAppointments/{clinicId}/appointments/{appointmentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /cancelledAppointments/{appointmentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // PENDING CONFIRMATIONS
+    // ============================================
+    match /pendingConfirmations/{confirmationId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // PATIENT PROFILES (Protected - Admins only)
+    // ============================================
+    match /patientProfiles/{patientId} {
+      // Only admins can access patient profiles
+      allow read, write: if isAdminByEmail() || hasAdminRole();
+    }
+
+    // ============================================
+    // MEDICAL RECORDS (Protected - Admins only)
+    // ============================================
+    match /medicalRecords/{recordId} {
+      // Only admins can access medical records (HIPAA compliance)
+      allow read, write: if isAdminByEmail() || hasAdminRole();
+    }
+
+    // ============================================
+    // AUDIT LOGS
+    // ============================================
+    match /auditLogs/{logId} {
+      // Anyone can create audit logs
+      allow create: if isAuthenticated();
+
+      // Only admins can read audit logs
+      allow read: if isAdminByEmail() || hasAdminRole();
+
+      // No one can update or delete (immutable)
+      allow update, delete: if false;
+    }
+
+    // ============================================
+    // DENTAL CHARTS
+    // ============================================
+    match /dentalCharts/{userId} {
+      // Users can read their own chart, admins can read all
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId ||
+        isAdminByEmail() ||
+        hasAdminRole()
+      );
+
+      // Users can write their own chart, admins can write all
+      allow create, update: if isAuthenticated() && (
+        request.auth.uid == userId ||
+        isAdminByEmail() ||
+        hasAdminRole()
+      );
+
+      // Only admins can delete
+      allow delete: if isAdminByEmail() || hasAdminRole();
+    }
+
+    // ============================================
+    // DEFAULT: Deny other collections
+    // ============================================
+    // Any other collection not explicitly listed above is denied
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
