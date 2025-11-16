@@ -182,7 +182,10 @@ class GlobalDataManager {
             try {
                 // 1. Check cache first
                 if (window.cacheManager) {
-                    const cached = window.cacheManager.getDateCache(dateKey);
+                    let cached = window.cacheManager.getDateCache(dateKey);
+                    if (cached && typeof cached.then === 'function') {
+                        cached = await cached;
+                    }
                     if (cached) {
                         return cached;
                     }
@@ -298,7 +301,10 @@ class GlobalDataManager {
             try {
                 // 1. Check cache first
                 if (window.cacheManager) {
-                    const cached = window.cacheManager.getAllCache();
+                    let cached = window.cacheManager.getAllCache();
+                    if (cached && typeof cached.then === 'function') {
+                        cached = await cached;
+                    }
                     if (cached) {
                         return cached;
                     }
@@ -310,7 +316,6 @@ class GlobalDataManager {
                 const userClinics = this.getUserClinics(currentUser);
 
                 const appointments = await this.firebaseService.getAllAppointments(userRole, userClinics, includeAllStatuses);
-
                 // Ensure we return an array
                 if (Array.isArray(appointments)) {
                     // 3. Store in cache
@@ -318,9 +323,6 @@ class GlobalDataManager {
                         window.cacheManager.setAllCache(appointments);
                     }
                     return appointments;
-                } else {
-                    console.warn('Firebase getAllAppointments did not return an array:', appointments);
-                    return this.getAllAppointmentsLocal();
                 }
             } catch (error) {
                 console.warn('Firebase failed, falling back to localStorage:', error);
@@ -953,4 +955,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.dataManager = dataManager;
 }
-

@@ -125,7 +125,7 @@ class FirebaseDataService {
     // === APPOINTMENT METHODS ===
 
     // Get appointments for a specific date
-    async getAppointmentsForDate(dateKey, userRole = null, userClinics = []) {
+    async getAppointmentsForDate(dateKey, userRole = null, userClinics = [], includeAllStatuses = false) {
         try {
             await this.ensureReady();
 
@@ -171,8 +171,8 @@ class FirebaseDataService {
                     return; // Skip appointments from inaccessible clinics
                 }
 
-                // Filter out pending, cancelled, and declined appointments for Calendar views
-                if (data.status === 'pending' || data.status === 'cancelled' || data.status === 'declined') {
+                // Filter out cancelled and declined appointments for Calendar views (keep pending if includeAllStatuses)
+                if (!includeAllStatuses && (data.status === 'cancelled' || data.status === 'declined')) {
                     filteredByStatus++;
                     return; // Skip these statuses for calendar
                 }
@@ -352,7 +352,7 @@ class FirebaseDataService {
     }
 
     // Get all appointments across all dates and clinics
-    async getAllAppointments(userRole = null, userClinics = []) {
+    async getAllAppointments(userRole = null, userClinics = [], includeAllStatuses = true) {
         try {
             await this.ensureReady();
 
@@ -377,7 +377,7 @@ class FirebaseDataService {
             const startDateKey = threeMonthsAgo.toISOString().split('T')[0];
             const endDateKey = oneYearLater.toISOString().split('T')[0];
 
-            console.log(`📅 getAllAppointments: Querying range ${startDateKey} to ${endDateKey}`);
+            console.log(`📅 getAllAppointments: Querying range ${startDateKey} to ${endDateKey} (includeAllStatuses: ${includeAllStatuses})`);
 
             const appointmentsRef = collection(db, 'appointments');
             const q = query(
@@ -398,6 +398,11 @@ class FirebaseDataService {
                 // Filter by accessible clinics (case-insensitive)
                 if (!clinicSet.has((data.clinicLocation || '').toLowerCase())) {
                     return; // Skip appointments from inaccessible clinics
+                }
+
+                // Filter by status if needed (by default include all statuses for getAllAppointments)
+                if (!includeAllStatuses && (data.status === 'cancelled' || data.status === 'declined')) {
+                    return; // Skip cancelled/declined if not including all statuses
                 }
 
                 // Extract time and date with LOCAL timezone (matching other queries)
@@ -1150,97 +1155,175 @@ class FirebaseDataService {
         }
     }
 
-    // === USER PROFILES METHODS (for VIP status) ===
+    // ==================== DENTAL CHART METHODS ====================
 
-    /**
-     * Batch get user profiles for VIP status check
-     * @param {Array<string>} userIds - Array of user IDs to fetch
-     * @returns {Promise<Map<string, object>>} Map of userId to user profile
-     */
-    async getUserProfilesBatch(userIds) {
-        try {
-            await this.ensureReady();
-            const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+    // Get dental chart for a patient (Universal numbering 1-32)
+    async getDentalChart(userId) {
+        await this.ensureReady();
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
-            if (!userIds || userIds.length === 0) {
-                return new Map();
-            }
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+        const chartSnap = await getDoc(chartRef);
 
-            const db = this.validateDatabase();
-            const profiles = new Map();
+        if (chartSnap.exists()) {
+            return { id: chartSnap.id, ...chartSnap.data() };
+        }
+        return null;
+    }
 
-            // Fetch all user profiles in parallel
-            const promises = userIds.map(async (userId) => {
-                try {
-                    const userRef = doc(db, 'users', userId);
-                    const userSnap = await getDoc(userRef);
+    // Update tooth status (e.g., healthy, cavity, filled, missing, etc.)
+    async updateToothStatus(userId, toothNum, statusData) {
+        await this.ensureReady();
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
-                    if (userSnap.exists()) {
-                        const userData = userSnap.data();
-                        profiles.set(userId, {
-                            uid: userId,
-                            isVIP: userData.isVIP === true,
-                            displayName: userData.displayName || '',
-                            email: userData.email || ''
-                        });
-                    }
-                } catch (error) {
-                    console.warn(`Failed to fetch profile for user ${userId}:`, error);
-                    // Set default profile on error
-                    profiles.set(userId, {
-                        uid: userId,
-                        isVIP: false,
-                        displayName: '',
-                        email: ''
-                    });
-                }
-            });
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
 
-            await Promise.all(promises);
+        await updateDoc(chartRef, {
+            [`teeth.${toothNum}.status`]: statusData.status,
+            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
 
-            console.log(`📊 Fetched ${profiles.size} user profiles for VIP check`);
-            return profiles;
+        return true;
+    }
 
-        } catch (error) {
-            console.error('Error batch fetching user profiles:', error);
-            return new Map();
+    // Add treatment record to a tooth
+    async addToothTreatment(userId, toothNum, treatment) {
+        await this.ensureReady();
+        const { doc, getDoc, updateDoc, arrayUnion } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        // Ensure tooth exists
+        const chartSnap = await getDoc(chartRef);
+        if (!chartSnap.exists()) {
+            throw new Error('Dental chart not found');
+        }
+
+        const entry = {
+            id: `treatment-${Date.now()}`,
+            date: new Date().toISOString(),
+            createdBy: this.auth.currentUser?.uid || 'unknown',
+            ...treatment
+        };
+
+        // Ensure teeth object and tooth entry exist
+        const chartData = chartSnap.data();
+        if (!chartData.teeth) {
+            chartData.teeth = {};
+        }
+        if (!chartData.teeth[toothNum]) {
+            chartData.teeth[toothNum] = { status: 'healthy', treatments: [] };
+        }
+        if (!chartData.teeth[toothNum].treatments) {
+            chartData.teeth[toothNum].treatments = [];
+        }
+
+        // Add treatment entry
+        chartData.teeth[toothNum].treatments.push(entry);
+
+        await updateDoc(chartRef, {
+            [`teeth.${toothNum}.treatments`]: chartData.teeth[toothNum].treatments,
+            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+
+        return entry;
+    }
+
+    // Upload file for tooth attachment (hybrid: <50KB Base64, >50KB Storage)
+    async uploadToothAttachment(userId, toothNum, file) {
+        await this.ensureReady();
+        const MAX_BASE64_SIZE = 50 * 1024; // 50 KB threshold
+
+        if (file.size < MAX_BASE64_SIZE) {
+            // Small file: Store as Base64 in Firestore
+            const base64 = await this.fileToBase64(file);
+            return {
+                type: 'base64',
+                filename: file.name,
+                mimeType: file.type,
+                fileSize: file.size,
+                base64Data: base64
+            };
+        } else {
+            // Large file: Upload to Firebase Storage
+            const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js');
+
+            const storage = this.storage;
+            const storagePath = `dentalCharts/${userId}/tooth_${toothNum}/${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, storagePath);
+
+            // Upload file
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            return {
+                type: 'storage',
+                filename: file.name,
+                mimeType: file.type,
+                fileSize: file.size,
+                storagePath: storagePath,
+                downloadURL: downloadURL
+            };
         }
     }
 
-    /**
-     * Get single user profile (with caching handled by data-manager)
-     * @param {string} userId - User ID to fetch
-     * @returns {Promise<object|null>} User profile or null
-     */
-    async getUserProfile(userId) {
-        try {
-            await this.ensureReady();
-            const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+    // Delete tooth treatment entry
+    async deleteToothTreatment(userId, toothNum, treatmentId) {
+        await this.ensureReady();
+        const { doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
-            if (!userId) {
-                return null;
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+        const chartSnap = await getDoc(chartRef);
+
+        if (chartSnap.exists()) {
+            const chartData = chartSnap.data();
+            const tooth = chartData.teeth?.[toothNum];
+
+            if (tooth?.treatments) {
+                const updatedTreatments = tooth.treatments.filter(t => t.id !== treatmentId);
+                await updateDoc(chartRef, {
+                    [`teeth.${toothNum}.treatments`]: updatedTreatments,
+                    [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                });
             }
-
-            const db = this.validateDatabase();
-            const userRef = doc(db, 'users', userId);
-            const userSnap = await getDoc(userRef);
-
-            if (userSnap.exists()) {
-                const userData = userSnap.data();
-                return {
-                    uid: userId,
-                    isVIP: userData.isVIP === true,
-                    displayName: userData.displayName || '',
-                    email: userData.email || ''
-                };
-            }
-
-            return null;
-
-        } catch (error) {
-            console.error(`Error fetching user profile for ${userId}:`, error);
-            return null;
         }
+
+        return true;
+    }
+
+    // Initialize empty dental chart for new patient
+    async initializeDentalChart(userId, patientName) {
+        await this.ensureReady();
+        const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        // Create 32 teeth with Universal numbering (1-32)
+        const teeth = {};
+        for (let i = 1; i <= 32; i++) {
+            teeth[i.toString()] = {
+                status: 'healthy',
+                treatments: [],
+                lastUpdated: new Date().toISOString()
+            };
+        }
+
+        await setDoc(chartRef, {
+            userId: userId,
+            patientName: patientName,
+            lastUpdated: new Date().toISOString(),
+            teeth: teeth
+        });
+
+        return true;
     }
 }
 

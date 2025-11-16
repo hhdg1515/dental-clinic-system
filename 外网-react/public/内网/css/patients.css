@@ -989,3 +989,388 @@
 .readonly-field {
     background-color: #f9fafb !important;
 }
+
+/* --- Dental Chart Inspired Card Layout --- */
+.patients-board {
+    display: none;
+}
+
+.patients-card-grid {
+    display: none;
+}
+
+.patients-table-container.legacy-table {
+    display: block;
+}
+
+.patient-card {
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.patient-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.12);
+}
+
+.patient-card h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+.patient-card .appointment-badge {
+    font-size: 0.9rem;
+    color: #475569;
+    background: rgba(99, 102, 241, 0.08);
+    border-radius: 999px;
+    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.patient-card .contact-row,
+.patient-card .service-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: #475569;
+}
+
+.patient-card .contact-row i,
+.patient-card .service-row i {
+    color: #6366f1;
+}
+
+.tooth-status-strip {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 10px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.04);
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(15, 23, 42, 0.2);
+}
+
+.status-dot.urgent { background: #f43f5e; }
+.status-dot.monitor { background: #fbbf24; }
+.status-dot.progress { background: #a855f7; }
+.status-dot.postop { background: #38bdf8; }
+.status-dot.healthy { background: #34d399; }
+
+.patient-card .card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-view-chart {
+    border: none;
+    background: #6366f1;
+    color: white;
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-view-chart:hover {
+    background: #4f46e5;
+}
+
+/* Drawer */
+.patient-drawer {
+    display: none;
+}
+
+.drawer-overlay {
+    flex: 1;
+    background: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.patient-drawer.active .drawer-overlay {
+    opacity: 1;
+}
+
+.drawer-panel {
+    width: min(860px, 100%);
+    background: #f8fafc;
+    box-shadow: -10px 0 30px rgba(15, 23, 42, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.patient-drawer.active .drawer-panel {
+    transform: translateX(0);
+}
+
+.drawer-header {
+    padding: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.drawer-label {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    margin: 0 0 4px;
+}
+
+.drawer-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+}
+
+.drawer-icon-btn {
+    border: none;
+    background: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.drawer-icon-btn:hover {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.drawer-body {
+    padding: 24px 28px 32px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.drawer-summary {
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.summary-item strong {
+    font-size: 1rem;
+    color: #0f172a;
+}
+
+.drawer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.drawer-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.drawer-section-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+.drawer-subtext {
+    margin: 4px 0 0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.drawer-legend {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.legend-dot.urgent { background: #f43f5e; }
+.legend-dot.monitor { background: #fbbf24; }
+.legend-dot.postop { background: #38bdf8; }
+.legend-dot.progress { background: #a855f7; }
+.legend-dot.healthy { background: #34d399; }
+
+.drawer-chart,
+.drawer-details {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    min-height: 420px;
+}
+
+.chart-canvas {
+    min-height: 320px;
+}
+
+.drawer-placeholder {
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+}
+
+.grid-chart {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(30px, 1fr));
+    gap: 8px;
+}
+
+.grid-chart .tooth-cell {
+    background: #f1f5f9;
+    border-radius: 10px;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #475569;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.grid-chart .tooth-cell:hover {
+    transform: translateY(-2px);
+    border-color: #6366f1;
+}
+
+.grid-chart .tooth-cell.status-urgent {
+    background: rgba(244, 63, 94, 0.12);
+    border-color: rgba(244, 63, 94, 0.6);
+}
+
+.grid-chart .tooth-cell.status-monitor {
+    background: rgba(251, 191, 36, 0.18);
+    border-color: rgba(251, 191, 36, 0.6);
+}
+
+.grid-chart .tooth-cell.status-progress {
+    background: rgba(168, 85, 247, 0.16);
+    border-color: rgba(168, 85, 247, 0.6);
+}
+
+.grid-chart .tooth-cell.status-postop {
+    background: rgba(56, 189, 248, 0.18);
+    border-color: rgba(56, 189, 248, 0.6);
+}
+
+.grid-chart .tooth-cell.status-healthy {
+    background: rgba(52, 211, 153, 0.12);
+    border-color: rgba(52, 211, 153, 0.5);
+}
+
+.grid-chart .tooth-cell.active {
+    border-color: #6366f1;
+    background: #eef2ff;
+}
+
+.drawer-details .drawer-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.timeline-card {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(99, 102, 241, 0.08);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.timeline-card h5 {
+    margin: 0 0 6px;
+    font-size: 0.95rem;
+    color: #312e81;
+}
+
+.timeline-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.drawer-detail-actions .btn-chip {
+    border: none;
+    background: #e0e7ff;
+    color: #3730a3;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.drawer-detail-actions .btn-chip:hover {
+    background: #c7d2fe;
+}
+
+@media (max-width: 1024px) {
+    .drawer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patients-card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+}

@@ -1500,22 +1500,6 @@ async function renderMonthView() {
     await generateMonthCalendar();
 }
 
-function createMonthDateElement(date, isOtherMonth = false, isToday = false) {
-    const dateElement = document.createElement('div');
-    dateElement.className = 'month-date';
-    
-    if (isOtherMonth) {
-        dateElement.classList.add('other-month');
-    }
-    
-    if (isToday) {
-        dateElement.classList.add('today');
-    }
-    
-    dateElement.textContent = date.toString();
-    
-    return dateElement;
-}
 // Helper function to get time position in pixels
 function getTimePosition(timeString) {
     const timeMatch = /^(\d{1,2}):(\d{2})$/.exec(timeString);
@@ -2475,8 +2459,55 @@ async function generateMonthCalendar() {
         monthDatesElement.appendChild(dateElement);
     }
 
+    pruneTrailingOtherMonthRows(monthDatesElement);
+
+    // Default sidebar content (prefer today's date if visible)
+    let defaultDateObj;
+    let defaultAppointments;
+    if (year === today.getFullYear() && month === today.getMonth()) {
+        defaultDateObj = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0, 0);
+        defaultAppointments = appointmentsByDate[formatDateToKey(defaultDateObj)] || [];
+        const todayElement = monthDatesElement.querySelector('.month-date.today');
+        if (todayElement) {
+            todayElement.classList.add('selected');
+        }
+    } else {
+        defaultDateObj = new Date(year, month, 1, 12, 0, 0);
+        defaultAppointments = appointmentsByDate[formatDateToKey(defaultDateObj)] || [];
+        const firstCurrent = monthDatesElement.querySelector('.month-date:not(.other-month)');
+        if (firstCurrent) {
+            firstCurrent.classList.add('selected');
+        }
+    }
+
+    if (defaultDateObj) {
+        updateMonthSidebar(defaultDateObj, defaultAppointments);
+    }
+
     console.log('Calendar: Optimized month calendar generation completed');
 }
+
+function pruneTrailingOtherMonthRows(container) {
+    const cells = Array.from(container.children);
+    if (cells.length % 7 !== 0) return;
+
+    let rows = cells.length / 7;
+    while (rows > 0) {
+        const startIndex = (rows - 1) * 7;
+        const rowCells = cells.slice(startIndex, startIndex + 7);
+        const allOther = rowCells.every(cell => cell.classList.contains('other-month'));
+
+        if (allOther) {
+            rowCells.forEach(cell => container.removeChild(cell));
+            cells.splice(startIndex, 7);
+            rows--;
+        } else {
+            break;
+        }
+    }
+}
+
+let currentMonthSidebarDate = null;
 
 // Optimized version that uses pre-fetched appointment data
 function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = false, dateObj = null, appointments = []) {
@@ -2526,12 +2557,80 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
                 return;
             }
 
-            // Navigate to Day View with selected date
+            // Highlight selected day in month view
+            document.querySelectorAll('.month-date.selected').forEach(el => el.classList.remove('selected'));
+            dateElement.classList.add('selected');
+
+            // Update sidebar with this day's appointments
+            updateMonthSidebar(dateObj, appointments);
+        });
+
+        dateElement.addEventListener('dblclick', (e) => {
+            if (!isOtherMonth && e.target.closest('.add-appointment-icon')) {
+                return;
+            }
             switchToDayView(dateObj);
         });
     }
 
     return dateElement;
+}
+
+function updateMonthSidebar(dateObj, appointments) {
+    const sidebarDateEl = document.getElementById('monthSidebarDate');
+    const sidebarCountEl = document.getElementById('monthSidebarCount');
+    const sidebarEmptyEl = document.getElementById('monthSidebarEmpty');
+    const sidebarListEl = document.getElementById('monthSidebarList');
+
+    if (!sidebarDateEl || !sidebarCountEl || !sidebarEmptyEl || !sidebarListEl) {
+        return;
+    }
+
+    currentMonthSidebarDate = dateObj;
+
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
+    sidebarDateEl.textContent = dateObj.toLocaleDateString('en-US', options);
+
+    const count = appointments.length;
+    if (count === 0) {
+        sidebarCountEl.textContent = '';
+        sidebarEmptyEl.style.display = 'block';
+        sidebarListEl.innerHTML = '';
+        return;
+    }
+
+    sidebarCountEl.textContent = count === 1 ? '1 appointment' : `${count} appointments`;
+    sidebarEmptyEl.style.display = 'none';
+
+    // Sort appointments by time (HH:MM)
+    const sorted = [...appointments].sort((a, b) => {
+        const ta = (a.time || '00:00').padStart(5, '0');
+        const tb = (b.time || '00:00').padStart(5, '0');
+        return ta.localeCompare(tb);
+    });
+
+    sidebarListEl.innerHTML = '';
+
+    sorted.forEach(app => {
+        const card = document.createElement('div');
+        const status = (app.status || 'scheduled').toLowerCase();
+        card.className = `month-sidebar-card status-${status}`;
+
+        const timeText = app.time ? app.time : 'Time TBC';
+        const serviceText = app.service || 'Dental visit';
+        const locationText = app.location || '';
+
+        card.innerHTML = `
+            <div class="month-sidebar-card-header">
+                <div class="month-sidebar-time">${timeText}</div>
+                <div class="month-sidebar-status">${status}</div>
+            </div>
+            <div class="month-sidebar-title">${app.patientName || 'Unnamed patient'}</div>
+            <div class="month-sidebar-subtitle">${serviceText}${locationText ? ' · ' + locationText : ''}</div>
+        `;
+
+        sidebarListEl.appendChild(card);
+    });
 }
 
 async function createMonthDateElement(date, isOtherMonth = false, isToday = false, dateObj = null) {
@@ -2955,7 +3054,7 @@ document.addEventListener('DOMContentLoaded', fixAppointmentTimeOptions);
 // Patient Account Modal Functions
 let currentAccountPatient = null;
 
-function showPatientAccountModal(patientData) {
+async function showPatientAccountModal(patientData) {
     currentAccountPatient = patientData;
 
     // DEBUG: Log the patient data structure
@@ -2968,7 +3067,7 @@ function showPatientAccountModal(patientData) {
     
     // Update status toggle
     const statusToggle = document.getElementById('patientStatusToggle');
-    const hasUpcomingAppointments = checkHasUpcomingAppointments(patientData.patientName);
+    const hasUpcomingAppointments = await checkHasUpcomingAppointments(patientData);
     
     if (hasUpcomingAppointments) {
         statusToggle.classList.add('active');
@@ -3012,14 +3111,17 @@ function showPatientAccountModal(patientData) {
 }, 200);
 }
 
-async function checkHasUpcomingAppointments(patientName) {
-    const today = new Date();
-    const allAppointments = await dataManager.getAllAppointments();
-    
+async function checkHasUpcomingAppointments(patientData) {
+    const allAppointments = await dataManager.getAllAppointments() || [];
+    const todayString = new Date().toISOString().split('T')[0];
+
     return allAppointments.some(appointment => {
-        if (appointment.patientName !== patientName) return false;
-        const appointmentDate = new Date(appointment.dateKey);
-        return appointmentDate >= today;
+        const samePatient = (patientData.userId && appointment.userId)
+            ? appointment.userId === patientData.userId
+            : appointment.patientName === patientData.patientName;
+
+        if (!samePatient) return false;
+        return appointment.dateKey >= todayString;
     });
 }
 
@@ -3979,7 +4081,7 @@ function showToothDetails(userId, toothNum, toothData) {
             treatmentsList.appendChild(treatmentEl);
         });
     } else {
-        treatmentsList.innerHTML = '<p style="color: #999;">No treatment records yet</p>';
+        treatmentsList.innerHTML = '<p class="treatment-placeholder">No treatment records yet</p>';
     }
 
     // Store current values for update
@@ -3997,8 +4099,21 @@ function showToothDetails(userId, toothNum, toothData) {
  */
 function closeToothDetails() {
     const panel = document.getElementById('toothDetailsPanel');
+    const title = document.getElementById('selectedToothTitle');
+    const treatmentsList = document.getElementById('treatmentsList');
+    const statusSelect = document.getElementById('toothStatusSelect');
     panel.style.display = 'none';
     window.currentToothData = null;
+
+    if (title) {
+        title.textContent = 'Select a tooth';
+    }
+    if (statusSelect) {
+        statusSelect.value = 'healthy';
+    }
+    if (treatmentsList) {
+        treatmentsList.innerHTML = '<p class="treatment-placeholder">Select a tooth to view history</p>';
+    }
 }
 
 /**
@@ -4039,27 +4154,17 @@ async function addTreatmentRecord() {
     if (!window.currentToothData) return;
 
     const { userId, toothNum } = window.currentToothData;
-    const notes = document.getElementById('treatmentNotes').value;
-    const fileInput = document.getElementById('treatmentAttachment');
-    const file = fileInput.files[0];
+    const notes = document.getElementById('treatmentNotes').value.trim();
 
-    if (!notes && !file) {
-        showNotification('⚠️ Please add notes or upload a file');
+    if (!notes) {
+        showNotification('⚠️ Please enter treatment notes');
         return;
     }
 
     try {
-        // Upload attachment if exists
-        let attachmentData = null;
-        if (file) {
-            attachmentData = await window.firebaseDataService.uploadToothAttachment(userId, toothNum, file);
-        }
-
-        // Create treatment record
         const treatment = {
-            type: file ? file.type.split('/')[0] : 'note',
-            notes: notes,
-            ...attachmentData
+            type: 'note',
+            notes: notes
         };
 
         await window.firebaseDataService.addToothTreatment(userId, toothNum, treatment);
@@ -4072,13 +4177,32 @@ async function addTreatmentRecord() {
 
         // Clear form
         document.getElementById('treatmentNotes').value = '';
-        fileInput.value = '';
 
         showNotification('✅ Treatment record added successfully');
     } catch (error) {
         console.error('❌ Error adding treatment record:', error);
         showNotification('❌ Failed to add treatment record');
     }
+}
+
+/**
+ * Unified save: update status first, then add record (if any)
+ */
+async function saveToothUpdates() {
+    if (!window.currentToothData) return;
+
+    // Always update status first
+    await updateToothStatus();
+
+    // Then add record if notes/file provided
+    const notes = document.getElementById('treatmentNotes').value.trim();
+
+    if (!notes) {
+        // No record to add; status already updated
+        return;
+    }
+
+    await addTreatmentRecord();
 }
 
 /**

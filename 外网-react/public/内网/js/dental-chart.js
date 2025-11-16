@@ -85,7 +85,7 @@ class DentalChart {
                 </div>
 
                 <div class="legend">
-                <div class="legend-title">Status:</div>
+                    <div class="legend-title">Status:</div>
                     <div class="legend-items">
                         ${this.generateLegend()}
                     </div>

@@ -97,6 +97,19 @@ export const UserDashboard = () => {
         : userData.clinics || ['arcadia'];
     const defaultViewLocation = accessibleLocations[0] || 'arcadia';
     if (typeof window !== 'undefined') {
+      const internalUserData = {
+        uid: currentUser.uid,
+        email: currentUser.email || '',
+        displayName: currentUser.displayName || currentUser.email?.split('@')[0] || 'Admin',
+        role: userData.role,
+        accessibleLocations,
+        clinics: accessibleLocations,
+        currentViewLocation: defaultViewLocation,
+        assignedLocation: userData.assignedLocation || defaultViewLocation,
+        photoURL: currentUser.photoURL || null
+      };
+
+      localStorage.setItem('currentUser', JSON.stringify(internalUserData));
       localStorage.setItem('dashboard:view-location', defaultViewLocation);
     }
 

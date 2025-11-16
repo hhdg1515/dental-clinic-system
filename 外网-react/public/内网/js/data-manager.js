@@ -6,10 +6,6 @@ class GlobalDataManager {
         this.storageKey = 'dental_clinic_data';
         this.useFirebase = true;
         this.firebaseService = null;
-        // User profiles cache for VIP status (in-memory, 5 min TTL)
-        this.userProfilesCache = new Map();
-        this.userProfilesCacheTime = new Map();
-        this.USER_PROFILE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
         this.init();
     }
 
@@ -186,7 +182,10 @@ class GlobalDataManager {
             try {
                 // 1. Check cache first
                 if (window.cacheManager) {
-                    const cached = window.cacheManager.getDateCache(dateKey);
+                    let cached = window.cacheManager.getDateCache(dateKey);
+                    if (cached && typeof cached.then === 'function') {
+                        cached = await cached;
+                    }
                     if (cached) {
                         return cached;
                     }
@@ -297,12 +296,15 @@ class GlobalDataManager {
 
 
     // Get all appointments (with caching)
-    async getAllAppointments() {
+    async getAllAppointments(includeAllStatuses = true) {
         if (this.useFirebase && this.firebaseService) {
             try {
                 // 1. Check cache first
                 if (window.cacheManager) {
-                    const cached = window.cacheManager.getAllCache();
+                    let cached = window.cacheManager.getAllCache();
+                    if (cached && typeof cached.then === 'function') {
+                        cached = await cached;
+                    }
                     if (cached) {
                         return cached;
                     }
@@ -313,8 +315,7 @@ class GlobalDataManager {
                 const userRole = currentUser.role;
                 const userClinics = this.getUserClinics(currentUser);
 
-                const appointments = await this.firebaseService.getAllAppointments(userRole, userClinics);
-
+                const appointments = await this.firebaseService.getAllAppointments(userRole, userClinics, includeAllStatuses);
                 // Ensure we return an array
                 if (Array.isArray(appointments)) {
                     // 3. Store in cache
@@ -368,14 +369,9 @@ class GlobalDataManager {
 
     // Get user clinics for Firebase filtering
     getUserClinics(user) {
-        // ✅ UPDATED: Support both 'owner' (new) and 'boss' (legacy) roles
         if (user.role === 'boss' || user.role === 'owner') {
             return ['arcadia', 'irvine', 'south-pasadena', 'rowland-heights', 'eastvale'];
-        } else if (user.clinics && Array.isArray(user.clinics)) {
-            // ✅ NEW: Use clinics array from user profile (from Firestore users/{uid})
-            return user.clinics;
         } else {
-            // Fallback: Use assignedLocation
             return user.assignedLocation ? [user.assignedLocation] : [];
         }
     }
@@ -585,27 +581,21 @@ class GlobalDataManager {
     }
      // New user management methods
     getCurrentUser() {
-    // ✅ UPDATED: Get user from intranet auth guard (Firebase Auth + Firestore users/{uid})
-    // No longer reads sensitive identity data from localStorage
-    if (window.intranetAuthGuard) {
-        const userProfile = window.intranetAuthGuard.getUserProfile();
-        if (userProfile) {
-            // Convert to data-manager compatible format
-            return {
-                name: userProfile.displayName || userProfile.email?.split('@')[0] || 'Admin',
-                role: userProfile.role, // 'owner' or 'admin'
-                clinics: userProfile.clinics || [],
-                assignedLocation: userProfile.assignedLocation || (userProfile.clinics?.[0]) || 'arcadia',
-                currentViewLocation: window.intranetAuthGuard.getCurrentViewLocation() || 'arcadia',
-                email: userProfile.email,
-                uid: userProfile.uid
-            };
+    // First check localStorage for mock login user (from mock-login.html)
+    try {
+        const mockUser = localStorage.getItem('currentUser');
+        if (mockUser) {
+            const parsedUser = JSON.parse(mockUser);
+            console.log('🔍 Using mock login user:', parsedUser);
+            return parsedUser;
         }
+    } catch (error) {
+        console.warn('Failed to parse mock user from localStorage:', error);
     }
 
-    // Fallback to internal data-manager config (for development/testing only)
+    // Fallback to internal data-manager config
     if (!this.data || !this.data.userConfig || !this.data.userConfig.users) {
-        console.warn('⚠️ No user config found and no auth guard, defaulting to boss');
+        console.warn('⚠️ No user config found, defaulting to boss');
         return {
             name: 'Sunny',
             role: 'boss',
@@ -691,28 +681,13 @@ class GlobalDataManager {
                 const userRole = currentUser.role;
                 const userClinics = this.getUserClinics(currentUser);
 
-                console.log('📋 getPendingConfirmations - Current user:', currentUser);
-                console.log('📋 getPendingConfirmations - User clinics:', userClinics);
-
                 // Get pending appointments from Firebase
                 const pendingAppointments = await this.firebaseService.getAllAppointments(userRole, userClinics);
-                console.log('📋 getPendingConfirmations - All appointments from Firebase:', pendingAppointments.length);
 
-                // Filter for pending status
-                const pending = pendingAppointments.filter(appointment => appointment.status === 'pending');
-                console.log('📋 getPendingConfirmations - Pending appointments before conversion:', pending.length);
-
-                if (pending.length > 0) {
-                    console.log('📋 Sample pending appointment:', pending[0]);
-                }
-
-                // Convert to confirmation format
-                const pendingConfirmations = pending.map(appointment => this.convertAppointmentToConfirmation(appointment));
-
-                console.log('📋 getPendingConfirmations - Final confirmations:', pendingConfirmations.length);
-                if (pendingConfirmations.length > 0) {
-                    console.log('📋 Sample confirmation:', pendingConfirmations[0]);
-                }
+                // Filter for pending status and convert to confirmation format
+                const pendingConfirmations = pendingAppointments
+                    .filter(appointment => appointment.status === 'pending')
+                    .map(appointment => this.convertAppointmentToConfirmation(appointment));
 
                 return pendingConfirmations;
             } catch (error) {
@@ -749,21 +724,13 @@ class GlobalDataManager {
             hour12: true
         });
 
-        // Get and normalize location - keep it in title case format for display
+        // Get and normalize location
         let location = appointment.location || appointment.clinicLocation || appointment.clinicName || 'Unknown';
 
-        // Normalize location format: "arcadia" -> "Arcadia", "south-pasadena" -> "South Pasadena"
+        // Ensure proper capitalization for location (needed for role-based filtering)
         if (location && typeof location === 'string') {
-            // Handle hyphenated locations like "south-pasadena"
-            location = location.split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join(' ');
+            location = location.charAt(0).toUpperCase() + location.slice(1).toLowerCase();
         }
-
-        console.log('🔄 convertAppointmentToConfirmation - location mapping:', {
-            original: appointment.location || appointment.clinicLocation,
-            normalized: location
-        });
 
         return {
             id: appointment.id,
@@ -980,182 +947,6 @@ class GlobalDataManager {
         });
         return breakdown;
     }
-
-    // === USER PROFILES CACHE METHODS (for VIP status) ===
-
-    /**
-     * Get user profiles with caching
-     * @param {Array<string>} userIds - Array of user IDs
-     * @returns {Promise<Map<string, object>>} Map of userId to profile
-     */
-    async getUserProfiles(userIds) {
-        if (!userIds || userIds.length === 0) {
-            return new Map();
-        }
-
-        if (!this.firebaseService) {
-            console.warn('Firebase service not available for getUserProfiles');
-            return new Map();
-        }
-
-        const now = Date.now();
-        const uncachedIds = [];
-        const result = new Map();
-
-        // Check cache first
-        for (const userId of userIds) {
-            if (this.userProfilesCache.has(userId)) {
-                const cacheTime = this.userProfilesCacheTime.get(userId);
-                // Check if cache is still valid (within TTL)
-                if (now - cacheTime < this.USER_PROFILE_CACHE_TTL) {
-                    result.set(userId, this.userProfilesCache.get(userId));
-                } else {
-                    // Cache expired
-                    uncachedIds.push(userId);
-                }
-            } else {
-                uncachedIds.push(userId);
-            }
-        }
-
-        // Fetch uncached profiles
-        if (uncachedIds.length > 0) {
-            try {
-                const freshProfiles = await this.firebaseService.getUserProfilesBatch(uncachedIds);
-
-                // Update cache
-                freshProfiles.forEach((profile, userId) => {
-                    this.userProfilesCache.set(userId, profile);
-                    this.userProfilesCacheTime.set(userId, now);
-                    result.set(userId, profile);
-                });
-
-                console.log(`👤 Fetched ${uncachedIds.length} user profiles, ${result.size - freshProfiles.size} from cache`);
-            } catch (error) {
-                console.error('Error fetching user profiles:', error);
-                // Return cached results even if fetch fails
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Get patient icon based on VIP status and history
-     * @param {object} appointment - Appointment object with userId and other info
-     * @param {Map<string, object>} userProfilesMap - Map of userId to profile (optional, for batch operations)
-     * @returns {Promise<string>} Icon string (e.g., ' 👑' or ' 🔄' or '')
-     */
-    async getPatientIcon(appointment, userProfilesMap = null) {
-        try {
-            // Check VIP status first (priority)
-            if (appointment.userId) {
-                let userProfile = null;
-
-                // Use provided map if available (for batch operations)
-                if (userProfilesMap && userProfilesMap.has(appointment.userId)) {
-                    userProfile = userProfilesMap.get(appointment.userId);
-                } else {
-                    // Fetch single profile with cache
-                    const profiles = await this.getUserProfiles([appointment.userId]);
-                    userProfile = profiles.get(appointment.userId);
-                }
-
-                // If VIP, return crown icon
-                if (userProfile && userProfile.isVIP === true) {
-                    return ' 👑';
-                }
-            }
-
-            // Check if old patient (has history)
-            // For pending confirmations, we need to check appointment history
-            if (appointment.userId) {
-                const allAppointments = await this.getAllAppointments();
-                const patientHistory = allAppointments.filter(apt =>
-                    apt.userId === appointment.userId &&
-                    apt.id !== appointment.id // Exclude current appointment
-                );
-
-                if (patientHistory.length > 0) {
-                    return ' 🔄';
-                }
-            }
-
-            // New patient - no icon
-            return '';
-
-        } catch (error) {
-            console.warn('Error getting patient icon:', error);
-            return '';
-        }
-    }
-
-    /**
-     * Batch get patient icons for multiple appointments (optimized)
-     * @param {Array<object>} appointments - Array of appointment objects
-     * @returns {Promise<Map<string, string>>} Map of appointment ID to icon
-     */
-    async getPatientIconsBatch(appointments) {
-        if (!appointments || appointments.length === 0) {
-            return new Map();
-        }
-
-        const icons = new Map();
-
-        // Collect all unique userIds
-        const userIds = [...new Set(
-            appointments
-                .filter(apt => apt.userId)
-                .map(apt => apt.userId)
-        )];
-
-        // Fetch all user profiles in one batch
-        const userProfilesMap = await this.getUserProfiles(userIds);
-
-        // Get all appointments for history check
-        const allAppointments = await this.getAllAppointments();
-
-        // Process each appointment
-        for (const appointment of appointments) {
-            let icon = '';
-
-            // Check VIP first
-            if (appointment.userId && userProfilesMap.has(appointment.userId)) {
-                const profile = userProfilesMap.get(appointment.userId);
-                if (profile && profile.isVIP === true) {
-                    icon = ' 👑';
-                    icons.set(appointment.id, icon);
-                    continue; // VIP takes priority, skip history check
-                }
-            }
-
-            // Check history for old patients
-            if (appointment.userId) {
-                const patientHistory = allAppointments.filter(apt =>
-                    apt.userId === appointment.userId &&
-                    apt.id !== appointment.id
-                );
-
-                if (patientHistory.length > 0) {
-                    icon = ' 🔄';
-                }
-            }
-
-            icons.set(appointment.id, icon);
-        }
-
-        console.log(`👤 Generated icons for ${icons.size} appointments`);
-        return icons;
-    }
-
-    /**
-     * Clear user profiles cache (for manual refresh)
-     */
-    clearUserProfilesCache() {
-        this.userProfilesCache.clear();
-        this.userProfilesCacheTime.clear();
-        console.log('👤 User profiles cache cleared');
-    }
 }
 
 // Create global instance
@@ -1167,4 +958,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.dataManager = dataManager;
 }
-

@@ -241,7 +241,30 @@ export async function signInUser(
     resetRateLimit(email);
 
     // Get user data from Firestore
-    const userData = await getUserData(user.uid);
+    let userData = await getUserData(user.uid);
+
+    // Fallback: if Firestore is offline or document missing, synthesize userData from config
+    if (!userData) {
+      const userConfig = getUserConfig(user.email || email);
+      userData = {
+        uid: user.uid,
+        email: (user.email || email).toLowerCase(),
+        role: userConfig.role,
+        clinics: userConfig.clinics,
+        assignedLocation: userConfig.clinics[0] || null,
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        isFirstLogin: false,
+        isVIP: false
+      };
+
+      logDev('User data not found in Firestore or client offline, using fallback config:', {
+        uid: userData.uid,
+        email: userData.email,
+        role: userData.role,
+        clinics: userData.clinics
+      });
+    }
 
     // Update last login time
     if (userData) {
