@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ⚠️⚠️⚠️ TEMPORARY DEVELOPMENT RULES ⚠️⚠️⚠️
+    // 这是临时开发规则,允许已认证用户访问大部分数据
+    // 仅用于调试和开发,不要在生产环境长期使用!
+    //
+    // 使用此规则可以:
+    // 1. 立即看到内网的所有数据
+    // 2. 调试permission问题
+    // 3. 验证用户数据结构
+    //
+    // 完成调试后,请替换为更安全的规则!
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ============================================
+    // USERS COLLECTION - 稍微限制一下
+    // ============================================
+    match /users/{userId} {
+      // 已认证用户可以读取所有用户(用于调试)
+      allow read: if isAuthenticated();
+
+      // 只能创建/更新自己的用户文档
+      allow create, update: if isAuthenticated() && request.auth.uid == userId;
+
+      // 禁止删除用户
+      allow delete: if false;
+    }
+
+    // ============================================
+    // APPOINTMENTS - 完全开放给已认证用户
+    // ============================================
+    match /appointments/{appointmentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // PENDING CONFIRMATIONS - 完全开放
+    // ============================================
+    match /pendingConfirmations/{confirmationId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // CANCELLED APPOINTMENTS - 完全开放
+    // ============================================
+    match /cancelledAppointments/{documentId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // PATIENT PROFILES - 完全开放
+    // ============================================
+    match /patientProfiles/{patientId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // DENTAL CHARTS - 完全开放
+    // ============================================
+    match /dentalCharts/{userId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // MEDICAL RECORDS - 完全开放(临时)
+    // ============================================
+    match /medicalRecords/{recordId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ============================================
+    // AUDIT LOGS - 只读和创建
+    // ============================================
+    match /auditLogs/{logId} {
+      allow read, create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+
+    // ============================================
+    // DEFAULT - 开放给已认证用户(临时)
+    // ============================================
+    match /{document=**} {
+      // 临时允许已认证用户访问所有集合
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

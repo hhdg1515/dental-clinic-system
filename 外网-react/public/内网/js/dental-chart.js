@@ -1,7 +1,15 @@
 // Dental Chart Component - Simplified version with CSS grid
 // Universal numbering system (1-32)
 
-import { escapeHtml } from './security-utils.js';
+// XSS Prevention: Escape HTML function (inline to avoid module import issues)
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
 
 class DentalChart {
     constructor(containerId, options = {}) {
