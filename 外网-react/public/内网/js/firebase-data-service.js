@@ -1172,17 +1172,60 @@ class FirebaseDataService {
         return null;
     }
 
+    // Validate tooth number (1-32)
+    validateToothNumber(toothNum) {
+        const num = parseInt(toothNum);
+        if (isNaN(num) || num < 1 || num > 32) {
+            throw new Error(`Invalid tooth number: ${toothNum}. Must be 1-32.`);
+        }
+        return num;
+    }
+
+    // Validate tooth status
+    validateToothStatus(status) {
+        const validStatuses = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op', 'urgent'];
+        if (!validStatuses.includes(status)) {
+            throw new Error(`Invalid tooth status: ${status}. Must be one of: ${validStatuses.join(', ')}`);
+        }
+        return status;
+    }
+
+    // Validate file upload
+    validateFileUpload(file) {
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+
+        if (!file) {
+            throw new Error('No file provided');
+        }
+
+        if (file.size > maxSize) {
+            throw new Error(`File too large: ${(file.size / 1024 / 1024).toFixed(2)}MB. Maximum 5MB allowed.`);
+        }
+
+        if (!allowedTypes.includes(file.type)) {
+            throw new Error(`Invalid file type: ${file.type}. Only JPEG, PNG, and PDF allowed.`);
+        }
+
+        return true;
+    }
+
     // Update tooth status (e.g., healthy, cavity, filled, missing, etc.)
     async updateToothStatus(userId, toothNum, statusData) {
         await this.ensureReady();
+
+        // Validate inputs
+        const validToothNum = this.validateToothNumber(toothNum);
+        const validStatus = this.validateToothStatus(statusData.status);
+
         const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
         const db = this.validateDatabase();
         const chartRef = doc(db, 'dentalCharts', userId);
 
         await updateDoc(chartRef, {
-            [`teeth.${toothNum}.status`]: statusData.status,
-            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+            [`teeth.${validToothNum}.status`]: validStatus,
+            [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         });
 
@@ -1192,6 +1235,10 @@ class FirebaseDataService {
     // Add treatment record to a tooth
     async addToothTreatment(userId, toothNum, treatment) {
         await this.ensureReady();
+
+        // Validate tooth number
+        const validToothNum = this.validateToothNumber(toothNum);
+
         const { doc, getDoc, updateDoc, arrayUnion } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
         const db = this.validateDatabase();
@@ -1215,19 +1262,19 @@ class FirebaseDataService {
         if (!chartData.teeth) {
             chartData.teeth = {};
         }
-        if (!chartData.teeth[toothNum]) {
-            chartData.teeth[toothNum] = { status: 'healthy', treatments: [] };
+        if (!chartData.teeth[validToothNum]) {
+            chartData.teeth[validToothNum] = { status: 'healthy', treatments: [] };
         }
-        if (!chartData.teeth[toothNum].treatments) {
-            chartData.teeth[toothNum].treatments = [];
+        if (!chartData.teeth[validToothNum].treatments) {
+            chartData.teeth[validToothNum].treatments = [];
         }
 
         // Add treatment entry
-        chartData.teeth[toothNum].treatments.push(entry);
+        chartData.teeth[validToothNum].treatments.push(entry);
 
         await updateDoc(chartRef, {
-            [`teeth.${toothNum}.treatments`]: chartData.teeth[toothNum].treatments,
-            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+            [`teeth.${validToothNum}.treatments`]: chartData.teeth[validToothNum].treatments,
+            [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         });
 
@@ -1237,6 +1284,11 @@ class FirebaseDataService {
     // Upload file for tooth attachment (hybrid: <50KB Base64, >50KB Storage)
     async uploadToothAttachment(userId, toothNum, file) {
         await this.ensureReady();
+
+        // Validate inputs
+        const validToothNum = this.validateToothNumber(toothNum);
+        this.validateFileUpload(file);
+
         const MAX_BASE64_SIZE = 50 * 1024; // 50 KB threshold
 
         if (file.size < MAX_BASE64_SIZE) {
@@ -1254,7 +1306,7 @@ class FirebaseDataService {
             const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js');
 
             const storage = this.storage;
-            const storagePath = `dentalCharts/${userId}/tooth_${toothNum}/${Date.now()}_${file.name}`;
+            const storagePath = `dentalCharts/${userId}/tooth_${validToothNum}/${Date.now()}_${file.name}`;
             const storageRef = ref(storage, storagePath);
 
             // Upload file
@@ -1275,6 +1327,10 @@ class FirebaseDataService {
     // Delete tooth treatment entry
     async deleteToothTreatment(userId, toothNum, treatmentId) {
         await this.ensureReady();
+
+        // Validate tooth number
+        const validToothNum = this.validateToothNumber(toothNum);
+
         const { doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
         const db = this.validateDatabase();
@@ -1283,13 +1339,13 @@ class FirebaseDataService {
 
         if (chartSnap.exists()) {
             const chartData = chartSnap.data();
-            const tooth = chartData.teeth?.[toothNum];
+            const tooth = chartData.teeth?.[validToothNum];
 
             if (tooth?.treatments) {
                 const updatedTreatments = tooth.treatments.filter(t => t.id !== treatmentId);
                 await updateDoc(chartRef, {
-                    [`teeth.${toothNum}.treatments`]: updatedTreatments,
-                    [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+                    [`teeth.${validToothNum}.treatments`]: updatedTreatments,
+                    [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
                     lastUpdated: new Date().toISOString()
                 });
             }

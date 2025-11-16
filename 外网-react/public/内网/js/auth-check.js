@@ -1,6 +1,37 @@
 // 内网认证检查模块
 // 基于localStorage的用户角色验证，确保只有admin/owner能访问内网
 
+/**
+ * ⚠️ SECURITY WARNING ⚠️
+ *
+ * This is a CLIENT-SIDE UX helper ONLY for improving user experience.
+ *
+ * DO NOT rely on this for security!
+ *
+ * All authorization MUST be enforced server-side via Firestore Security Rules.
+ * Attackers can easily bypass localStorage checks by:
+ * 1. Opening browser DevTools → Application → Local Storage
+ * 2. Modifying the user object to set "role": "owner"
+ * 3. Refreshing the page to bypass this client-side check
+ *
+ * This module is ONLY used to:
+ * - Hide/show UI elements (better UX)
+ * - Redirect unauthorized users to login page (convenience)
+ * - Display user info in the UI
+ *
+ * Real security is enforced by:
+ * - Firebase Security Rules (server-side, cannot be bypassed)
+ * - Firebase Authentication (server-side token validation)
+ * - Firestore RBAC rules (role-based access control)
+ *
+ * Never use this module to make security decisions like:
+ * ❌ Showing/hiding sensitive data
+ * ❌ Enabling/disabling critical operations
+ * ❌ Granting access to protected resources
+ *
+ * Always rely on server-side Firebase Security Rules for actual authorization.
+ */
+
 class InternalAuthChecker {
     constructor() {
         this.allowedRoles = ['admin', 'owner'];
