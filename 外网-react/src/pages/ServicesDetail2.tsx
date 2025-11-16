@@ -68,7 +68,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <OptimizedImage className="service-image" src="/images/pe.jpg" alt={t('periodontics-card-title')} loading="lazy" />
+                    <OptimizedImage className="service-image" src="/images/pe.jpg" alt={t('periodontics-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('periodontics-card-title')}</h3>
@@ -134,7 +134,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <OptimizedImage className="service-image" src="/images/res.jpg" alt={t('restorations-card-title')} loading="lazy" />
+                    <OptimizedImage className="service-image" src="/images/res.jpg" alt={t('restorations-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('restorations-card-title')}</h3>
@@ -198,7 +198,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <OptimizedImage className="service-image" src="/images/preventive.png" alt={t('preventive-card-title')} loading="lazy" />
+                    <OptimizedImage className="service-image" src="/images/preventive.png" alt={t('preventive-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('preventive-card-title')}</h3>
@@ -262,7 +262,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <OptimizedImage className="service-image" src="/images/oral.jpg" alt={t('oral-surgery-card-title')} loading="lazy" />
+                    <OptimizedImage className="service-image" src="/images/oral.jpg" alt={t('oral-surgery-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('oral-surgery-card-title')}</h3>

@@ -154,6 +154,7 @@ export const Landing = () => {
           alt="Hero Background"
           loading="eager"
           fetchPriority="high"
+          aspectRatio="16/9"
           style={{
             width: '100%',
             height: '100%',
@@ -199,6 +200,7 @@ export const Landing = () => {
                     alt={t(service.titleKey)}
                     className="h-[288px] w-full rounded-[10px] object-cover shadow-[10px_10px_10px_rgba(0,0,0,0.2)] transition duration-300 hover:scale-[1.02]"
                     loading="lazy"
+                    aspectRatio="4/3"
                   />
                 </Link>
                 <p className="mt-5 font-display text-sm uppercase tracking-[0.16em] text-white md:text-base md:tracking-[0.18em]">
@@ -247,6 +249,7 @@ export const Landing = () => {
             alt="Dental clinic interior"
             className="w-full max-w-[360px] object-cover"
             loading="lazy"
+            aspectRatio="4/3"
           />
         </div>
 
@@ -392,7 +395,7 @@ export const Landing = () => {
             <div className="image-cards-row">
               <div className="image-card amenities-card">
                 <div className="image-container">
-                  <OptimizedImage src="/images/local.jpg" alt="Local Amenities" className="card-image" loading="lazy" />
+                  <OptimizedImage src="/images/local.jpg" alt="Local Amenities" className="card-image" loading="lazy" aspectRatio="4/3" />
                   <div className="image-overlay">
                     <div className="image-content">
                       <h2 className="card-title">{t('amenities-title')}</h2>
@@ -405,7 +408,7 @@ export const Landing = () => {
 
               <div className="image-card plan-card">
                 <div className="image-container">
-                  <OptimizedImage src="/images/todo.jpg" alt="Plan Your Visit" className="card-image" loading="lazy" />
+                  <OptimizedImage src="/images/todo.jpg" alt="Plan Your Visit" className="card-image" loading="lazy" aspectRatio="4/3" />
                   <div className="image-overlay">
                     <div className="image-content">
                       <h2 className="card-title">{t('plan-title')}</h2>
@@ -479,7 +482,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=Arcadia,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Arcadia location on Google Maps">
                       <div className="city-image-container">
-                        <OptimizedImage src="/images/arcadia2.jpg" alt="Arcadia" className="city-image" loading="lazy" />
+                        <OptimizedImage src="/images/arcadia2.jpg" alt="Arcadia" className="city-image" loading="lazy" aspectRatio="16/9" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-arcadia')}</h3>
@@ -495,7 +498,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=Rowland+Heights,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Rowland Heights location on Google Maps">
                       <div className="city-image-container">
-                        <OptimizedImage src="/images/rowland.jpg" alt="Rowland Heights" className="city-image" loading="lazy" />
+                        <OptimizedImage src="/images/rowland.jpg" alt="Rowland Heights" className="city-image" loading="lazy" aspectRatio="16/9" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-rowland-heights')}</h3>
@@ -511,7 +514,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=Irvine,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Irvine location on Google Maps">
                       <div className="city-image-container">
-                        <OptimizedImage src="/images/irvine2.jpg" alt="Irvine" className="city-image" loading="lazy" />
+                        <OptimizedImage src="/images/irvine2.jpg" alt="Irvine" className="city-image" loading="lazy" aspectRatio="16/9" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-irvine')}</h3>
@@ -527,7 +530,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://maps.google.com/maps?q=South+Pasadena,CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View South Pasadena location on Google Maps">
                       <div className="city-image-container">
-                        <OptimizedImage src="/images/pasadena2.jpg" alt="South Pasadena" className="city-image" loading="lazy" />
+                        <OptimizedImage src="/images/pasadena2.jpg" alt="South Pasadena" className="city-image" loading="lazy" aspectRatio="16/9" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-south-pasadena')}</h3>
@@ -543,7 +546,7 @@ export const Landing = () => {
                   <div className="map-display">
                     <a href="https://www.google.com/maps/place/Eastvale,+CA" target="_blank" className="map-link" rel="noreferrer" aria-label="View Eastvale location on Google Maps">
                       <div className="city-image-container">
-                        <OptimizedImage src="/images/eastvale.jpg" alt="Eastvale" className="city-image" loading="lazy" />
+                        <OptimizedImage src="/images/eastvale.jpg" alt="Eastvale" className="city-image" loading="lazy" aspectRatio="16/9" />
                         <div className="city-overlay">
                           <div className="city-content">
                             <h3 className="city-name">{t('data-clinic-eastvale')}</h3>

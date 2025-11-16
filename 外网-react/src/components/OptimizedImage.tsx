@@ -8,6 +8,9 @@ interface OptimizedImageProps {
   style?: React.CSSProperties;
   decoding?: 'async' | 'sync' | 'auto';
   fetchPriority?: 'high' | 'low' | 'auto';
+  aspectRatio?: string; // e.g., "16/9", "4/3", "1/1"
+  width?: string | number;
+  height?: string | number;
 }
 
 /**
@@ -33,11 +36,22 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   loading = 'lazy',
   style,
   decoding = 'async',
-  fetchPriority
+  fetchPriority,
+  aspectRatio,
+  width,
+  height
 }) => {
   // 提取文件名和路径
   const basePath = src.replace(/\.(jpg|jpeg|png)$/i, '');
   const ext = src.match(/\.(jpg|jpeg|png)$/i)?.[1] || 'jpg';
+
+  // Merge styles with aspectRatio to prevent CLS
+  const imageStyle: React.CSSProperties = {
+    ...style,
+    ...(aspectRatio && { aspectRatio }),
+    ...(width && { width }),
+    ...(height && { height })
+  };
 
   return (
     <picture>
@@ -56,7 +70,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         alt={alt}
         className={className}
         loading={loading}
-        style={style}
+        style={imageStyle}
         decoding={decoding}
         fetchPriority={fetchPriority}
       />

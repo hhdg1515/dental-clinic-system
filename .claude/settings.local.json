@@ -51,7 +51,8 @@
       "Bash(node scripts/compress-intranet.js:*)",
       "Bash(node scripts/update-html-references.js:*)",
       "Bash(node -c:*)",
-      "Bash(node scripts/add-seo-to-pages.js:*)"
+      "Bash(node scripts/add-seo-to-pages.js:*)",
+      "Bash(do sed -i 's|loading=\"\"lazy\"\" />|loading=\"\"lazy\"\" aspectRatio=\"\"16/9\"\" />|g; s|loading=\"\"eager\"\" />|loading=\"\"eager\"\" aspectRatio=\"\"16/9\"\" />|g' \"$file\")"
     ],
     "deny": [],
     "ask": []
