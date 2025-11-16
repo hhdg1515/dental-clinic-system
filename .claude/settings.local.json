@@ -47,7 +47,10 @@
       "Bash(then echo \"$f: ✅ has WebP\")",
       "Bash(else echo \"$f: ❌ NO WebP\")",
       "Bash(node -e:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(node scripts/compress-intranet.js:*)",
+      "Bash(node scripts/update-html-references.js:*)",
+      "Bash(node -c:*)"
     ],
     "deny": [],
     "ask": []
