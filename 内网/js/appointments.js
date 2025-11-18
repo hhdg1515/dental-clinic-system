@@ -4,8 +4,22 @@
  * .day-appointment-card, .concurrent-appointments-container
  * Defined in appointments.css
  */
+
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 // Appointments Page Functionality - Updated to use Global Data Manager
-import { escapeHtml } from './security-utils.js';
 
 // Current view and date state
 let currentView = 'week';
@@ -1500,6 +1514,22 @@ async function renderMonthView() {
     await generateMonthCalendar();
 }
 
+function createMonthDateElement(date, isOtherMonth = false, isToday = false) {
+    const dateElement = document.createElement('div');
+    dateElement.className = 'month-date';
+    
+    if (isOtherMonth) {
+        dateElement.classList.add('other-month');
+    }
+    
+    if (isToday) {
+        dateElement.classList.add('today');
+    }
+    
+    dateElement.textContent = date.toString();
+    
+    return dateElement;
+}
 // Helper function to get time position in pixels
 function getTimePosition(timeString) {
     const timeMatch = /^(\d{1,2}):(\d{2})$/.exec(timeString);
@@ -2459,55 +2489,8 @@ async function generateMonthCalendar() {
         monthDatesElement.appendChild(dateElement);
     }
 
-    pruneTrailingOtherMonthRows(monthDatesElement);
-
-    // Default sidebar content (prefer today's date if visible)
-    let defaultDateObj;
-    let defaultAppointments;
-    if (year === today.getFullYear() && month === today.getMonth()) {
-        defaultDateObj = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0, 0);
-        defaultAppointments = appointmentsByDate[formatDateToKey(defaultDateObj)] || [];
-        const todayElement = monthDatesElement.querySelector('.month-date.today');
-        if (todayElement) {
-            todayElement.classList.add('selected');
-        }
-    } else {
-        defaultDateObj = new Date(year, month, 1, 12, 0, 0);
-        defaultAppointments = appointmentsByDate[formatDateToKey(defaultDateObj)] || [];
-        const firstCurrent = monthDatesElement.querySelector('.month-date:not(.other-month)');
-        if (firstCurrent) {
-            firstCurrent.classList.add('selected');
-        }
-    }
-
-    if (defaultDateObj) {
-        updateMonthSidebar(defaultDateObj, defaultAppointments);
-    }
-
     console.log('Calendar: Optimized month calendar generation completed');
 }
-
-function pruneTrailingOtherMonthRows(container) {
-    const cells = Array.from(container.children);
-    if (cells.length % 7 !== 0) return;
-
-    let rows = cells.length / 7;
-    while (rows > 0) {
-        const startIndex = (rows - 1) * 7;
-        const rowCells = cells.slice(startIndex, startIndex + 7);
-        const allOther = rowCells.every(cell => cell.classList.contains('other-month'));
-
-        if (allOther) {
-            rowCells.forEach(cell => container.removeChild(cell));
-            cells.splice(startIndex, 7);
-            rows--;
-        } else {
-            break;
-        }
-    }
-}
-
-let currentMonthSidebarDate = null;
 
 // Optimized version that uses pre-fetched appointment data
 function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = false, dateObj = null, appointments = []) {
@@ -2557,80 +2540,12 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
                 return;
             }
 
-            // Highlight selected day in month view
-            document.querySelectorAll('.month-date.selected').forEach(el => el.classList.remove('selected'));
-            dateElement.classList.add('selected');
-
-            // Update sidebar with this day's appointments
-            updateMonthSidebar(dateObj, appointments);
-        });
-
-        dateElement.addEventListener('dblclick', (e) => {
-            if (!isOtherMonth && e.target.closest('.add-appointment-icon')) {
-                return;
-            }
+            // Navigate to Day View with selected date
             switchToDayView(dateObj);
         });
     }
 
     return dateElement;
-}
-
-function updateMonthSidebar(dateObj, appointments) {
-    const sidebarDateEl = document.getElementById('monthSidebarDate');
-    const sidebarCountEl = document.getElementById('monthSidebarCount');
-    const sidebarEmptyEl = document.getElementById('monthSidebarEmpty');
-    const sidebarListEl = document.getElementById('monthSidebarList');
-
-    if (!sidebarDateEl || !sidebarCountEl || !sidebarEmptyEl || !sidebarListEl) {
-        return;
-    }
-
-    currentMonthSidebarDate = dateObj;
-
-    const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    sidebarDateEl.textContent = dateObj.toLocaleDateString('en-US', options);
-
-    const count = appointments.length;
-    if (count === 0) {
-        sidebarCountEl.textContent = '';
-        sidebarEmptyEl.style.display = 'block';
-        sidebarListEl.innerHTML = '';
-        return;
-    }
-
-    sidebarCountEl.textContent = count === 1 ? '1 appointment' : `${count} appointments`;
-    sidebarEmptyEl.style.display = 'none';
-
-    // Sort appointments by time (HH:MM)
-    const sorted = [...appointments].sort((a, b) => {
-        const ta = (a.time || '00:00').padStart(5, '0');
-        const tb = (b.time || '00:00').padStart(5, '0');
-        return ta.localeCompare(tb);
-    });
-
-    sidebarListEl.innerHTML = '';
-
-    sorted.forEach(app => {
-        const card = document.createElement('div');
-        const status = (app.status || 'scheduled').toLowerCase();
-        card.className = `month-sidebar-card status-${status}`;
-
-        const timeText = app.time ? app.time : 'Time TBC';
-        const serviceText = app.service || 'Dental visit';
-        const locationText = app.location || '';
-
-        card.innerHTML = `
-            <div class="month-sidebar-card-header">
-                <div class="month-sidebar-time">${timeText}</div>
-                <div class="month-sidebar-status">${status}</div>
-            </div>
-            <div class="month-sidebar-title">${app.patientName || 'Unnamed patient'}</div>
-            <div class="month-sidebar-subtitle">${serviceText}${locationText ? ' · ' + locationText : ''}</div>
-        `;
-
-        sidebarListEl.appendChild(card);
-    });
 }
 
 async function createMonthDateElement(date, isOtherMonth = false, isToday = false, dateObj = null) {
@@ -3054,7 +2969,7 @@ document.addEventListener('DOMContentLoaded', fixAppointmentTimeOptions);
 // Patient Account Modal Functions
 let currentAccountPatient = null;
 
-async function showPatientAccountModal(patientData) {
+function showPatientAccountModal(patientData) {
     currentAccountPatient = patientData;
 
     // DEBUG: Log the patient data structure
@@ -3067,7 +2982,7 @@ async function showPatientAccountModal(patientData) {
     
     // Update status toggle
     const statusToggle = document.getElementById('patientStatusToggle');
-    const hasUpcomingAppointments = await checkHasUpcomingAppointments(patientData);
+    const hasUpcomingAppointments = checkHasUpcomingAppointments(patientData.patientName);
     
     if (hasUpcomingAppointments) {
         statusToggle.classList.add('active');
@@ -3081,13 +2996,10 @@ async function showPatientAccountModal(patientData) {
     
     // Load appointment history - pass full patient data for userId access
     loadAccountHistory(patientData);
-
+    
     // Load medical records
     loadAccountRecords(patientData);
-
-    // Load dental chart
-    loadDentalChart(patientData);
-
+    
     // Load next treatments - pass full patient data for userId access
     loadNextTreatments(patientData);
     
@@ -3111,17 +3023,14 @@ async function showPatientAccountModal(patientData) {
 }, 200);
 }
 
-async function checkHasUpcomingAppointments(patientData) {
-    const allAppointments = await dataManager.getAllAppointments() || [];
-    const todayString = new Date().toISOString().split('T')[0];
-
+async function checkHasUpcomingAppointments(patientName) {
+    const today = new Date();
+    const allAppointments = await dataManager.getAllAppointments();
+    
     return allAppointments.some(appointment => {
-        const samePatient = (patientData.userId && appointment.userId)
-            ? appointment.userId === patientData.userId
-            : appointment.patientName === patientData.patientName;
-
-        if (!samePatient) return false;
-        return appointment.dateKey >= todayString;
+        if (appointment.patientName !== patientName) return false;
+        const appointmentDate = new Date(appointment.dateKey);
+        return appointmentDate >= today;
     });
 }
 
@@ -3174,7 +3083,7 @@ async function loadAccountHistory(patientData) {
             comparison: 'This should now show correct dates'
         });
         const formattedTime = formatTime(appointment.time);
-        
+
         historyItem.innerHTML = `
             <div class="account-history-header">
                 <span class="account-history-date">${escapeHtml(formattedDate)} - ${escapeHtml(formattedTime)}</span>
@@ -3271,10 +3180,10 @@ async function loadAccountRecords(patientData) {
                 </div>
             `;
 
-            // Add event listeners to buttons (safer than inline onclick)
+            // Add event listeners to avoid inline onclick handlers
             const buttons = recordItem.querySelectorAll('.record-action');
-            buttons.forEach(btn => {
-                btn.addEventListener('click', function() {
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
                     const action = this.getAttribute('data-action');
                     const recordId = this.getAttribute('data-record-id');
                     const recordName = this.getAttribute('data-record-name');
@@ -3373,7 +3282,7 @@ async function loadNextTreatments(patientData) {
             comparison: 'This should now show correct dates'
         });
         const formattedTime = formatTime(appointment.time);
-        
+
         treatmentCard.innerHTML = `
             <div class="treatment-header">
                 <div class="treatment-info">
@@ -3997,236 +3906,5 @@ function applyLocationPermissionsToNewAppointmentModal() {
         locationSelect.style.backgroundColor = 'white';
         locationSelect.style.cursor = 'pointer';
         console.log('🔓 Boss mode: All locations accessible');
-    }
-}
-
-// ==================== DENTAL CHART FUNCTIONS ====================
-
-let currentDentalChart = null;
-
-/**
- * Load and render dental chart for patient
- */
-async function loadDentalChart(patientData) {
-    try {
-        const userId = patientData.userId || `patient_${patientData.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
-
-        console.log('📊 Loading dental chart for userId:', userId);
-
-        // Check cache first
-        let chartData = window.cacheManager.getDentalChartCache(userId);
-
-        if (!chartData) {
-            // Fetch from Firebase
-            chartData = await window.firebaseDataService.getDentalChart(userId);
-
-            if (!chartData) {
-                // Initialize new chart if doesn't exist
-                console.log('ℹ️ Dental chart not found, initializing new one...');
-                await window.firebaseDataService.initializeDentalChart(userId, patientData.patientName);
-                chartData = await window.firebaseDataService.getDentalChart(userId);
-            }
-
-            // Cache the chart
-            if (chartData) {
-                window.cacheManager.setDentalChartCache(userId, chartData);
-            }
-        }
-
-        // Render dental chart
-        const container = document.getElementById('dentalChartContainer');
-        if (container && chartData) {
-            currentDentalChart = new DentalChart('dentalChartContainer', {
-                mode: 'edit',
-                teethData: chartData.teeth || {},
-                onToothSelect: (toothNum, toothData) => {
-                    showToothDetails(userId, toothNum, toothData);
-                }
-            });
-            console.log('✅ Dental chart rendered successfully');
-        }
-    } catch (error) {
-        console.error('❌ Error loading dental chart:', error);
-    }
-}
-
-/**
- * Show tooth details panel when tooth is selected
- */
-function showToothDetails(userId, toothNum, toothData) {
-    const panel = document.getElementById('toothDetailsPanel');
-    const title = document.getElementById('selectedToothTitle');
-    const statusSelect = document.getElementById('toothStatusSelect');
-    const treatmentsList = document.getElementById('treatmentsList');
-
-    // Update title
-    title.textContent = `Tooth ${toothNum}`;
-
-    // Update status select
-    statusSelect.value = toothData.status || 'healthy';
-
-    // Clear and populate treatments list
-    treatmentsList.innerHTML = '';
-
-    if (toothData.treatments && toothData.treatments.length > 0) {
-        toothData.treatments.forEach((treatment, idx) => {
-            const treatmentEl = document.createElement('div');
-            treatmentEl.className = 'treatment-item';
-            treatmentEl.innerHTML = `
-                <div class="treatment-date">${new Date(treatment.date).toLocaleDateString()}</div>
-                <div class="treatment-type">${treatment.type || 'Note'}</div>
-                <div class="treatment-notes">${treatment.notes || ''}</div>
-                <button class="btn-small btn-danger" onclick="deleteToothTreatment('${userId}', ${toothNum}, '${treatment.id}')">Delete</button>
-            `;
-            treatmentsList.appendChild(treatmentEl);
-        });
-    } else {
-        treatmentsList.innerHTML = '<p class="treatment-placeholder">No treatment records yet</p>';
-    }
-
-    // Store current values for update
-    window.currentToothData = {
-        userId: userId,
-        toothNum: toothNum
-    };
-
-    // Show panel
-    panel.style.display = 'block';
-}
-
-/**
- * Close tooth details panel
- */
-function closeToothDetails() {
-    const panel = document.getElementById('toothDetailsPanel');
-    const title = document.getElementById('selectedToothTitle');
-    const treatmentsList = document.getElementById('treatmentsList');
-    const statusSelect = document.getElementById('toothStatusSelect');
-    panel.style.display = 'none';
-    window.currentToothData = null;
-
-    if (title) {
-        title.textContent = 'Select a tooth';
-    }
-    if (statusSelect) {
-        statusSelect.value = 'healthy';
-    }
-    if (treatmentsList) {
-        treatmentsList.innerHTML = '<p class="treatment-placeholder">Select a tooth to view history</p>';
-    }
-}
-
-/**
- * Update tooth status
- */
-async function updateToothStatus() {
-    if (!window.currentToothData) return;
-
-    const { userId, toothNum } = window.currentToothData;
-    const status = document.getElementById('toothStatusSelect').value;
-
-    try {
-        await window.firebaseDataService.updateToothStatus(userId, toothNum, { status });
-
-        // Update cache
-        window.cacheManager.onDentalChartUpdated(userId);
-
-        // Update UI
-        if (currentDentalChart) {
-            const toothData = currentDentalChart.getToothData(toothNum);
-            if (toothData) {
-                toothData.status = status;
-                currentDentalChart.updateToothData(toothNum, toothData);
-            }
-        }
-
-        showNotification('✅ Tooth status updated successfully');
-    } catch (error) {
-        console.error('❌ Error updating tooth status:', error);
-        showNotification('❌ Failed to update tooth status');
-    }
-}
-
-/**
- * Add treatment record to tooth
- */
-async function addTreatmentRecord() {
-    if (!window.currentToothData) return;
-
-    const { userId, toothNum } = window.currentToothData;
-    const notes = document.getElementById('treatmentNotes').value.trim();
-
-    if (!notes) {
-        showNotification('⚠️ Please enter treatment notes');
-        return;
-    }
-
-    try {
-        const treatment = {
-            type: 'note',
-            notes: notes
-        };
-
-        await window.firebaseDataService.addToothTreatment(userId, toothNum, treatment);
-
-        // Update cache
-        window.cacheManager.onDentalChartUpdated(userId);
-
-        // Refresh chart
-        await loadDentalChart({ userId });
-
-        // Clear form
-        document.getElementById('treatmentNotes').value = '';
-
-        showNotification('✅ Treatment record added successfully');
-    } catch (error) {
-        console.error('❌ Error adding treatment record:', error);
-        showNotification('❌ Failed to add treatment record');
-    }
-}
-
-/**
- * Unified save: update status first, then add record (if any)
- */
-async function saveToothUpdates() {
-    if (!window.currentToothData) return;
-
-    // Always update status first
-    await updateToothStatus();
-
-    // Then add record if notes/file provided
-    const notes = document.getElementById('treatmentNotes').value.trim();
-
-    if (!notes) {
-        // No record to add; status already updated
-        return;
-    }
-
-    await addTreatmentRecord();
-}
-
-/**
- * Delete treatment record
- */
-async function deleteToothTreatment(userId, toothNum, treatmentId) {
-    if (!confirm('Are you sure you want to delete this treatment record?')) return;
-
-    try {
-        await window.firebaseDataService.deleteToothTreatment(userId, toothNum, treatmentId);
-
-        // Update cache
-        window.cacheManager.onDentalChartUpdated(userId);
-
-        // Refresh details
-        const chartData = await window.firebaseDataService.getDentalChart(userId);
-        if (chartData) {
-            const toothData = chartData.teeth[toothNum.toString()];
-            showToothDetails(userId, toothNum, toothData);
-        }
-
-        showNotification('✅ Treatment record deleted');
-    } catch (error) {
-        console.error('❌ Error deleting treatment record:', error);
-        showNotification('❌ Failed to delete treatment record');
     }
 }

@@ -1,7 +1,18 @@
 // Dashboard functionality - Complete rewrite to fix all issues
 
-// Import security utilities to prevent XSS
-import { escapeHtml } from './security-utils.js';
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
 
 // ==================== AUTHENTICATION & PERMISSIONS SYSTEM ====================
 
@@ -369,6 +380,23 @@ function safeGetCurrentLocation() {
     }
 }
 
+async function safeGetAppointmentsForDate(dateKey) {
+    try {
+        if (window.dataManager && dataManager.getAppointmentsForDate) {
+            let appointments = await dataManager.getAppointmentsForDate(dateKey) || [];
+
+            // Apply role-based filtering
+            appointments = filterDataByRole(appointments, 'appointments');
+
+            return appointments;
+        }
+    } catch (error) {
+        console.warn('Failed to get appointments for date:', error);
+    }
+    return [];
+}
+
+// Asynchronous wrapper to use Firebase data source (like other pages)
 async function safeGetAppointmentsForDate(dateKey) {
     try {
         if (window.dataManager && dataManager.getAppointmentsForDate) {
@@ -959,12 +987,12 @@ for (let i = 0; i < 6; i++) {
         const appointment = displayAppointments[i];
         const timeFormatted = formatTime(appointment.time);
         const statusFormatted = getStatusDisplayName(appointment.status);
-        
+
         row.innerHTML = `
             <td>${escapeHtml(appointment.patientName)}</td>
             <td>${escapeHtml(timeFormatted)}</td>
             <td>${escapeHtml(appointment.service)}</td>
-            <td><span class="status-badge ${escapeHtml(appointment.status)}">${escapeHtml(statusFormatted)}</span></td>
+            <td><span class="status-badge ${appointment.status}">${escapeHtml(statusFormatted)}</span></td>
         `;
     } else {
         // Empty rows
@@ -1021,10 +1049,26 @@ async function renderPendingConfirmations() {
                     </div>
                 </div>
                 <div class="pending-actions">
-                    <button class="btn-icon" onclick="handleConfirmAction('${confirmation.id}')" title="Confirm">✓</button>
-                    <button class="btn-icon" onclick="handleDeclineAction('${confirmation.id}')" title="Decline">✗</button>
+                    <button class="btn-icon" data-confirmation-id="${escapeHtml(confirmation.id)}" data-action="confirm" title="Confirm">✓</button>
+                    <button class="btn-icon" data-confirmation-id="${escapeHtml(confirmation.id)}" data-action="decline" title="Decline">✗</button>
                 </div>
             `;
+
+            // Add event listeners to avoid inline onclick handlers
+            const buttons = item.querySelectorAll('.btn-icon');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const confirmationId = this.getAttribute('data-confirmation-id');
+
+                    if (action === 'confirm') {
+                        handleConfirmAction(confirmationId);
+                    } else if (action === 'decline') {
+                        handleDeclineAction(confirmationId);
+                    }
+                });
+            });
+
             pendingList.appendChild(item);
         });
     } catch (error) {
@@ -1271,10 +1315,10 @@ function updateChartLegend(container, data) {
     allServices.forEach(service => {
         const legendItem = document.createElement('div');
         legendItem.className = 'legend-item';
-        
+
         legendItem.innerHTML = `
-            <div class="legend-color" style="background-color: ${service.color}"></div>
-            <span>${service.label}</span>
+            <div class="legend-color" style="background-color: ${escapeHtml(service.color)}"></div>
+            <span>${escapeHtml(service.label)}</span>
         `;
         container.appendChild(legendItem);
     });
@@ -1447,19 +1491,14 @@ function getStatusDisplayName(status) {
 
 // Global functions for pending confirmations
 window.handleConfirmAction = async function(confirmationId) {
-    if (!confirmationId) return;
-
-    if (!confirm('Confirm this appointment and move it to Recent Appointments?')) {
-        return;
+    // Add confirmation dialog
+    if (!confirm('Please confirm if you want to CONFIRM this appointment?')) {
+        return; // User cancelled, no operation
     }
 
     try {
-        if (window.dataManager && dataManager.updateAppointmentStatus) {
-            await dataManager.updateAppointmentStatus(confirmationId, 'confirmed', {
-                confirmedAt: new Date().toISOString(),
-                confirmedBy: dataManager.getCurrentUser()?.name || 'Admin'
-            });
-
+        if (window.dataManager && dataManager.removePendingConfirmation) {
+            await dataManager.removePendingConfirmation(confirmationId);
             if (typeof showSuccessMessage === 'function') {
                 showSuccessMessage('Appointment confirmed!');
             }
@@ -1467,26 +1506,18 @@ window.handleConfirmAction = async function(confirmationId) {
         }
     } catch (error) {
         console.error('Error confirming appointment:', error);
-        if (typeof showErrorMessage === 'function') {
-            showErrorMessage('Failed to confirm appointment. Please try again.');
-        }
     }
 };
 
 window.handleDeclineAction = async function(confirmationId) {
-    if (!confirmationId) return;
-
-    if (!confirm('Decline this appointment request?')) {
-        return;
+    // Add confirmation dialog
+    if (!confirm('Please confirm if you want to DECLINE this appointment?')) {
+        return; // User cancelled, no operation
     }
     
     try {
-        if (window.dataManager && dataManager.updateAppointmentStatus) {
-            await dataManager.updateAppointmentStatus(confirmationId, 'declined', {
-                declinedAt: new Date().toISOString(),
-                declinedBy: dataManager.getCurrentUser()?.name || 'Admin'
-            });
-
+        if (window.dataManager && dataManager.removePendingConfirmation) {
+            dataManager.removePendingConfirmation(confirmationId);
             if (typeof showSuccessMessage === 'function') {
                 showSuccessMessage('Appointment declined!');
             }
@@ -1494,9 +1525,6 @@ window.handleDeclineAction = async function(confirmationId) {
         }
     } catch (error) {
         console.error('Error declining appointment:', error);
-        if (typeof showErrorMessage === 'function') {
-            showErrorMessage('Failed to decline appointment. Please try again.');
-        }
     }
 };
 
@@ -1538,21 +1566,22 @@ async function renderTrendChart() {
         return;
     }
     
-     // --- Key modification: Make Canvas width fully adapt while keeping crisp pixels ---
+     // --- Key modification: Make Canvas width fully adapt to parent container ---
     const container = document.querySelector('.trend-chart-container');
+    // Reset canvas size to prevent cumulative growth
+    canvas.style.width = '100%';
+    canvas.style.height = 'auto';
+    
+    // Use container's computed style width instead of offsetWidth
     const computedStyle = window.getComputedStyle(container);
     const containerPadding = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
-    const usableWidth = Math.max(480, container.clientWidth - containerPadding);
-    const targetHeight = 320;
-    const dpr = window.devicePixelRatio || 1;
+    const maxWidth = container.clientWidth - containerPadding;
+    // Set reasonable maximum width limit
+    const canvasWidth = Math.min(maxWidth, 800); // Limit maximum width to 800px
+    canvas.width = canvasWidth;
+    canvas.height = 296; 
 
-    canvas.style.width = `${usableWidth}px`;
-    canvas.style.height = `${targetHeight}px`;
-    canvas.width = usableWidth * dpr;
-    canvas.height = targetHeight * dpr; 
     const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-
     const data = await getLast30DaysCompletedData();
     
     // Clear the canvas before redrawing
@@ -1568,97 +1597,73 @@ async function renderTrendChart() {
     }
     
     // Define chart dimensions and padding
-    const padding = { top: 70, right: 36, bottom: 55, left: 60 };
-    const chartWidth = canvas.width - padding.left - padding.right;
-    const chartHeight = canvas.height - padding.top - padding.bottom;
+    const padding = 50; 
+    const chartWidth = canvas.width - (padding * 2);
+    const chartHeight = canvas.height - (padding * 2);
+    
+    // Get the maximum value for scaling
     const maxValue = Math.max(...data.map(d => d.completed), 1);
-    const avgValue = data.reduce((sum, point) => sum + point.completed, 0) / data.length;
-
-    // Background gradient
-    const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    bgGradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-    bgGradient.addColorStop(1, 'rgba(239, 244, 255, 0.95)');
-    ctx.fillStyle = bgGradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Grid lines
-    const gridColor = 'rgba(148, 163, 184, 0.25)';
-    const gridLines = 4;
-    ctx.strokeStyle = gridColor;
+    
+    // Draw the X and Y axes
+    ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
-    ctx.setLineDash([4, 6]);
-    for (let i = 0; i <= gridLines; i++) {
-        const y = padding.top + (i / gridLines) * chartHeight;
-        ctx.beginPath();
-        ctx.moveTo(padding.left, y);
-        ctx.lineTo(canvas.width - padding.right, y);
-        ctx.stroke();
-    }
-    ctx.setLineDash([]);
-
-    // Labels
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.stroke();
+    
+    // --- Draw Y-axis labels and ticks with improved spacing ---
     ctx.font = '12px Inter';
-    ctx.fillStyle = '#94a3b8';
+    ctx.fillStyle = '#6b7280';
     ctx.textAlign = 'right';
-    for (let i = 0; i <= gridLines; i++) {
-        const value = Math.round((maxValue / gridLines) * (gridLines - i));
-        const y = padding.top + (i / gridLines) * chartHeight;
-        ctx.fillText(value.toString(), padding.left - 12, y + 4);
+    const ySteps = 4;
+    for (let i = 0; i <= ySteps; i++) {
+        const value = Math.round((maxValue / ySteps) * i);
+        const y = canvas.height - padding - (i / ySteps) * chartHeight;
+        ctx.fillText(value.toString(), padding - 10, y + 3); 
     }
-
+    
+    // --- Draw X-axis labels and ticks with improved spacing ---
+    ctx.font = '12px Inter';
+    ctx.fillStyle = '#6b7280';
     ctx.textAlign = 'center';
+    
     const step = Math.ceil(data.length / 5);
     data.forEach((point, index) => {
         if (index % step === 0 || index === data.length - 1) {
-            const x = padding.left + (index / (data.length - 1)) * chartWidth;
-            ctx.fillText(point.dateLabel, x, canvas.height - padding.bottom + 28);
+            const x = padding + (index / (data.length - 1)) * chartWidth;
+            ctx.beginPath();
+            ctx.moveTo(x, canvas.height - padding);
+            ctx.lineTo(x, canvas.height - padding + 5);
+            ctx.stroke();
+            ctx.fillText(point.dateLabel, x, canvas.height - padding + 25);
         }
     });
 
+    // --- Draw the smooth bezier curve ---
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    
     const points = data.map((point, index) => ({
-        x: padding.left + (index / (data.length - 1)) * chartWidth,
-        y: padding.top + (1 - point.completed / maxValue) * chartHeight,
-        value: point.completed
+        x: padding + (index / (data.length - 1)) * chartWidth,
+        y: canvas.height - padding - (point.completed / maxValue) * chartHeight
     }));
-
-    // Area fill
-    const areaGradient = ctx.createLinearGradient(0, padding.top, 0, canvas.height - padding.bottom);
-    areaGradient.addColorStop(0, 'rgba(37, 99, 235, 0.28)');
-    areaGradient.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, canvas.height - padding.bottom);
-    points.forEach(pt => ctx.lineTo(pt.x, pt.y));
-    ctx.lineTo(points[points.length - 1].x, canvas.height - padding.bottom);
-    ctx.closePath();
-    ctx.fillStyle = areaGradient;
-    ctx.fill();
-
-    // Smooth curve
-    ctx.strokeStyle = '#60a5fa';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-    for (let i = 0; i < points.length - 1; i++) {
-        const p1 = points[i];
-        const p2 = points[i + 1];
-        const cp1x = p1.x + (p2.x - p1.x) / 2;
-        const cp2x = cp1x;
-        ctx.bezierCurveTo(cp1x, p1.y, cp2x, p2.y, p2.x, p2.y);
+    
+    if (points.length > 1) {
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 0; i < points.length - 1; i++) {
+            const p1 = points[i];
+            const p2 = points[i+1];
+            const cp1x = (p1.x + p2.x) / 2;
+            const cp1y = p1.y;
+            const cp2x = (p1.x + p2.x) / 2;
+            const cp2y = p2.y;
+            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+        }
     }
     ctx.stroke();
-
-    // Points
-    points.forEach(pt => {
-        ctx.fillStyle = '#ffffff';
-        ctx.strokeStyle = '#60a5fa';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-    });
-
-    // Highlight latest value
 }
 
 // Render calendar

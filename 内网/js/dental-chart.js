@@ -1,6 +1,16 @@
 // Dental Chart Component - Simplified version with CSS grid
 // Universal numbering system (1-32)
 
+// XSS Prevention: Escape HTML function (inline to avoid module import issues)
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 class DentalChart {
     constructor(containerId, options = {}) {
         this.container = document.getElementById(containerId);
@@ -85,7 +95,7 @@ class DentalChart {
                 </div>
 
                 <div class="legend">
-                <div class="legend-title">Status:</div>
+                    <div class="legend-title">Status:</div>
                     <div class="legend-items">
                         ${this.generateLegend()}
                     </div>
@@ -97,14 +107,19 @@ class DentalChart {
     generateToothButtons(toothNumbers) {
         return toothNumbers.map(num => {
             const tooth = this.teethData[num.toString()] || { status: 'healthy', treatments: [] };
-            const color = this.statusColors[tooth.status] || this.statusColors['healthy'];
+
+            // Validate tooth status against whitelist to prevent XSS in CSS
+            const validStatuses = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op', 'urgent'];
+            const safeStatus = validStatuses.includes(tooth.status) ? tooth.status : 'healthy';
+            const color = this.statusColors[safeStatus];
+
             const treatmentCount = tooth.treatments ? tooth.treatments.length : 0;
 
-            const showDot = tooth.status && tooth.status !== 'healthy';
+            const showDot = safeStatus && safeStatus !== 'healthy';
             return `
                 <button class="tooth-btn"
                         data-tooth="${num}"
-                        title="${num}: ${tooth.status}${treatmentCount > 0 ? ` (${treatmentCount} treatments)` : ''}">
+                        title="${num}: ${escapeHtml(safeStatus)}${treatmentCount > 0 ? ` (${treatmentCount} treatments)` : ''}">
                     <span class="tooth-number">${num}</span>
                     ${showDot ? `<span class="status-dot" style="background-color: ${color};"></span>` : ''}
                     ${treatmentCount > 0 ? `<span class="treatment-badge">${treatmentCount}</span>` : ''}
@@ -158,10 +173,15 @@ class DentalChart {
         this.teethData[toothNum.toString()] = data;
         const btn = this.container.querySelector(`[data-tooth="${toothNum}"]`);
         if (btn) {
-            const color = this.statusColors[data.status] || this.statusColors['healthy'];
-            btn.title = `${toothNum}: ${data.status}`;
+            // Validate tooth status against whitelist
+            const validStatuses = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op', 'urgent'];
+            const safeStatus = validStatuses.includes(data.status) ? data.status : 'healthy';
+            const color = this.statusColors[safeStatus];
+
+            // Use textContent instead of setting HTML to prevent XSS
+            btn.title = `${toothNum}: ${safeStatus}`;
             let statusDot = btn.querySelector('.status-dot');
-            if (data.status === 'healthy') {
+            if (safeStatus === 'healthy') {
                 if (statusDot) statusDot.remove();
             } else {
                 if (!statusDot) {

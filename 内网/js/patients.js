@@ -1,5 +1,18 @@
 // Patients Page Functionality - Updated to use Global Data Manager with Pagination
-import { escapeHtml } from './security-utils.js';
+
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
 
 // Global variables to store current processing data
 let currentProcessingRow = null;
@@ -360,8 +373,6 @@ async function renderPendingAppointments(forceReload = false) {
         const row = createPatientTableRow(confirmation, 'pending');
         tableBody.appendChild(row);
     });
-
-    renderPatientCards(paginatedData, 'pending');
     
     // Update pagination controls (no notification badge update needed - bell is always active)
     updatePendingPaginationControls();
@@ -380,11 +391,11 @@ async function renderConfirmedAppointments(forceReload = false) {
 
             // Ensure we have an array
             if (!Array.isArray(allAppointments)) {
-            console.warn('getAllAppointments did not return an array:', allAppointments);
-            confirmedAllData = [];
-            applyConfirmedFilter(true);
-            return;
-        }
+                console.warn('getAllAppointments did not return an array:', allAppointments);
+                confirmedAllData = [];
+                applyConfirmedFilter(true);
+                return;
+            }
 
             // Filter for confirmed appointments (exclude pending, cancelled, and declined)
             const confirmedAppointments = allAppointments.filter(app =>
@@ -430,8 +441,6 @@ async function renderConfirmedAppointments(forceReload = false) {
         const row = createPatientTableRow(appointment, 'confirmed');
         tableBody.appendChild(row);
     });
-
-    renderPatientCards(paginatedData, 'confirmed');
     
     // Update pagination controls
     updateConfirmedPaginationControls();
