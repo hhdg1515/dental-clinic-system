@@ -1,9 +1,24 @@
-/* 
+/*
  * Dynamic CSS classes used in this file:
  * .week-appointment, .week-patient, .week-more-indicator
  * .day-appointment-card, .concurrent-appointments-container
  * Defined in appointments.css
  */
+
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 // Appointments Page Functionality - Updated to use Global Data Manager
 
 // Current view and date state
@@ -1155,26 +1170,26 @@ function showAppointmentDetails(element, appointmentData = null) {
     const detailsContent = document.getElementById('appointmentDetailsContent');
     if (detailsContent) {
         detailsContent.innerHTML = `
-            <h4>${patientName}</h4>
+            <h4>${escapeHtml(patientName)}</h4>
             <div class="detail-row">
                 <span class="detail-label">Date & Time:</span>
-                <span class="detail-value">${datetime}</span>
+                <span class="detail-value">${escapeHtml(datetime)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${service}</span>
+                <span class="detail-value">${escapeHtml(service)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Location:</span>
-                <span class="detail-value">${location}</span>
+                <span class="detail-value">${escapeHtml(location)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Phone:</span>
-                <span class="detail-value">${tel}</span>
+                <span class="detail-value">${escapeHtml(tel)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">${status}</span>
+                <span class="detail-value">${escapeHtml(status)}</span>
             </div>
             ${additionalInfo}
         `;
@@ -1887,18 +1902,18 @@ function openProcessModal(element, appointmentData = null) {
             phone = appointmentData.phone;
         }
         summary.innerHTML = `
-            <h4>${patientName}</h4>
+            <h4>${escapeHtml(patientName)}</h4>
             <div class="detail-row">
                 <span class="detail-label">Phone:</span>
-                <span class="detail-value">${phone}</span>
+                <span class="detail-value">${escapeHtml(phone)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${service}</span>
+                <span class="detail-value">${escapeHtml(service)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">${capitalizeFirst(status.replace('-', ' '))}</span>
+                <span class="detail-value">${escapeHtml(capitalizeFirst(status.replace('-', ' ')))}</span>
             </div>
         `;
     }
@@ -2700,15 +2715,15 @@ function updateProcessModalDisplay(appointmentData) {
             <h4>Appointment Details</h4>
             <div class="detail-row">
                 <span class="detail-label">Patient:</span>
-                <span class="detail-value">${appointmentData.patientName}</span>
+                <span class="detail-value">${escapeHtml(appointmentData.patientName)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${appointmentData.service}</span>
+                <span class="detail-value">${escapeHtml(appointmentData.service)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">${capitalizeFirst(appointmentData.status.replace('-', ' '))}</span>
+                <span class="detail-value">${escapeHtml(capitalizeFirst(appointmentData.status.replace('-', ' ')))}</span>
             </div>
         `;
     }
@@ -3068,18 +3083,18 @@ async function loadAccountHistory(patientData) {
             comparison: 'This should now show correct dates'
         });
         const formattedTime = formatTime(appointment.time);
-        
+
         historyItem.innerHTML = `
             <div class="account-history-header">
-                <span class="account-history-date">${formattedDate} - ${formattedTime}</span>
-                <span class="status-badge ${appointment.status}">${capitalizeFirst(appointment.status)}</span>
+                <span class="account-history-date">${escapeHtml(formattedDate)} - ${escapeHtml(formattedTime)}</span>
+                <span class="status-badge ${appointment.status}">${escapeHtml(capitalizeFirst(appointment.status))}</span>
             </div>
             <div class="account-history-details">
-                <div><strong>Service:</strong> ${appointment.serviceType || appointment.service || 'Unknown Service'}</div>
-                <div><strong>Location:</strong> ${appointment.location}</div>
+                <div><strong>Service:</strong> ${escapeHtml(appointment.serviceType || appointment.service || 'Unknown Service')}</div>
+                <div><strong>Location:</strong> ${escapeHtml(appointment.location)}</div>
                 <div><strong>Duration:</strong> 60 minutes</div>
             </div>
-            ${appointment.notes ? `<div class="account-history-notes"><strong>Notes:</strong> ${appointment.notes}</div>` : ''}
+            ${appointment.notes ? `<div class="account-history-notes"><strong>Notes:</strong> ${escapeHtml(appointment.notes)}</div>` : ''}
         `;
         
         historyContainer.appendChild(historyItem);
@@ -3148,22 +3163,40 @@ async function loadAccountRecords(patientData) {
                 <div class="record-info">
                     <i class="${iconClass} record-icon"></i>
                     <div class="record-details">
-                        <div class="record-name">${record.originalName}</div>
-                        <div class="record-date">Uploaded: ${formattedDate}</div>
+                        <div class="record-name">${escapeHtml(record.originalName)}</div>
+                        <div class="record-date">Uploaded: ${escapeHtml(formattedDate)}</div>
                     </div>
                 </div>
                 <div class="record-actions">
-                    <button class="record-action" onclick="downloadRecord('${record.id}', \`${record.base64Data.replace(/`/g, '\\`')}\`, '${record.originalName}')" title="Download">
+                    <button class="record-action" data-record-id="${escapeHtml(record.id)}" data-record-name="${escapeHtml(record.originalName)}" data-action="download" title="Download">
                         <i class="fas fa-download"></i>
                     </button>
-                    <button class="record-action" onclick="renameRecord('${record.id}', '${record.originalName}')" title="Rename">
+                    <button class="record-action" data-record-id="${escapeHtml(record.id)}" data-record-name="${escapeHtml(record.originalName)}" data-action="rename" title="Rename">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="record-action" onclick="deleteRecord('${record.id}', '${record.originalName}')" title="Delete">
+                    <button class="record-action" data-record-id="${escapeHtml(record.id)}" data-record-name="${escapeHtml(record.originalName)}" data-action="delete" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             `;
+
+            // Add event listeners to avoid inline onclick handlers
+            const buttons = recordItem.querySelectorAll('.record-action');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const recordId = this.getAttribute('data-record-id');
+                    const recordName = this.getAttribute('data-record-name');
+
+                    if (action === 'download') {
+                        downloadRecord(recordId, record.base64Data, recordName);
+                    } else if (action === 'rename') {
+                        renameRecord(recordId, recordName);
+                    } else if (action === 'delete') {
+                        deleteRecord(recordId, recordName);
+                    }
+                });
+            });
 
             recordsList.appendChild(recordItem);
         });
@@ -3249,16 +3282,16 @@ async function loadNextTreatments(patientData) {
             comparison: 'This should now show correct dates'
         });
         const formattedTime = formatTime(appointment.time);
-        
+
         treatmentCard.innerHTML = `
             <div class="treatment-header">
                 <div class="treatment-info">
-                    <h4>${appointment.serviceType || appointment.service || 'Unknown Service'} - ${appointment.location}</h4>
-                    <div class="treatment-date">${formattedDate} at ${formattedTime}</div>
+                    <h4>${escapeHtml(appointment.serviceType || appointment.service || 'Unknown Service')} - ${escapeHtml(appointment.location)}</h4>
+                    <div class="treatment-date">${escapeHtml(formattedDate)} at ${escapeHtml(formattedTime)}</div>
                 </div>
-                <span class="status-badge ${appointment.status}">${capitalizeFirst(appointment.status)}</span>
+                <span class="status-badge ${appointment.status}">${escapeHtml(capitalizeFirst(appointment.status))}</span>
             </div>
-            ${appointment.notes ? `<div class="treatment-desc">${appointment.notes}</div>` : ''}
+            ${appointment.notes ? `<div class="treatment-desc">${escapeHtml(appointment.notes)}</div>` : ''}
         `;
         
         treatmentContainer.appendChild(treatmentCard);

@@ -1,4 +1,19 @@
 // Patients Page Functionality - Updated to use Global Data Manager with Pagination
+
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 // Global variables to store current processing data
 let currentProcessingRow = null;
 let currentPatientData = null;
@@ -462,12 +477,12 @@ function createPatientTableRow(data, type) {
     
     // Create the basic row structure
     row.innerHTML = `
-        <td class="patient-name">${data.patientName}</td>
-        <td class="appointment-date">${displayDateTime}</td>
-        <td>${data.phone || '(XXX) XXX-XXXX'}</td>
-        <td><span class="treatment-type">${data.service || data.serviceType || data.serviceName || data.treatment || 'Not specified'}</span></td>
-        <td class="location-cell">${data.location}</td>
-        <td id="actions-${data.id}"></td>
+        <td class="patient-name">${escapeHtml(data.patientName)}</td>
+        <td class="appointment-date">${escapeHtml(displayDateTime)}</td>
+        <td>${escapeHtml(data.phone || '(XXX) XXX-XXXX')}</td>
+        <td><span class="treatment-type">${escapeHtml(data.service || data.serviceType || data.serviceName || data.treatment || 'Not specified')}</span></td>
+        <td class="location-cell">${escapeHtml(data.location)}</td>
+        <td id="actions-${escapeHtml(data.id)}"></td>
     `;
     
     // Add the appropriate actions based on type
@@ -720,21 +735,21 @@ function createAppointmentHistoryCard(appointment) {
     
     card.innerHTML = `
         <div class="appointment-card-header">
-            <div class="appointment-date-time">${formattedDate}</div>
-            <div class="appointment-status ${statusClass}">${statusText}</div>
+            <div class="appointment-date-time">${escapeHtml(formattedDate)}</div>
+            <div class="appointment-status ${statusClass}">${escapeHtml(statusText)}</div>
         </div>
         <div class="appointment-details">
             <div class="detail-item">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${appointment.service || appointment.serviceType || appointment.serviceName || appointment.treatment || 'Not specified'}</span>
+                <span class="detail-value">${escapeHtml(appointment.service || appointment.serviceType || appointment.serviceName || appointment.treatment || 'Not specified')}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Location:</span>
-                <span class="detail-value">${appointment.location}</span>
+                <span class="detail-value">${escapeHtml(appointment.location)}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Time:</span>
-                <span class="detail-value">${formattedTime}</span>
+                <span class="detail-value">${escapeHtml(formattedTime)}</span>
             </div>
         </div>
     `;
@@ -777,18 +792,18 @@ async function showProcessModal(element) {
     const summary = document.getElementById('appointmentSummary');
     const phone = patientData.phone || 'Phone not available';
     summary.innerHTML = `
-        <h4>${patientData.patientName}</h4>
+        <h4>${escapeHtml(patientData.patientName)}</h4>
         <div class="detail-row">
             <span class="detail-label">Phone:</span>
-            <span class="detail-value">${phone}</span>
+            <span class="detail-value">${escapeHtml(phone)}</span>
         </div>
         <div class="detail-row">
             <span class="detail-label">Service:</span>
-            <span class="detail-value">${patientData.service || patientData.serviceType || patientData.serviceName || patientData.treatment || 'Not specified'}</span>
+            <span class="detail-value">${escapeHtml(patientData.service || patientData.serviceType || patientData.serviceName || patientData.treatment || 'Not specified')}</span>
         </div>
         <div class="detail-row">
             <span class="detail-label">Status:</span>
-            <span class="detail-value">${capitalizeFirst(patientData.status.replace('-', ' '))}</span>
+            <span class="detail-value">${escapeHtml(capitalizeFirst(patientData.status.replace('-', ' ')))}</span>
         </div>
     `;
 
