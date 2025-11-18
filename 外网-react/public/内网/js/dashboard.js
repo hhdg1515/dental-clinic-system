@@ -444,22 +444,6 @@ function safeGetCurrentLocation() {
     }
 }
 
-async function safeGetAppointmentsForDate(dateKey) {
-    try {
-        if (window.dataManager && dataManager.getAppointmentsForDate) {
-            let appointments = await dataManager.getAppointmentsForDate(dateKey) || [];
-
-            // Apply role-based filtering
-            appointments = filterDataByRole(appointments, 'appointments');
-
-            return appointments;
-        }
-    } catch (error) {
-        console.warn('Failed to get appointments for date:', error);
-    }
-    return [];
-}
-
 // Asynchronous wrapper to use Firebase data source (like other pages)
 async function safeGetAppointmentsForDate(dateKey) {
     try {
