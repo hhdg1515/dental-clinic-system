@@ -1860,8 +1860,12 @@ function openProcessModal(element, appointmentData = null) {
         status, 
         element, 
         appointmentId,
-        phone: appointmentData?.phone || '' // Add phone number
+        phone: appointmentData?.phone || '',
+        rawAppointment: appointmentData || null
     };
+    if (typeof window !== 'undefined') {
+        window.__currentAppointmentData = currentAppointmentData;
+    }
     
     // Populate modal
     const summary = document.getElementById('appointmentSummary');
@@ -2732,10 +2736,12 @@ async function updateAppointmentStatus(newStatus, additionalData = {}) {
     }
     
     try {
+        const appointmentContext = currentAppointmentData?.rawAppointment || null;
         const success = await dataManager.updateAppointmentStatus(
             currentAppointmentData.appointmentId,
             newStatus,
-            additionalData
+            additionalData,
+            appointmentContext
         );
         
         if (!success) {

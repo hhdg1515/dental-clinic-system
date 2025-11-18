@@ -1,32 +1,5 @@
 // Firebase Data Service - Handles all Firestore operations for appointment data
-// Guard against accidental global patientName usage from legacy/minified code
-if (typeof patientName === 'undefined') {
-    // eslint-disable-next-line no-var
-    var patientName = null;
-}
 // Replaces localStorage operations with Firebase Firestore
-
-if (typeof window !== 'undefined' && !window.__intranetDebugLog) {
-    window.__intranetDebugLog = [];
-}
-
-function recordDebugLog(label, payload) {
-    try {
-        if (typeof window === 'undefined') {
-            return;
-        }
-        if (!window.__intranetDebugLog) {
-            window.__intranetDebugLog = [];
-        }
-        window.__intranetDebugLog.push({
-            ts: new Date().toISOString(),
-            label,
-            payload
-        });
-    } catch (_error) {
-        // ignore
-    }
-}
 
 class FirebaseDataService {
     constructor() {
@@ -122,16 +95,11 @@ class FirebaseDataService {
 
     // Get current user's accessible clinic IDs based on role
     getAccessibleClinics(userRole, userClinics) {
-        const clinics = (userRole === 'boss' || userRole === 'owner')
-            ? this.clinicLocations
-            : (userClinics || []);
-
-        const normalized = clinics
-            .map(clinic => this.normalizeClinicId(clinic))
-            .filter(Boolean);
-
-        // Ensure uniqueness to avoid Firestore "in" query errors
-        return Array.from(new Set(normalized));
+        if (userRole === 'boss' || userRole === 'owner') {
+            return this.clinicLocations;
+        } else {
+            return userClinics || [];
+        }
     }
 
     // Normalize status field between internal and external bookings
@@ -154,43 +122,22 @@ class FirebaseDataService {
         return normalized;
     }
 
-    normalizeClinicId(value) {
-        if (!value) {
-            return null;
-        }
-        if (typeof value !== 'string') {
-            value = String(value);
-        }
+    /**
+     * Capitalize clinic name from clinicLocation ID
+     * Converts "arcadia" → "Arcadia", "rowland-heights" → "Rowland Heights"
+     */
+    capitalizeClinicName(clinicId) {
+        if (!clinicId) return '';
 
-        const raw = value.trim().toLowerCase();
-        if (!raw) {
-            return null;
-        }
-
-        if (raw.includes('arcadia')) return 'arcadia';
-        if (raw.includes('rowland')) return 'rowland-heights';
-        if (raw.includes('pasadena')) return 'south-pasadena';
-        if (raw.includes('irvine')) return 'irvine';
-        if (raw.includes('eastvale')) return 'eastvale';
-
-        return raw
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/[\s_]+/g, '-');
-    }
-
-    resolveClinicInfo(data) {
-        const rawLocation = data?.clinicLocation ??
-            data?.clinicId ??
-            data?.location ??
-            data?.clinic ??
-            data?.clinicName ??
-            '';
-        const clinicKey = this.normalizeClinicId(rawLocation);
-
-        return {
-            key: clinicKey,
-            label: clinicKey ? this.getLocationFromClinicId(clinicKey) : rawLocation || ''
+        const clinicMap = {
+            'arcadia': 'Arcadia',
+            'irvine': 'Irvine',
+            'south-pasadena': 'South Pasadena',
+            'rowland-heights': 'Rowland Heights',
+            'eastvale': 'Eastvale'
         };
+
+        return clinicMap[clinicId] || clinicId;
     }
 
     // === APPOINTMENT METHODS ===
@@ -230,20 +177,14 @@ class FirebaseDataService {
             let filteredByDate = 0;
 
             // Convert accessibleClinics to Set for faster lookup (case-insensitive)
-            const clinicSet = new Set(accessibleClinics);
+            const clinicSet = new Set(accessibleClinics.map(c => c.toLowerCase()));
 
             querySnapshot.forEach((doc) => {
                 totalDocs++;
                 const data = doc.data();
 
                 // Filter by accessible clinics (case-insensitive)
-                const clinicInfo = this.resolveClinicInfo(data);
-                if (!clinicInfo.key) {
-                    filteredByClinic++;
-                    return;
-                }
-
-                if (!clinicSet.has(clinicInfo.key)) {
+                if (!clinicSet.has((data.clinicLocation || '').toLowerCase())) {
                     filteredByClinic++;
                     return; // Skip appointments from inaccessible clinics
                 }
@@ -287,18 +228,31 @@ class FirebaseDataService {
                     const normalizedStatus = this.normalizeStatus(data.status);
                     const normalizedService = data.service || data.serviceType || data.serviceName || 'General Consultation';
 
-                    const legacyId = data.id || data.appointmentId || null;
+                    // Normalize location field - handle both old and new format
+                    // New format: has "location" field (capitalized, e.g., "Arcadia")
+                    // Old format: only has "clinicLocation" field (lowercase, e.g., "arcadia")
+                    let normalizedLocation = data.location;
+                    if (!normalizedLocation && data.clinicLocation) {
+                        normalizedLocation = this.capitalizeClinicName(data.clinicLocation);
+                    }
+                    if (!normalizedLocation) {
+                        normalizedLocation = 'Unknown'; // Fallback
+                    }
+
+                    // Ensure clinicLocation exists
+                    let normalizedClinicLocation = data.clinicLocation;
+                    if (!normalizedClinicLocation && data.location) {
+                        normalizedClinicLocation = data.location.toLowerCase().replace(/\s+/g, '-');
+                    }
 
                     appointments.push({
-                        ...data,
-                        legacyId,
                         id: doc.id,
-                        clinicLocation: clinicInfo.key,
-                        clinicId: clinicInfo.key,
-                        location: clinicInfo.label || data.location || data.clinicLocation || '',
+                        ...data,
                         time: extractedTime,
                         dateKey: extractedDateKey,
                         date: extractedDateKey,
+                        location: normalizedLocation,
+                        clinicLocation: normalizedClinicLocation,
                         // Normalize status field (external bookings use "confirmed", internal use "scheduled")
                         status: normalizedStatus,
                         // Normalize service field (external: serviceType, internal: service)
@@ -356,14 +310,13 @@ class FirebaseDataService {
             const appointmentsByDate = {};
 
             // Convert accessibleClinics to Set for faster lookup (case-insensitive)
-            const clinicSet = new Set(accessibleClinics);
+            const clinicSet = new Set(accessibleClinics.map(c => c.toLowerCase()));
 
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
 
                 // Filter by accessible clinics (case-insensitive)
-                const clinicInfo = this.resolveClinicInfo(data);
-                if (!clinicInfo.key || !clinicSet.has(clinicInfo.key)) {
+                if (!clinicSet.has((data.clinicLocation || '').toLowerCase())) {
                     return; // Skip appointments from inaccessible clinics
                 }
 
@@ -413,18 +366,27 @@ class FirebaseDataService {
                     const normalizedStatus = this.normalizeStatus(data.status);
                     const normalizedService = data.service || data.serviceType || data.serviceName || 'General Consultation';
 
-                    const legacyId = data.id || data.appointmentId || null;
+                    let normalizedLocation = data.location;
+                    if (!normalizedLocation && data.clinicLocation) {
+                        normalizedLocation = this.capitalizeClinicName(data.clinicLocation);
+                    }
+                    if (!normalizedLocation) {
+                        normalizedLocation = 'Unknown';
+                    }
+
+                    let normalizedClinicLocation = data.clinicLocation;
+                    if (!normalizedClinicLocation && data.location) {
+                        normalizedClinicLocation = data.location.toLowerCase().replace(/\s+/g, '-');
+                    }
 
                     appointmentsByDate[extractedDateKey].push({
-                        ...data,
-                        legacyId,
                         id: doc.id,
-                        clinicLocation: clinicInfo.key,
-                        clinicId: clinicInfo.key,
+                        ...data,
                         time: extractedTime,
                         dateKey: extractedDateKey,
                         date: extractedDateKey,
-                        location: clinicInfo.label || data.location || data.clinicLocation || '',
+                        location: normalizedLocation,
+                        clinicLocation: normalizedClinicLocation,
                         status: normalizedStatus,
                         service: normalizedService
                     });
@@ -478,14 +440,13 @@ class FirebaseDataService {
             const appointments = [];
 
             // Convert accessibleClinics to Set for faster lookup (case-insensitive)
-            const clinicSet = new Set(accessibleClinics);
+            const clinicSet = new Set(accessibleClinics.map(c => c.toLowerCase()));
 
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
 
                 // Filter by accessible clinics (case-insensitive)
-                const clinicInfo = this.resolveClinicInfo(data);
-                if (!clinicInfo.key || !clinicSet.has(clinicInfo.key)) {
+                if (!clinicSet.has((data.clinicLocation || '').toLowerCase())) {
                     return; // Skip appointments from inaccessible clinics
                 }
 
@@ -522,17 +483,26 @@ class FirebaseDataService {
                 const normalizedStatus = this.normalizeStatus(data.status);
                 const normalizedService = data.service || data.serviceType || data.serviceName || 'General Consultation';
 
-                const legacyId = data.id || data.appointmentId || null;
+                let normalizedLocation = data.location;
+                if (!normalizedLocation && data.clinicLocation) {
+                    normalizedLocation = this.capitalizeClinicName(data.clinicLocation);
+                }
+                if (!normalizedLocation) {
+                    normalizedLocation = 'Unknown';
+                }
+
+                let normalizedClinicLocation = data.clinicLocation;
+                if (!normalizedClinicLocation && data.location) {
+                    normalizedClinicLocation = data.location.toLowerCase().replace(/\s+/g, '-');
+                }
 
                 appointments.push({
-                    ...data,
-                    legacyId,
                     id: doc.id,
-                    clinicLocation: clinicInfo.key,
-                    clinicId: clinicInfo.key,
+                    ...data,
                     time: appointmentTime,
                     dateKey: appointmentDateKey,
-                    location: clinicInfo.label || data.location || data.clinicLocation || '',
+                    location: normalizedLocation,
+                    clinicLocation: normalizedClinicLocation,
                     status: normalizedStatus,
                     service: normalizedService
                 });
@@ -619,23 +589,24 @@ class FirebaseDataService {
     }
 
     // Update appointment status
-    async updateAppointmentStatus(appointmentId, newStatus, additionalData = {}, userRole = null, userClinics = [], appointmentContext = null) {
+    async updateAppointmentStatus(appointmentId, newStatus, additionalData = {}, userRole = null, userClinics = []) {
         try {
+            console.log('🔄 updateAppointmentStatus called with:', {
+                appointmentId,
+                newStatus,
+                userRole,
+                userClinics,
+                additionalData
+            });
+
             await this.ensureReady();
             const { doc, updateDoc, deleteDoc, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
-            recordDebugLog('firebase.updateAppointmentStatus.start', {
-                appointmentId,
-                newStatus,
-                additionalData,
-                userRole,
-                userClinics,
-                appointmentContext
-            });
+            console.log('🔄 Firebase updateAppointmentStatus - Appointment ID:', appointmentId, 'New status:', newStatus);
 
             // First find the appointment to get clinic and date info
-            const appointment = await this.findAppointmentById(appointmentId, userRole, userClinics, appointmentContext);
-            recordDebugLog('firebase.updateAppointmentStatus.found', appointment);
+            const appointment = await this.findAppointmentById(appointmentId, userRole, userClinics);
+            console.log('🔄 Found appointment:', appointment);
 
             if (appointment && appointment.appointmentDateTime) {
                 const appointmentDate = appointment.appointmentDateTime.toDate();
@@ -649,15 +620,16 @@ class FirebaseDataService {
                 throw new Error('Appointment not found');
             }
 
-            const clinicLocation = appointment.clinicLocation || appointment.location;
+            const clinicLocation = appointment.clinicLocation;
             const dateKey = appointment.dateKey || (appointment.appointmentDateTime ?
                 appointment.appointmentDateTime.toDate().toISOString().split('T')[0] :
                 new Date().toISOString().split('T')[0]);
 
             // STRICT permission check - exact match required
             const accessibleClinics = this.getAccessibleClinics(userRole, userClinics);
-            const normalizedClinicLocation = this.normalizeClinicId(clinicLocation);
-            if (!normalizedClinicLocation || !accessibleClinics.includes(normalizedClinicLocation)) {
+            // Normalize clinicLocation for legacy data compatibility
+            const normalizedClinicLocation = (clinicLocation || '').toLowerCase().replace(/\s+/g, '-');
+            if (!accessibleClinics.includes(normalizedClinicLocation)) {
                 console.error(`Access denied: User clinics [${accessibleClinics.join(', ')}] does not include "${normalizedClinicLocation}"`);
                 throw new Error(`Access denied to clinic: ${normalizedClinicLocation}`);
             }
@@ -712,8 +684,8 @@ class FirebaseDataService {
 
             // STRICT permission check
             const accessibleClinics = this.getAccessibleClinics(userRole, userClinics);
-            const normalizedClinicLocation = this.normalizeClinicId(appointment.clinicLocation || appointment.location);
-            if (!normalizedClinicLocation || !accessibleClinics.includes(normalizedClinicLocation)) {
+            const normalizedClinicLocation = (appointment.clinicLocation || '').toLowerCase().replace(/\s+/g, '-');
+            if (!accessibleClinics.includes(normalizedClinicLocation)) {
                 console.error(`Update denied: User clinics [${accessibleClinics.join(', ')}] does not include "${normalizedClinicLocation}"`);
                 throw new Error(`No permission to update appointments for ${normalizedClinicLocation}`);
             }
@@ -755,12 +727,12 @@ class FirebaseDataService {
                 throw new Error('Appointment not found');
             }
 
-            const clinicLocation = appointment.clinicLocation || appointment.location;
+            const clinicLocation = appointment.clinicLocation;
 
             // STRICT permission check
             const accessibleClinics = this.getAccessibleClinics(userRole, userClinics);
-            const normalizedClinicLocation = this.normalizeClinicId(clinicLocation);
-            if (!normalizedClinicLocation || !accessibleClinics.includes(normalizedClinicLocation)) {
+            const normalizedClinicLocation = (clinicLocation || '').toLowerCase().replace(/\s+/g, '-');
+            if (!accessibleClinics.includes(normalizedClinicLocation)) {
                 console.error(`Delete denied: User clinics [${accessibleClinics.join(', ')}] does not include "${normalizedClinicLocation}"`);
                 throw new Error(`Access denied to delete appointments for ${normalizedClinicLocation}`);
             }
@@ -777,66 +749,58 @@ class FirebaseDataService {
     }
 
     // Find appointment by ID in flat structure
-    async findAppointmentById(appointmentId, userRole = null, userClinics = [], appointmentContext = null) {
+    async findAppointmentById(appointmentId, userRole = null, userClinics = []) {
         try {
+            console.log('🔍 findAppointmentById called with:', {
+                appointmentId,
+                userRole,
+                userClinics
+            });
+
             await this.ensureReady();
-            const { doc, getDoc, collection, getDocs, query, where, limit } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+            const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
             const accessibleClinics = this.getAccessibleClinics(userRole, userClinics);
+            console.log('🔍 Accessible clinics:', accessibleClinics);
+
             const db = this.validateDatabase();
 
-            const tryLoadById = async (docId, label = 'primary') => {
-                if (!docId) {
-                    return null;
-                }
-                    recordDebugLog('firebase.findAppointmentById.tryId', { label, docId });
-                const appointmentRef = doc(db, 'appointments', docId);
-                const appointmentSnap = await getDoc(appointmentRef);
+            // Get appointment from flat structure
+            const appointmentRef = doc(db, 'appointments', appointmentId);
+            const appointmentSnap = await getDoc(appointmentRef);
 
-                if (!appointmentSnap.exists()) {
-                    return null;
-                }
+            console.log('🔍 Appointment exists in DB:', appointmentSnap.exists());
 
+            if (appointmentSnap.exists()) {
                 const appointmentData = appointmentSnap.data();
-                const normalizedClinicLocation = this.normalizeClinicId(appointmentData.clinicLocation || appointmentData.location);
-                if (!normalizedClinicLocation || !accessibleClinics.includes(normalizedClinicLocation)) {
-                    console.error(`Find denied: User clinics [${accessibleClinics.join(', ')}] does not include "${normalizedClinicLocation}"`);
+                console.log('🔍 Appointment data:', {
+                    id: appointmentSnap.id,
+                    patientName: appointmentData.patientName,
+                    clinicLocation: appointmentData.clinicLocation,
+                    location: appointmentData.location,
+                    status: appointmentData.status
+                });
+
+                // STRICT permission check
+                const normalizedClinicLocation = (appointmentData.clinicLocation || '').toLowerCase().replace(/\s+/g, '-');
+                console.log('🔍 Normalized clinic location:', normalizedClinicLocation);
+
+                if (accessibleClinics.includes(normalizedClinicLocation)) {
+                    console.log('✅ Permission granted - returning appointment');
+                    return {
+                        id: appointmentSnap.id,
+                        ...appointmentData
+                    };
+                } else {
+                    console.error(`❌ Find denied: User clinics [${accessibleClinics.join(', ')}] does not include "${normalizedClinicLocation}"`);
                     throw new Error('No permission to access this appointment');
                 }
-
-                return {
-                    id: appointmentSnap.id,
-                    ...appointmentData
-                };
-            };
-
-            let found = await tryLoadById(appointmentId, 'primary');
-            if (found) {
-                return found;
             }
 
-            // Fallback: try legacy identifiers stored on the appointment context
-            const legacyId = appointmentContext?.legacyId || appointmentContext?.appointmentId || null;
-            if (!found && legacyId && legacyId !== appointmentId) {
-                try {
-                    found = await tryLoadById(legacyId, 'legacy');
-                    if (found) {
-                        return found;
-                    }
-                } catch (legacyError) {
-                    console.warn('Legacy ID lookup failed:', legacyError);
-                }
-            }
-
-            // Fallback query disabled for legacy data
-
-            recordDebugLog('firebase.findAppointmentById.failed', {
-                appointmentId,
-                appointmentContext
-            });
+            console.warn('⚠️ Appointment not found in database with ID:', appointmentId);
             return null;
         } catch (error) {
-            console.error('Error finding appointment by ID:', error);
+            console.error('❌ Error finding appointment by ID:', error);
             return null;
         }
     }
@@ -862,9 +826,8 @@ class FirebaseDataService {
 
                 if (accessibleClinics.includes(clinicId)) {
                     confirmations.push({
-                        ...data,
-                        legacyId: data.id || data.appointmentId || null,
-                        id: doc.id
+                        id: doc.id,
+                        ...data
                     });
                 }
             });
@@ -940,11 +903,9 @@ class FirebaseDataService {
                 const querySnapshot = await getDocs(q);
 
                 querySnapshot.forEach((doc) => {
-                    const data = doc.data();
                     appointments.push({
-                        ...data,
-                        legacyId: data.id || data.appointmentId || null,
-                        id: doc.id
+                        id: doc.id,
+                        ...doc.data()
                     });
                 });
             }
@@ -1005,8 +966,8 @@ class FirebaseDataService {
 
     // Convert location name to clinic ID
     getClinicIdFromLocation(locationName) {
-        const normalized = this.normalizeClinicId(locationName);
-        return normalized || 'arcadia';
+        if (!locationName) return 'arcadia'; // default
+        return locationName.toLowerCase().replace(/\s+/g, '-');
     }
 
     // Convert clinic ID back to location name
@@ -1054,18 +1015,14 @@ class FirebaseDataService {
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const appointmentDate = data.appointmentDateTime ? data.appointmentDateTime.toDate() : new Date();
-                    const clinicInfo = this.resolveClinicInfo(data);
 
                     pendingAppointments.push({
-                        ...data,
-                        legacyId: data.id || data.appointmentId || null,
                         id: doc.id,
-                        clinicLocation: clinicInfo.key,
-                        clinicId: clinicInfo.key,
+                        ...data,
                         // Convert Firebase timestamp to readable format
                         time: appointmentDate.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', hour12: false}),
                         dateKey: appointmentDate.toISOString().split('T')[0], // YYYY-MM-DD format
-                        location: clinicInfo.label || data.location || data.clinicLocation || '',
+                        location: data.clinicLocation,
                         appointmentDateTime: appointmentDate
                     });
                 });
@@ -1204,11 +1161,9 @@ class FirebaseDataService {
             const records = [];
 
             querySnapshot.forEach((doc) => {
-                const data = doc.data();
                 records.push({
-                    ...data,
-                    legacyId: data.id || null,
-                    id: doc.id
+                    id: doc.id,
+                    ...doc.data()
                 });
             });
 
@@ -1309,60 +1264,17 @@ class FirebaseDataService {
         return null;
     }
 
-    // Validate tooth number (1-32)
-    validateToothNumber(toothNum) {
-        const num = parseInt(toothNum);
-        if (isNaN(num) || num < 1 || num > 32) {
-            throw new Error(`Invalid tooth number: ${toothNum}. Must be 1-32.`);
-        }
-        return num;
-    }
-
-    // Validate tooth status
-    validateToothStatus(status) {
-        const validStatuses = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op', 'urgent'];
-        if (!validStatuses.includes(status)) {
-            throw new Error(`Invalid tooth status: ${status}. Must be one of: ${validStatuses.join(', ')}`);
-        }
-        return status;
-    }
-
-    // Validate file upload
-    validateFileUpload(file) {
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-
-        if (!file) {
-            throw new Error('No file provided');
-        }
-
-        if (file.size > maxSize) {
-            throw new Error(`File too large: ${(file.size / 1024 / 1024).toFixed(2)}MB. Maximum 5MB allowed.`);
-        }
-
-        if (!allowedTypes.includes(file.type)) {
-            throw new Error(`Invalid file type: ${file.type}. Only JPEG, PNG, and PDF allowed.`);
-        }
-
-        return true;
-    }
-
     // Update tooth status (e.g., healthy, cavity, filled, missing, etc.)
     async updateToothStatus(userId, toothNum, statusData) {
         await this.ensureReady();
-
-        // Validate inputs
-        const validToothNum = this.validateToothNumber(toothNum);
-        const validStatus = this.validateToothStatus(statusData.status);
-
         const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
         const db = this.validateDatabase();
         const chartRef = doc(db, 'dentalCharts', userId);
 
         await updateDoc(chartRef, {
-            [`teeth.${validToothNum}.status`]: validStatus,
-            [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
+            [`teeth.${toothNum}.status`]: statusData.status,
+            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         });
 
@@ -1372,10 +1284,6 @@ class FirebaseDataService {
     // Add treatment record to a tooth
     async addToothTreatment(userId, toothNum, treatment) {
         await this.ensureReady();
-
-        // Validate tooth number
-        const validToothNum = this.validateToothNumber(toothNum);
-
         const { doc, getDoc, updateDoc, arrayUnion } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
         const db = this.validateDatabase();
@@ -1399,19 +1307,19 @@ class FirebaseDataService {
         if (!chartData.teeth) {
             chartData.teeth = {};
         }
-        if (!chartData.teeth[validToothNum]) {
-            chartData.teeth[validToothNum] = { status: 'healthy', treatments: [] };
+        if (!chartData.teeth[toothNum]) {
+            chartData.teeth[toothNum] = { status: 'healthy', treatments: [] };
         }
-        if (!chartData.teeth[validToothNum].treatments) {
-            chartData.teeth[validToothNum].treatments = [];
+        if (!chartData.teeth[toothNum].treatments) {
+            chartData.teeth[toothNum].treatments = [];
         }
 
         // Add treatment entry
-        chartData.teeth[validToothNum].treatments.push(entry);
+        chartData.teeth[toothNum].treatments.push(entry);
 
         await updateDoc(chartRef, {
-            [`teeth.${validToothNum}.treatments`]: chartData.teeth[validToothNum].treatments,
-            [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
+            [`teeth.${toothNum}.treatments`]: chartData.teeth[toothNum].treatments,
+            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         });
 
@@ -1421,11 +1329,6 @@ class FirebaseDataService {
     // Upload file for tooth attachment (hybrid: <50KB Base64, >50KB Storage)
     async uploadToothAttachment(userId, toothNum, file) {
         await this.ensureReady();
-
-        // Validate inputs
-        const validToothNum = this.validateToothNumber(toothNum);
-        this.validateFileUpload(file);
-
         const MAX_BASE64_SIZE = 50 * 1024; // 50 KB threshold
 
         if (file.size < MAX_BASE64_SIZE) {
@@ -1443,7 +1346,7 @@ class FirebaseDataService {
             const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js');
 
             const storage = this.storage;
-            const storagePath = `dentalCharts/${userId}/tooth_${validToothNum}/${Date.now()}_${file.name}`;
+            const storagePath = `dentalCharts/${userId}/tooth_${toothNum}/${Date.now()}_${file.name}`;
             const storageRef = ref(storage, storagePath);
 
             // Upload file
@@ -1464,10 +1367,6 @@ class FirebaseDataService {
     // Delete tooth treatment entry
     async deleteToothTreatment(userId, toothNum, treatmentId) {
         await this.ensureReady();
-
-        // Validate tooth number
-        const validToothNum = this.validateToothNumber(toothNum);
-
         const { doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
 
         const db = this.validateDatabase();
@@ -1476,13 +1375,13 @@ class FirebaseDataService {
 
         if (chartSnap.exists()) {
             const chartData = chartSnap.data();
-            const tooth = chartData.teeth?.[validToothNum];
+            const tooth = chartData.teeth?.[toothNum];
 
             if (tooth?.treatments) {
                 const updatedTreatments = tooth.treatments.filter(t => t.id !== treatmentId);
                 await updateDoc(chartRef, {
-                    [`teeth.${validToothNum}.treatments`]: updatedTreatments,
-                    [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
+                    [`teeth.${toothNum}.treatments`]: updatedTreatments,
+                    [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
                     lastUpdated: new Date().toISOString()
                 });
             }
@@ -1547,8 +1446,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof window !== 'undefined') {
     window.FirebaseDataService = FirebaseDataService;
 }
-                recordDebugLog('firebase.findAppointmentById.fallbackQuery', {
-                    patientName,
-                    appointmentDate,
-                    appointmentTime
-                });

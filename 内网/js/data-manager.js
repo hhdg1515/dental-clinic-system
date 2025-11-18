@@ -20,6 +20,28 @@
  * Future improvement: Migrate all role checks to token claims.
  */
 
+if (typeof window !== 'undefined' && !window.__intranetDebugLog) {
+    window.__intranetDebugLog = [];
+}
+
+function recordDebugLog(label, payload) {
+    try {
+        if (typeof window === 'undefined') {
+            return;
+        }
+        if (!window.__intranetDebugLog) {
+            window.__intranetDebugLog = [];
+        }
+        window.__intranetDebugLog.push({
+            ts: new Date().toISOString(),
+            label,
+            payload
+        });
+    } catch (_error) {
+        // ignore
+    }
+}
+
 class GlobalDataManager {
     constructor() {
         this.storageKey = 'dental_clinic_data';
@@ -448,7 +470,12 @@ class GlobalDataManager {
     }
 
     // Update appointment status
-    async updateAppointmentStatus(appointmentId, newStatus, additionalData = {}) {
+    async updateAppointmentStatus(appointmentId, newStatus, additionalData = {}, appointmentContext = null) {
+        recordDebugLog('dataManager.updateAppointmentStatus', {
+            appointmentId,
+            newStatus,
+            appointmentContext
+        });
         if (this.useFirebase && this.firebaseService) {
             try {
                 const currentUser = this.getCurrentUser();
@@ -456,10 +483,22 @@ class GlobalDataManager {
                 const userClinics = this.getUserClinics(currentUser);
 
                 // Find the appointment to get its date before updating
-                const appointment = await this.firebaseService.findAppointmentById(appointmentId, userRole, userClinics);
+                const appointment = await this.firebaseService.findAppointmentById(
+                    appointmentId,
+                    userRole,
+                    userClinics,
+                    appointmentContext
+                );
                 const dateKey = appointment?.dateKey || appointment?.date;
 
-                const result = await this.firebaseService.updateAppointmentStatus(appointmentId, newStatus, additionalData, userRole, userClinics);
+                const result = await this.firebaseService.updateAppointmentStatus(
+                    appointmentId,
+                    newStatus,
+                    additionalData,
+                    userRole,
+                    userClinics,
+                    appointmentContext
+                );
 
                 // Invalidate cache after updating
                 if (window.cacheManager && dateKey) {
