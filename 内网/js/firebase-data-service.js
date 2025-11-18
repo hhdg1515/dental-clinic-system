@@ -1154,6 +1154,177 @@ class FirebaseDataService {
             throw error;
         }
     }
+
+    // ==================== DENTAL CHART METHODS ====================
+
+    // Get dental chart for a patient (Universal numbering 1-32)
+    async getDentalChart(userId) {
+        await this.ensureReady();
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+        const chartSnap = await getDoc(chartRef);
+
+        if (chartSnap.exists()) {
+            return { id: chartSnap.id, ...chartSnap.data() };
+        }
+        return null;
+    }
+
+    // Update tooth status (e.g., healthy, cavity, filled, missing, etc.)
+    async updateToothStatus(userId, toothNum, statusData) {
+        await this.ensureReady();
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        await updateDoc(chartRef, {
+            [`teeth.${toothNum}.status`]: statusData.status,
+            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+
+        return true;
+    }
+
+    // Add treatment record to a tooth
+    async addToothTreatment(userId, toothNum, treatment) {
+        await this.ensureReady();
+        const { doc, getDoc, updateDoc, arrayUnion } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        // Ensure tooth exists
+        const chartSnap = await getDoc(chartRef);
+        if (!chartSnap.exists()) {
+            throw new Error('Dental chart not found');
+        }
+
+        const entry = {
+            id: `treatment-${Date.now()}`,
+            date: new Date().toISOString(),
+            createdBy: this.auth.currentUser?.uid || 'unknown',
+            ...treatment
+        };
+
+        // Ensure teeth object and tooth entry exist
+        const chartData = chartSnap.data();
+        if (!chartData.teeth) {
+            chartData.teeth = {};
+        }
+        if (!chartData.teeth[toothNum]) {
+            chartData.teeth[toothNum] = { status: 'healthy', treatments: [] };
+        }
+        if (!chartData.teeth[toothNum].treatments) {
+            chartData.teeth[toothNum].treatments = [];
+        }
+
+        // Add treatment entry
+        chartData.teeth[toothNum].treatments.push(entry);
+
+        await updateDoc(chartRef, {
+            [`teeth.${toothNum}.treatments`]: chartData.teeth[toothNum].treatments,
+            [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+
+        return entry;
+    }
+
+    // Upload file for tooth attachment (hybrid: <50KB Base64, >50KB Storage)
+    async uploadToothAttachment(userId, toothNum, file) {
+        await this.ensureReady();
+        const MAX_BASE64_SIZE = 50 * 1024; // 50 KB threshold
+
+        if (file.size < MAX_BASE64_SIZE) {
+            // Small file: Store as Base64 in Firestore
+            const base64 = await this.fileToBase64(file);
+            return {
+                type: 'base64',
+                filename: file.name,
+                mimeType: file.type,
+                fileSize: file.size,
+                base64Data: base64
+            };
+        } else {
+            // Large file: Upload to Firebase Storage
+            const { ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js');
+
+            const storage = this.storage;
+            const storagePath = `dentalCharts/${userId}/tooth_${toothNum}/${Date.now()}_${file.name}`;
+            const storageRef = ref(storage, storagePath);
+
+            // Upload file
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            return {
+                type: 'storage',
+                filename: file.name,
+                mimeType: file.type,
+                fileSize: file.size,
+                storagePath: storagePath,
+                downloadURL: downloadURL
+            };
+        }
+    }
+
+    // Delete tooth treatment entry
+    async deleteToothTreatment(userId, toothNum, treatmentId) {
+        await this.ensureReady();
+        const { doc, getDoc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+        const chartSnap = await getDoc(chartRef);
+
+        if (chartSnap.exists()) {
+            const chartData = chartSnap.data();
+            const tooth = chartData.teeth?.[toothNum];
+
+            if (tooth?.treatments) {
+                const updatedTreatments = tooth.treatments.filter(t => t.id !== treatmentId);
+                await updateDoc(chartRef, {
+                    [`teeth.${toothNum}.treatments`]: updatedTreatments,
+                    [`teeth.${toothNum}.lastUpdated`]: new Date().toISOString(),
+                    lastUpdated: new Date().toISOString()
+                });
+            }
+        }
+
+        return true;
+    }
+
+    // Initialize empty dental chart for new patient
+    async initializeDentalChart(userId, patientName) {
+        await this.ensureReady();
+        const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        // Create 32 teeth with Universal numbering (1-32)
+        const teeth = {};
+        for (let i = 1; i <= 32; i++) {
+            teeth[i.toString()] = {
+                status: 'healthy',
+                treatments: [],
+                lastUpdated: new Date().toISOString()
+            };
+        }
+
+        await setDoc(chartRef, {
+            userId: userId,
+            patientName: patientName,
+            lastUpdated: new Date().toISOString(),
+            teeth: teeth
+        });
+
+        return true;
+    }
 }
 
 // Create global instance

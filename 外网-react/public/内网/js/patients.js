@@ -1,4 +1,6 @@
 // Patients Page Functionality - Updated to use Global Data Manager with Pagination
+import { escapeHtml } from './security-utils.js';
+
 // Global variables to store current processing data
 let currentProcessingRow = null;
 let currentPatientData = null;
@@ -146,7 +148,6 @@ function handleUrlHashNavigation() {
         window.history.replaceState(null, null, window.location.pathname);
     }
 }
-
 // Initialize Pagination for both tabs
 function initializePagination() {
     initializePendingPagination();
@@ -343,33 +344,22 @@ async function renderPendingAppointments(forceReload = false) {
         // Just re-apply current filter without resetting page
         applyPendingFilter(false);
     }
-
+    
     // Clear existing rows
     tableBody.innerHTML = '';
-
+    
     // Calculate pagination
     const startIndex = (pendingCurrentPage - 1) * patientsItemsPerPage;
     const endIndex = startIndex + patientsItemsPerPage;
     const paginatedData = pendingFilteredData.slice(startIndex, endIndex);
-
-    // Get patient icons in batch (optimized)
-    let iconsMap = new Map();
-    if (window.dataManager && window.dataManager.getPatientIconsBatch) {
-        try {
-            iconsMap = await window.dataManager.getPatientIconsBatch(paginatedData);
-            console.log('👤 Patients: Got patient icons for', iconsMap.size, 'pending confirmations');
-        } catch (error) {
-            console.warn('Failed to get patient icons:', error);
-        }
-    }
-
+    
+    
     // Create table rows for pending confirmations
     paginatedData.forEach(confirmation => {
-        const icon = iconsMap.get(confirmation.id) || '';
-        const row = createPatientTableRow(confirmation, 'pending', icon);
+        const row = createPatientTableRow(confirmation, 'pending');
         tableBody.appendChild(row);
     });
-
+    
     // Update pagination controls (no notification badge update needed - bell is always active)
     updatePendingPaginationControls();
 }
@@ -387,11 +377,11 @@ async function renderConfirmedAppointments(forceReload = false) {
 
             // Ensure we have an array
             if (!Array.isArray(allAppointments)) {
-                console.warn('getAllAppointments did not return an array:', allAppointments);
-                confirmedAllData = [];
-                applyConfirmedFilter(true);
-                return;
-            }
+            console.warn('getAllAppointments did not return an array:', allAppointments);
+            confirmedAllData = [];
+            applyConfirmedFilter(true);
+            return;
+        }
 
             // Filter for confirmed appointments (exclude pending, cancelled, and declined)
             const confirmedAppointments = allAppointments.filter(app =>
@@ -425,40 +415,29 @@ async function renderConfirmedAppointments(forceReload = false) {
     
     // Clear existing rows
     tableBody.innerHTML = '';
-
+    
     // Calculate pagination
     const startIndex = (confirmedCurrentPage - 1) * patientsItemsPerPage;
     const endIndex = startIndex + patientsItemsPerPage;
     const paginatedData = confirmedFilteredData.slice(startIndex, endIndex);
-
-    // Get patient icons in batch (optimized)
-    let iconsMap = new Map();
-    if (window.dataManager && window.dataManager.getPatientIconsBatch) {
-        try {
-            iconsMap = await window.dataManager.getPatientIconsBatch(paginatedData);
-            console.log('👤 Patients: Got patient icons for', iconsMap.size, 'confirmed appointments');
-        } catch (error) {
-            console.warn('Failed to get patient icons:', error);
-        }
-    }
-
+    
+    
     // Create table rows for confirmed appointments
     paginatedData.forEach(appointment => {
-        const icon = iconsMap.get(appointment.id) || '';
-        const row = createPatientTableRow(appointment, 'confirmed', icon);
+        const row = createPatientTableRow(appointment, 'confirmed');
         tableBody.appendChild(row);
     });
-
+    
     // Update pagination controls
     updateConfirmedPaginationControls();
 }
 
 // Create patient table row
-function createPatientTableRow(data, type, icon = '') {
+function createPatientTableRow(data, type) {
     const row = document.createElement('tr');
     row.dataset.patientId = data.id;
     row.dataset.patientType = type;
-
+    
     // Format date and time for display
     let displayDateTime;
     if (type === 'pending') {
@@ -481,15 +460,15 @@ function createPatientTableRow(data, type, icon = '') {
         const formattedTime = formatTime(data.time);
         displayDateTime = `${formattedDate} ${formattedTime}`;
     }
-
+    
     // Create the basic row structure
     row.innerHTML = `
-        <td class="patient-name">${data.patientName}${icon}</td>
-        <td class="appointment-date">${displayDateTime}</td>
-        <td>${data.phone || '(XXX) XXX-XXXX'}</td>
-        <td><span class="treatment-type">${data.service || data.serviceType || data.serviceName || data.treatment || 'Not specified'}</span></td>
-        <td class="location-cell">${data.location}</td>
-        <td id="actions-${data.id}"></td>
+        <td class="patient-name">${escapeHtml(data.patientName)}</td>
+        <td class="appointment-date">${escapeHtml(displayDateTime)}</td>
+        <td>${escapeHtml(data.phone || '(XXX) XXX-XXXX')}</td>
+        <td><span class="treatment-type">${escapeHtml(data.service || data.serviceType || data.serviceName || data.treatment || 'Not specified')}</span></td>
+        <td class="location-cell">${escapeHtml(data.location)}</td>
+        <td id="actions-${escapeHtml(data.id)}"></td>
     `;
     
     // Add the appropriate actions based on type
@@ -742,21 +721,21 @@ function createAppointmentHistoryCard(appointment) {
     
     card.innerHTML = `
         <div class="appointment-card-header">
-            <div class="appointment-date-time">${formattedDate}</div>
-            <div class="appointment-status ${statusClass}">${statusText}</div>
+            <div class="appointment-date-time">${escapeHtml(formattedDate)}</div>
+            <div class="appointment-status ${statusClass}">${escapeHtml(statusText)}</div>
         </div>
         <div class="appointment-details">
             <div class="detail-item">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${appointment.service || appointment.serviceType || appointment.serviceName || appointment.treatment || 'Not specified'}</span>
+                <span class="detail-value">${escapeHtml(appointment.service || appointment.serviceType || appointment.serviceName || appointment.treatment || 'Not specified')}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Location:</span>
-                <span class="detail-value">${appointment.location}</span>
+                <span class="detail-value">${escapeHtml(appointment.location)}</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Time:</span>
-                <span class="detail-value">${formattedTime}</span>
+                <span class="detail-value">${escapeHtml(formattedTime)}</span>
             </div>
         </div>
     `;
@@ -799,18 +778,18 @@ async function showProcessModal(element) {
     const summary = document.getElementById('appointmentSummary');
     const phone = patientData.phone || 'Phone not available';
     summary.innerHTML = `
-        <h4>${patientData.patientName}</h4>
+        <h4>${escapeHtml(patientData.patientName)}</h4>
         <div class="detail-row">
             <span class="detail-label">Phone:</span>
-            <span class="detail-value">${phone}</span>
+            <span class="detail-value">${escapeHtml(phone)}</span>
         </div>
         <div class="detail-row">
             <span class="detail-label">Service:</span>
-            <span class="detail-value">${patientData.service || patientData.serviceType || patientData.serviceName || patientData.treatment || 'Not specified'}</span>
+            <span class="detail-value">${escapeHtml(patientData.service || patientData.serviceType || patientData.serviceName || patientData.treatment || 'Not specified')}</span>
         </div>
         <div class="detail-row">
             <span class="detail-label">Status:</span>
-            <span class="detail-value">${capitalizeFirst(patientData.status.replace('-', ' '))}</span>
+            <span class="detail-value">${escapeHtml(capitalizeFirst(patientData.status.replace('-', ' ')))}</span>
         </div>
     `;
 

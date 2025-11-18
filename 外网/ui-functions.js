@@ -2,14 +2,15 @@
 /**
  * UI状态管理和界面切换功能
  */
+import { escapeHtml } from './js/security-utils.js';
 
 // UI状态枚举
 const UI_STATES = {
     LOGIN: 'login',
-    REGISTER: 'register', 
+    REGISTER: 'register',
     LOGGED_IN_DASHBOARD: 'loggedInDashboard',
     APPOINTMENT_FORM: 'appointmentForm',
-    APPOINTMENT_PREVIEW: 'appointmentPreview', 
+    APPOINTMENT_PREVIEW: 'appointmentPreview',
     APPOINTMENT_SUCCESS: 'appointmentSuccess',
     ADMIN_REDIRECT: 'adminRedirect'
 };
@@ -881,12 +882,12 @@ async function loadUserAppointmentsSummary(userId) {
                     <div class="appointment-slide ${index === 0 ? 'active' : ''}">
                         <div class="appointment-item">
                             <div class="appointment-details">
-                                <div class="service-type">${formatServiceType(appointment.serviceType)}</div>
-                                <div class="clinic-location">${formatClinicName(appointment.clinicLocation)}</div>
+                                <div class="service-type">${escapeHtml(formatServiceType(appointment.serviceType))}</div>
+                                <div class="clinic-location">${escapeHtml(formatClinicName(appointment.clinicLocation))}</div>
                             </div>
                             <div class="appointment-date">
-                                <strong>${formattedDate}</strong>
-                                <span>${formattedTime}</span>
+                                <strong>${escapeHtml(formattedDate)}</strong>
+                                <span>${escapeHtml(formattedTime)}</span>
                             </div>
                         </div>
                     </div>
@@ -929,12 +930,12 @@ async function loadUserAppointmentsSummary(userId) {
                     </div>
                     <div class="appointment-card-ios">
                         <div class="appointment-service">
-                            <div class="service-name">${formatServiceType(nextAppointment.serviceType)}</div>
-                            <div class="clinic-name">${formatClinicName(nextAppointment.clinicLocation)}</div>
+                            <div class="service-name">${escapeHtml(formatServiceType(nextAppointment.serviceType))}</div>
+                            <div class="clinic-name">${escapeHtml(formatClinicName(nextAppointment.clinicLocation))}</div>
                         </div>
                         <div class="appointment-time">
-                            <div class="date-time">${formattedDate}</div>
-                            <div class="time-only">${formattedTime}</div>
+                            <div class="date-time">${escapeHtml(formattedDate)}</div>
+                            <div class="time-only">${escapeHtml(formattedTime)}</div>
                         </div>
                     </div>
                 </div>

@@ -7,16 +7,49 @@
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="专业牙科诊所，提供家庭牙科、美容牙科、根管治疗、口腔正畸等全方位牙科服务。服务地点：Arcadia, Rowland Heights, Irvine, Pasadena, Eastvale。预约电话咨询，享受专业护理。">
+    <meta name="keywords" content="牙科诊所, 牙医, 美容牙科, 根管治疗, 洗牙, 口腔正畸, Arcadia牙科, Irvine牙医, Pasadena牙科">
+
+    <!-- Open Graph for Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="First Ave Dental & Orthodontics - 家庭与美容牙科服务">
+    <meta property="og:description" content="提供全方位牙科服务，5个便利地点。专业团队，先进设备，温馨环境。">
+    <meta property="og:url" content="https://firstavedentalortho.com">
+    <meta property="og:image" content="https://firstavedentalortho.com/images/og-image.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="First Ave Dental & Orthodontics - 家庭与美容牙科服务">
+    <meta name="twitter:description" content="提供全方位牙科服务，5个便利地点。">
+
     <title>First Ave Dental & Orthodontics</title>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome - Deferred loading -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
-    <!-- Google Fonts -->
+    <!-- Preconnect to critical domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+
+    <!-- Google Fonts - Deferred loading with font-display: optional to prevent CLS -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=optional" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=optional" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=optional" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=optional" rel="stylesheet">
+    </noscript>
+
+    <link
+      rel="preload"
+      as="image"
+      href="/images/forest-hero.webp"
+      imagesrcset="/images/forest-hero.webp 1200w, /images/forest-hero.jpg 1400w"
+      imagesizes="(min-width: 1024px) 100vw, 100vw"
+    />
   </head>
   <body>
     <div id="root"></div>

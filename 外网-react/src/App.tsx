@@ -1,8 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { LanguageProvider } from './context/LanguageContext';
-import { AuthProvider } from './context/AuthContext';
-import { ChatProvider } from './components/chat/ChatProvider';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
 
 const Landing = lazy(() =>
   import('./pages/Landing').then((module) => ({ default: module.Landing }))
@@ -41,6 +39,9 @@ const AppAppointment = lazy(() =>
 
 function App() {
   const ALLOWED_KEYS = new Set(['preferred-language', 'sidebarCollapsed', 'dashboard:view-location']);
+  const location = useLocation();
+  const { requestAuthInit, loading } = useAuth();
+  const isAppRoute = location.pathname.startsWith('/app');
 
   useEffect(() => {
     try {
@@ -65,32 +66,34 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (isAppRoute) {
+      requestAuthInit();
+    }
+  }, [isAppRoute, requestAuthInit]);
+
+  if (isAppRoute && loading) {
+    return <div style={{ padding: 16 }}>Preparing your dashboard…</div>;
+  }
+
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <ChatProvider>
-            <Suspense fallback={<div style={{ padding: 8 }}>Loading…</div>}>
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/service" element={<Service />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/services-detail-1" element={<ServicesDetail1 />} />
-                <Route path="/services/general-family" element={<ServicesDetail1 />} />
-                <Route path="/services/cosmetic" element={<ServicesDetail1 />} />
-                <Route path="/services/orthodontics" element={<ServicesDetail1 />} />
-                <Route path="/services/root-canals" element={<ServicesDetail1 />} />
-                <Route path="/services-detail-2" element={<ServicesDetail2 />} />
-                <Route path="/app/login" element={<AppLogin />} />
-                <Route path="/app/dashboard" element={<AppDashboard />} />
-                <Route path="/app/appointment" element={<AppAppointment />} />
-                <Route path="/app" element={<Navigate to="/app/login" replace />} />
-              </Routes>
-            </Suspense>
-          </ChatProvider>
-        </BrowserRouter>
-      </AuthProvider>
-    </LanguageProvider>
+    <Suspense fallback={<div style={{ padding: 8 }}>Loading…</div>}>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/service" element={<Service />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/services-detail-1" element={<ServicesDetail1 />} />
+        <Route path="/services/general-family" element={<ServicesDetail1 />} />
+        <Route path="/services/cosmetic" element={<ServicesDetail1 />} />
+        <Route path="/services/orthodontics" element={<ServicesDetail1 />} />
+        <Route path="/services/root-canals" element={<ServicesDetail1 />} />
+        <Route path="/services-detail-2" element={<ServicesDetail2 />} />
+        <Route path="/app/login" element={<AppLogin />} />
+        <Route path="/app/dashboard" element={<AppDashboard />} />
+        <Route path="/app/appointment" element={<AppAppointment />} />
+        <Route path="/app" element={<Navigate to="/app/login" replace />} />
+      </Routes>
+    </Suspense>
   );
 }
 

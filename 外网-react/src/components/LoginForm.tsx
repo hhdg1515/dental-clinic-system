@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FC, FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -8,7 +8,7 @@ interface LoginFormProps {
 }
 
 export const LoginForm: FC<LoginFormProps> = ({ onSuccess }) => {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, requestAuthInit } = useAuth();
   const { t, currentLanguage } = useLanguage();
   const isZh = currentLanguage === 'zh';
 
@@ -18,6 +18,10 @@ export const LoginForm: FC<LoginFormProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    requestAuthInit();
+  }, [requestAuthInit]);
 
   const validateForm = (): string[] => {
     const errors: string[] = [];

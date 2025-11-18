@@ -21,7 +21,7 @@ async function initializeFirebase() {
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
-        apiKey: "AIzaSyB5kla1coph39gz60jOhAw9ce3Trp9myHI",
+        apiKey: "AIzaSyCCJbTwnqQo4CcUM-jDSaTC-hdpMcBTX4c",
         authDomain: "dental-clinic-demo-ce94b.firebaseapp.com",
         projectId: "dental-clinic-demo-ce94b",
         storageBucket: "dental-clinic-demo-ce94b.firebasestorage.app"

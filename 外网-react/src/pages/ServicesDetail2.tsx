@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
+import { OptimizedImage } from '../components/OptimizedImage';
+import { SEO } from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 
 export const ServicesDetail2 = () => {
@@ -23,17 +25,25 @@ export const ServicesDetail2 = () => {
   }, []);
 
   return (
-    <div id="detail-page-2" className="flex min-h-screen flex-col">
-      <div className="flex-1">
-      {/* Hero Section */}
+    <>
+      <SEO
+        title="Cosmetic Dentistry & Orthodontics | First Ave Dental"
+        description="美容牙科与正畸服务：牙齿美白、贴面、隐形矫正、传统矫正等。专业美容牙医，打造完美笑容。"
+        keywords="美容牙科, 牙齿美白, 牙齿贴面, 隐形矫正, 牙齿矫正, 正畸"
+        ogTitle="美容牙科与正畸服务 - First Ave Dental"
+        ogDescription="专业美容牙科和正畸服务，打造完美笑容"
+      />
+      <div id="detail-page-2" className="flex min-h-screen flex-col">
+        <div className="flex-1">
+        {/* Hero Section */}
       <section className="hero-section">
         <Navigation />
 
         <div className="hero-content">
           <div className="breadcrumb-wrapper">
             <ul className="breadcrumbs">
-              <li><a href="/">{t('nav-home')}</a></li>
-              <li>&gt; <a href="/service">{t('nav-services')}</a></li>
+              <li><a href="/" aria-label="Go to home page">{t('nav-home')}</a></li>
+              <li>&gt; <a href="/service" aria-label="Go to services page">{t('nav-services')}</a></li>
               <li>{t('detail-breadcrumb-2')}</li>
             </ul>
           </div>
@@ -58,7 +68,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/pe.jpg" alt={t('periodontics-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/pe.jpg" alt={t('periodontics-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('periodontics-card-title')}</h3>
@@ -124,7 +134,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/res.jpg" alt={t('restorations-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/res.jpg" alt={t('restorations-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('restorations-card-title')}</h3>
@@ -188,7 +198,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/preventive.png" alt={t('preventive-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/preventive.png" alt={t('preventive-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('preventive-card-title')}</h3>
@@ -252,7 +262,7 @@ export const ServicesDetail2 = () => {
               <div className="carousel-content">
                 <div className="carousel-item active">
                   <div className="image-section">
-                    <img className="service-image" src="/images/oral.jpg" alt={t('oral-surgery-card-title')} />
+                    <OptimizedImage className="service-image" src="/images/oral.jpg" alt={t('oral-surgery-card-title')} loading="lazy" aspectRatio="16/9" />
                   </div>
                   <div className="text-section">
                     <h3 className="service-card-title">{t('oral-surgery-card-title')}</h3>
@@ -312,6 +322,7 @@ export const ServicesDetail2 = () => {
 
       {/* Footer */}
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };

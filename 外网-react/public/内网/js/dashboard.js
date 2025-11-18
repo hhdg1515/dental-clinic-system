@@ -1,5 +1,8 @@
 // Dashboard functionality - Complete rewrite to fix all issues
 
+// Import security utilities to prevent XSS
+import { escapeHtml } from './security-utils.js';
+
 // ==================== AUTHENTICATION & PERMISSIONS SYSTEM ====================
 
 // Global variables for auth state
@@ -7,69 +10,120 @@ let currentFirebaseUser = null;
 let userRole = null;
 let userClinics = [];
 
-// ✅ REMOVED: Old localStorage-based authentication functions are replaced by intranetAuthGuard
-// Authentication is handled by intranet-auth-guard.js using Firebase Auth + Firestore users/{uid}
-// The auth guard blocks page rendering until authentication completes, so this function is no longer needed
+// Basic Authentication Functions
+async function getCurrentUser() {
+    try {
+        // 使用与auth-check.js相同的逻辑获取用户数据
+        const possibleKeys = ['currentUser', 'user', 'userData', 'authUser'];
+
+        for (const key of possibleKeys) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const parsed = JSON.parse(data);
+                // 验证数据结构
+                if (parsed && (parsed.role || parsed.email)) {
+                    currentFirebaseUser = parsed;
+                    return parsed;
+                }
+            }
+        }
+        return null;
+    } catch (error) {
+        console.error('解析用户数据失败:', error);
+        return null;
+    }
+}
+
+async function getUserRole() {
+    const user = await getCurrentUser();
+    if (!user) return null;
+
+    try {
+        // 直接从localStorage用户数据获取角色
+        if (user.role) {
+            userRole = user.role;
+            // Support both 'clinics' and 'accessibleLocations' field names
+            userClinics = user.clinics || user.accessibleLocations || [];
+            return userRole;
+        }
+
+        // 备用：根据邮箱推断角色
+        if (user.email) {
+            if (user.email.includes('admin') || user.email.includes('boss') || user.email.includes('owner')) {
+                userRole = 'admin';
+                return userRole;
+            }
+        }
+
+        return null; // 没有找到admin角色
+    } catch (error) {
+        console.error('Error getting user role:', error);
+        return null;
+    }
+}
 
 async function redirectIfNotAdmin() {
-    // ✅ Wait for auth guard to complete initialization
-    if (!window.intranetAuthGuard) {
-        console.warn('⚠️ Auth guard not available');
+    const user = await getCurrentUser();
+    const role = await getUserRole();
+
+    if (!user) {
+        console.log('No user logged in, showing login message...');
+        showAuthError('Please login first through the external website to access the internal dashboard.');
         return false;
     }
 
-    // ✅ Wait for authentication to complete (auth guard will handle redirects if needed)
-    if (!window.intranetAuthGuard.isAuthReady) {
-        console.log('⏳ Waiting for authentication to complete...');
-        try {
-            await window.intranetAuthGuard.waitForAuth();
-        } catch (error) {
-            console.error('❌ Auth wait failed:', error);
-            return false;
-        }
-    }
-
-    const userProfile = window.intranetAuthGuard.getUserProfile();
-
-    if (!userProfile) {
-        console.log('No user logged in');
-        return false;
-    }
-
-    const role = userProfile.role;
-    if (!role || (role !== 'admin' && role !== 'owner')) {
+    if (!role || (role !== 'admin' && role !== 'boss' && role !== 'owner')) {
         console.log('User does not have admin privileges');
+        showAuthError('Access denied. Admin privileges required for internal dashboard.');
         return false;
     }
-
-    // Store in global variables for compatibility with existing code
-    currentFirebaseUser = userProfile;
-    userRole = userProfile.role;
-    userClinics = userProfile.clinics || [];
 
     console.log(`✅ User authenticated as ${role}`);
     return true;
 }
 
 // Permission Management Functions
-// ✅ UPDATED: Now uses intranet auth guard instead of localStorage
 function isOwner() {
-    // ✅ Get from new auth guard (Firebase Auth + Firestore users/{uid})
-    if (window.intranetAuthGuard) {
-        return window.intranetAuthGuard.isOwner();
+    // Get current user role from localStorage first
+    try {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (currentUser.role) {
+            return currentUser.role === 'boss' || currentUser.role === 'owner';
+        }
+    } catch (error) {
+        console.warn('Failed to get user from localStorage:', error);
     }
 
-    // Fallback for backward compatibility during development
+    // Fallback to global userRole
     return userRole === 'boss' || userRole === 'owner';
 }
 
 function getAccessibleClinics() {
-    // ✅ Get from new auth guard (Firebase Auth + Firestore users/{uid})
-    if (window.intranetAuthGuard) {
-        return window.intranetAuthGuard.getAllowedClinics();
+    // Get current user from localStorage first
+    try {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (currentUser.role) {
+            if (currentUser.role === 'boss' || currentUser.role === 'owner') {
+                // Owners can access all clinics
+                return [
+                    'arcadia',
+                    'irvine',
+                    'south-pasadena',
+                    'rowland-heights',
+                    'eastvale'
+                ];
+            } else {
+                // Admins can only access assigned clinics
+                // Support both 'clinics' and 'accessibleLocations' field names
+                const clinicsList = currentUser.clinics || currentUser.accessibleLocations || [];
+                return clinicsList.map(clinic => clinic.id || clinic);
+            }
+        }
+    } catch (error) {
+        console.warn('Failed to get user from localStorage:', error);
     }
 
-    // Fallback for backward compatibility during development
+    // Fallback to global variables
     if (isOwner()) {
         return [
             'arcadia',
@@ -256,41 +310,36 @@ function getStartOfWeek(date) {
     return startOfWeek;
 }
 
-// ✅ UPDATED: Safe dataManager access functions (no longer reads from localStorage)
+// Safe dataManager access functions
 function safeGetCurrentUser() {
     try {
-        // ✅ Get from DataManager which now uses intranetAuthGuard
-        if (window.dataManager && dataManager.getCurrentUser) {
-            return dataManager.getCurrentUser();
+        // First try to get user from localStorage (same as test page)
+        const possibleKeys = ['currentUser', 'user', 'userData', 'authUser'];
+
+        for (const key of possibleKeys) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const parsed = JSON.parse(data);
+                if (parsed && (parsed.role || parsed.email)) {
+                    return parsed;
+                }
+            }
         }
 
-        // ✅ Direct fallback to auth guard if dataManager not ready
-        if (window.intranetAuthGuard) {
-            const userProfile = window.intranetAuthGuard.getUserProfile();
-            if (userProfile) {
-                return {
-                    name: userProfile.displayName || userProfile.email?.split('@')[0] || 'Admin',
-                    role: userProfile.role,
-                    clinics: userProfile.clinics || [],
-                    assignedLocation: userProfile.assignedLocation || (userProfile.clinics?.[0]) || 'arcadia',
-                    currentViewLocation: window.intranetAuthGuard.getCurrentViewLocation() || 'arcadia',
-                    email: userProfile.email,
-                    uid: userProfile.uid
-                };
-            }
+        // Fallback to DataManager
+        if (window.dataManager && dataManager.getCurrentUser) {
+            return dataManager.getCurrentUser();
         }
     } catch (error) {
         console.warn('DataManager access failed:', error);
     }
 
-    // Fallback user for development only
-    console.warn('⚠️ No auth data available, returning fallback user');
+    // Fallback user
     return {
         name: 'Sunny',
-        role: 'owner',
+        role: 'boss',
         currentViewLocation: 'arcadia',
-        assignedLocation: 'arcadia',
-        clinics: ['arcadia', 'irvine', 'south-pasadena', 'rowland-heights', 'eastvale']
+        assignedLocation: 'arcadia'
     };
 }
 
@@ -320,23 +369,6 @@ function safeGetCurrentLocation() {
     }
 }
 
-async function safeGetAppointmentsForDate(dateKey) {
-    try {
-        if (window.dataManager && dataManager.getAppointmentsForDate) {
-            let appointments = await dataManager.getAppointmentsForDate(dateKey) || [];
-
-            // Apply role-based filtering
-            appointments = filterDataByRole(appointments, 'appointments');
-
-            return appointments;
-        }
-    } catch (error) {
-        console.warn('Failed to get appointments for date:', error);
-    }
-    return [];
-}
-
-// Asynchronous wrapper to use Firebase data source (like other pages)
 async function safeGetAppointmentsForDate(dateKey) {
     try {
         if (window.dataManager && dataManager.getAppointmentsForDate) {
@@ -679,8 +711,6 @@ async function refreshDashboardData() {
     await renderTodaysAppointments();
     await renderServiceChart();
     await renderTrendChart();
-    await renderServiceSuccessRate();
-    await renderServiceUpgradeRate();
 
     // Render asynchronous pending confirmations
     await renderPendingConfirmations();
@@ -931,10 +961,10 @@ for (let i = 0; i < 6; i++) {
         const statusFormatted = getStatusDisplayName(appointment.status);
         
         row.innerHTML = `
-            <td>${appointment.patientName}</td>
-            <td>${timeFormatted}</td>
-            <td>${appointment.service}</td>
-            <td><span class="status-badge ${appointment.status}">${statusFormatted}</span></td>
+            <td>${escapeHtml(appointment.patientName)}</td>
+            <td>${escapeHtml(timeFormatted)}</td>
+            <td>${escapeHtml(appointment.service)}</td>
+            <td><span class="status-badge ${escapeHtml(appointment.status)}">${escapeHtml(statusFormatted)}</span></td>
         `;
     } else {
         // Empty rows
@@ -979,29 +1009,15 @@ async function renderPendingConfirmations() {
 
         const displayItems = pendingConfirmations.slice(0, 3);
 
-        // Get patient icons in batch (optimized)
-        let iconsMap = new Map();
-        if (window.dataManager && window.dataManager.getPatientIconsBatch) {
-            try {
-                iconsMap = await window.dataManager.getPatientIconsBatch(displayItems);
-                console.log('👤 Dashboard: Got patient icons for', iconsMap.size, 'confirmations');
-            } catch (error) {
-                console.warn('Failed to get patient icons:', error);
-            }
-        }
-
         displayItems.forEach(confirmation => {
-            // Get patient icon
-            const icon = iconsMap.get(confirmation.id) || '';
-
             const item = document.createElement('div');
             item.className = 'pending-item';
             item.innerHTML = `
                 <div class="pending-info">
-                    <div class="pending-patient-name">${confirmation.patientName}${icon}</div>
+                    <div class="pending-patient-name">${escapeHtml(confirmation.patientName)}</div>
                     <div class="pending-details">
-                        ${confirmation.dateTime}<br>
-                        ${confirmation.service} • ${confirmation.location}
+                        ${escapeHtml(confirmation.dateTime)}<br>
+                        ${escapeHtml(confirmation.service)} • ${escapeHtml(confirmation.location)}
                     </div>
                 </div>
                 <div class="pending-actions">
@@ -1431,14 +1447,19 @@ function getStatusDisplayName(status) {
 
 // Global functions for pending confirmations
 window.handleConfirmAction = async function(confirmationId) {
-    // Add confirmation dialog
-    if (!confirm('Please confirm if you want to CONFIRM this appointment?')) {
-        return; // User cancelled, no operation
+    if (!confirmationId) return;
+
+    if (!confirm('Confirm this appointment and move it to Recent Appointments?')) {
+        return;
     }
 
     try {
-        if (window.dataManager && dataManager.removePendingConfirmation) {
-            await dataManager.removePendingConfirmation(confirmationId);
+        if (window.dataManager && dataManager.updateAppointmentStatus) {
+            await dataManager.updateAppointmentStatus(confirmationId, 'confirmed', {
+                confirmedAt: new Date().toISOString(),
+                confirmedBy: dataManager.getCurrentUser()?.name || 'Admin'
+            });
+
             if (typeof showSuccessMessage === 'function') {
                 showSuccessMessage('Appointment confirmed!');
             }
@@ -1446,18 +1467,26 @@ window.handleConfirmAction = async function(confirmationId) {
         }
     } catch (error) {
         console.error('Error confirming appointment:', error);
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage('Failed to confirm appointment. Please try again.');
+        }
     }
 };
 
 window.handleDeclineAction = async function(confirmationId) {
-    // Add confirmation dialog
-    if (!confirm('Please confirm if you want to DECLINE this appointment?')) {
-        return; // User cancelled, no operation
+    if (!confirmationId) return;
+
+    if (!confirm('Decline this appointment request?')) {
+        return;
     }
     
     try {
-        if (window.dataManager && dataManager.removePendingConfirmation) {
-            dataManager.removePendingConfirmation(confirmationId);
+        if (window.dataManager && dataManager.updateAppointmentStatus) {
+            await dataManager.updateAppointmentStatus(confirmationId, 'declined', {
+                declinedAt: new Date().toISOString(),
+                declinedBy: dataManager.getCurrentUser()?.name || 'Admin'
+            });
+
             if (typeof showSuccessMessage === 'function') {
                 showSuccessMessage('Appointment declined!');
             }
@@ -1465,6 +1494,9 @@ window.handleDeclineAction = async function(confirmationId) {
         }
     } catch (error) {
         console.error('Error declining appointment:', error);
+        if (typeof showErrorMessage === 'function') {
+            showErrorMessage('Failed to decline appointment. Please try again.');
+        }
     }
 };
 
@@ -1506,22 +1538,21 @@ async function renderTrendChart() {
         return;
     }
     
-     // --- Key modification: Make Canvas width fully adapt to parent container ---
+     // --- Key modification: Make Canvas width fully adapt while keeping crisp pixels ---
     const container = document.querySelector('.trend-chart-container');
-    // Reset canvas size to prevent cumulative growth
-    canvas.style.width = '100%';
-    canvas.style.height = 'auto';
-    
-    // Use container's computed style width instead of offsetWidth
     const computedStyle = window.getComputedStyle(container);
     const containerPadding = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
-    const maxWidth = container.clientWidth - containerPadding;
-    // Set reasonable maximum width limit
-    const canvasWidth = Math.min(maxWidth, 800); // Limit maximum width to 800px
-    canvas.width = canvasWidth;
-    canvas.height = 296; 
+    const usableWidth = Math.max(480, container.clientWidth - containerPadding);
+    const targetHeight = 320;
+    const dpr = window.devicePixelRatio || 1;
 
+    canvas.style.width = `${usableWidth}px`;
+    canvas.style.height = `${targetHeight}px`;
+    canvas.width = usableWidth * dpr;
+    canvas.height = targetHeight * dpr; 
     const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
     const data = await getLast30DaysCompletedData();
     
     // Clear the canvas before redrawing
@@ -1537,322 +1568,97 @@ async function renderTrendChart() {
     }
     
     // Define chart dimensions and padding
-    const padding = 50; 
-    const chartWidth = canvas.width - (padding * 2);
-    const chartHeight = canvas.height - (padding * 2);
-    
-    // Get the maximum value for scaling
+    const padding = { top: 70, right: 36, bottom: 55, left: 60 };
+    const chartWidth = canvas.width - padding.left - padding.right;
+    const chartHeight = canvas.height - padding.top - padding.bottom;
     const maxValue = Math.max(...data.map(d => d.completed), 1);
-    
-    // Draw the X and Y axes
-    ctx.strokeStyle = '#e5e7eb';
+    const avgValue = data.reduce((sum, point) => sum + point.completed, 0) / data.length;
+
+    // Background gradient
+    const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    bgGradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+    bgGradient.addColorStop(1, 'rgba(239, 244, 255, 0.95)');
+    ctx.fillStyle = bgGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Grid lines
+    const gridColor = 'rgba(148, 163, 184, 0.25)';
+    const gridLines = 4;
+    ctx.strokeStyle = gridColor;
     ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(padding, canvas.height - padding);
-    ctx.lineTo(canvas.width - padding, canvas.height - padding);
-    ctx.stroke();
-    
-    // --- Draw Y-axis labels and ticks with improved spacing ---
-    ctx.font = '12px Inter';
-    ctx.fillStyle = '#6b7280';
-    ctx.textAlign = 'right';
-    const ySteps = 4;
-    for (let i = 0; i <= ySteps; i++) {
-        const value = Math.round((maxValue / ySteps) * i);
-        const y = canvas.height - padding - (i / ySteps) * chartHeight;
-        ctx.fillText(value.toString(), padding - 10, y + 3); 
+    ctx.setLineDash([4, 6]);
+    for (let i = 0; i <= gridLines; i++) {
+        const y = padding.top + (i / gridLines) * chartHeight;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(canvas.width - padding.right, y);
+        ctx.stroke();
     }
-    
-    // --- Draw X-axis labels and ticks with improved spacing ---
+    ctx.setLineDash([]);
+
+    // Labels
     ctx.font = '12px Inter';
-    ctx.fillStyle = '#6b7280';
+    ctx.fillStyle = '#94a3b8';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= gridLines; i++) {
+        const value = Math.round((maxValue / gridLines) * (gridLines - i));
+        const y = padding.top + (i / gridLines) * chartHeight;
+        ctx.fillText(value.toString(), padding.left - 12, y + 4);
+    }
+
     ctx.textAlign = 'center';
-    
     const step = Math.ceil(data.length / 5);
     data.forEach((point, index) => {
         if (index % step === 0 || index === data.length - 1) {
-            const x = padding + (index / (data.length - 1)) * chartWidth;
-            ctx.beginPath();
-            ctx.moveTo(x, canvas.height - padding);
-            ctx.lineTo(x, canvas.height - padding + 5);
-            ctx.stroke();
-            ctx.fillText(point.dateLabel, x, canvas.height - padding + 25);
+            const x = padding.left + (index / (data.length - 1)) * chartWidth;
+            ctx.fillText(point.dateLabel, x, canvas.height - padding.bottom + 28);
         }
     });
 
-    // --- Draw the smooth bezier curve ---
-    ctx.strokeStyle = '#3b82f6';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    
     const points = data.map((point, index) => ({
-        x: padding + (index / (data.length - 1)) * chartWidth,
-        y: canvas.height - padding - (point.completed / maxValue) * chartHeight
+        x: padding.left + (index / (data.length - 1)) * chartWidth,
+        y: padding.top + (1 - point.completed / maxValue) * chartHeight,
+        value: point.completed
     }));
-    
-    if (points.length > 1) {
-        ctx.moveTo(points[0].x, points[0].y);
-        for (let i = 0; i < points.length - 1; i++) {
-            const p1 = points[i];
-            const p2 = points[i+1];
-            const cp1x = (p1.x + p2.x) / 2;
-            const cp1y = p1.y;
-            const cp2x = (p1.x + p2.x) / 2;
-            const cp2y = p2.y;
-            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
-        }
+
+    // Area fill
+    const areaGradient = ctx.createLinearGradient(0, padding.top, 0, canvas.height - padding.bottom);
+    areaGradient.addColorStop(0, 'rgba(37, 99, 235, 0.28)');
+    areaGradient.addColorStop(1, 'rgba(37, 99, 235, 0.02)');
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, canvas.height - padding.bottom);
+    points.forEach(pt => ctx.lineTo(pt.x, pt.y));
+    ctx.lineTo(points[points.length - 1].x, canvas.height - padding.bottom);
+    ctx.closePath();
+    ctx.fillStyle = areaGradient;
+    ctx.fill();
+
+    // Smooth curve
+    ctx.strokeStyle = '#60a5fa';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+        const cp1x = p1.x + (p2.x - p1.x) / 2;
+        const cp2x = cp1x;
+        ctx.bezierCurveTo(cp1x, p1.y, cp2x, p2.y, p2.x, p2.y);
     }
     ctx.stroke();
-}
 
-/**
- * Renders service success rate analysis for the current month
- * Success rate = completed appointments / total appointments for each service
- */
-async function renderServiceSuccessRate() {
-    const tbody = document.getElementById('serviceSuccessRateList');
-    if (!tbody) {
-        console.error('serviceSuccessRateList not found');
-        return;
-    }
+    // Points
+    points.forEach(pt => {
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    });
 
-    try {
-        // Get current location and all appointments
-        const currentLocation = safeGetCurrentLocation();
-        let allAppointments = [];
-
-        try {
-            allAppointments = await dataManager.getAllAppointments() || [];
-            // Apply role-based filtering
-            allAppointments = filterDataByRole(allAppointments, 'appointments');
-        } catch (error) {
-            console.warn('Failed to get all appointments for service success rate:', error);
-            allAppointments = [];
-        }
-
-        // Filter by location
-        const filteredAppointments = allAppointments.filter(app => {
-            if (currentLocation === 'all') return true;
-            return app.location.toLowerCase().replace(/\s+/g, '-') === currentLocation;
-        });
-
-        // Filter for current month only
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-
-        const monthAppointments = filteredAppointments.filter(app => {
-            const appDate = new Date(app.dateKey);
-            const isCurrentMonth = appDate.getMonth() === currentMonth && appDate.getFullYear() === currentYear;
-
-            // 排除 pending 状态的预约（未确认的不算入成功率统计）
-            const isConfirmed = app.status !== 'pending';
-
-            return isCurrentMonth && isConfirmed;
-        });
-
-        // Group by service
-        const serviceStats = {};
-        monthAppointments.forEach(appointment => {
-            const mappedService = mapServiceName(appointment.service);
-            if (!serviceStats[mappedService]) {
-                serviceStats[mappedService] = {
-                    total: 0,
-                    completed: 0
-                };
-            }
-
-            serviceStats[mappedService].total++;
-            if (appointment.status === 'completed') {
-                serviceStats[mappedService].completed++;
-            }
-        });
-
-        // Clear existing rows
-        tbody.innerHTML = '';
-
-        // Check if there's data
-        if (Object.keys(serviceStats).length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280; padding: 20px;">No appointments this month</td></tr>';
-            return;
-        }
-
-        // Create rows sorted by success rate (descending)
-        const sortedServices = Object.entries(serviceStats).sort(([, a], [, b]) => {
-            const rateA = a.total > 0 ? (a.completed / a.total) * 100 : 0;
-            const rateB = b.total > 0 ? (b.completed / b.total) * 100 : 0;
-            return rateB - rateA;
-        });
-
-        sortedServices.forEach(([service, stats]) => {
-            const rate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
-
-            // Determine rate class
-            let rateClass = 'poor';
-            if (rate >= 90) rateClass = 'excellent';
-            else if (rate >= 75) rateClass = 'good';
-            else if (rate >= 60) rateClass = 'fair';
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${service}</td>
-                <td>${stats.total}</td>
-                <td>${stats.completed}</td>
-                <td>${rate}%</td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        console.log('📊 Service success rate rendered:', Object.keys(serviceStats).length, 'services');
-
-    } catch (error) {
-        console.error('Error rendering service success rate:', error);
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc2626; padding: 20px;">Error loading data</td></tr>';
-    }
-}
-
-/**
- * Renders service upgrade rate analysis (All Time)
- * Shows conversion from low-value services (General, Preventive) to high-value services
- */
-async function renderServiceUpgradeRate() {
-    const tbody = document.getElementById('serviceUpgradeRateList');
-    if (!tbody) {
-        console.error('serviceUpgradeRateList not found');
-        return;
-    }
-
-    try {
-        // Get current location and all appointments
-        const currentLocation = safeGetCurrentLocation();
-        let allAppointments = [];
-
-        try {
-            allAppointments = await dataManager.getAllAppointments() || [];
-            // Apply role-based filtering
-            allAppointments = filterDataByRole(allAppointments, 'appointments');
-        } catch (error) {
-            console.warn('Failed to get all appointments for service upgrade rate:', error);
-            allAppointments = [];
-        }
-
-        // Filter by location
-        const filteredAppointments = allAppointments.filter(app => {
-            if (currentLocation === 'all') return true;
-            return app.location.toLowerCase().replace(/\s+/g, '-') === currentLocation;
-        });
-
-        // Only include confirmed appointments (status !== 'pending')
-        const confirmedAppointments = filteredAppointments.filter(app => app.status !== 'pending');
-
-        // Define service categories
-        const lowValueServices = ['General', 'Preventive'];
-        const highValueServices = ['Root Canal', 'Periodontics', 'Extraction', 'Implant', 'Orthodontics'];
-
-        // Group appointments by userId
-        const userGroups = {};
-        confirmedAppointments.forEach(app => {
-            if (!app.userId) return; // Skip appointments without userId
-            if (!userGroups[app.userId]) {
-                userGroups[app.userId] = [];
-            }
-            userGroups[app.userId].push(app);
-        });
-
-        // Calculate upgrade statistics
-        const stats = {
-            'General': { total: 0, upgraded: 0 },
-            'Preventive': { total: 0, upgraded: 0 }
-        };
-
-        Object.values(userGroups).forEach(appointments => {
-            // Sort by date to find first appointment
-            appointments.sort((a, b) => new Date(a.dateKey) - new Date(b.dateKey));
-            const firstAppointment = appointments[0];
-
-            // Check if first appointment is low-value service
-            const mappedFirstService = mapServiceName(firstAppointment.service);
-            if (!lowValueServices.includes(mappedFirstService)) {
-                return; // First appointment is not a low-value service, skip
-            }
-
-            // Count this user for the initial service
-            stats[mappedFirstService].total++;
-
-            // Check if user has any high-value service appointments after the first one
-            const hasUpgraded = appointments.some(app => {
-                const mappedService = mapServiceName(app.service);
-                return highValueServices.includes(mappedService) &&
-                       new Date(app.dateKey) > new Date(firstAppointment.dateKey);
-            });
-
-            if (hasUpgraded) {
-                stats[mappedFirstService].upgraded++;
-            }
-        });
-
-        // Calculate Overall statistics
-        const overallTotal = stats['General'].total + stats['Preventive'].total;
-        const overallUpgraded = stats['General'].upgraded + stats['Preventive'].upgraded;
-        const overallRate = overallTotal > 0 ? Math.round((overallUpgraded / overallTotal) * 100) : 0;
-
-        // Clear existing rows
-        tbody.innerHTML = '';
-
-        // Check if there's data
-        if (overallTotal === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280; padding: 20px;">No patient data available</td></tr>';
-            return;
-        }
-
-        // Helper function to determine rate class
-        const getRateClass = (rate) => {
-            if (rate >= 60) return 'excellent';
-            if (rate >= 45) return 'good';
-            if (rate >= 30) return 'fair';
-            return 'poor';
-        };
-
-        // Render General row
-        const generalRate = stats['General'].total > 0 ? Math.round((stats['General'].upgraded / stats['General'].total) * 100) : 0;
-        const generalRow = document.createElement('tr');
-        generalRow.innerHTML = `
-            <td>General</td>
-            <td>${stats['General'].total}</td>
-            <td>${stats['General'].upgraded}</td>
-            <td>${generalRate}%</td>
-        `;
-        tbody.appendChild(generalRow);
-
-        // Render Preventive row
-        const preventiveRate = stats['Preventive'].total > 0 ? Math.round((stats['Preventive'].upgraded / stats['Preventive'].total) * 100) : 0;
-        const preventiveRow = document.createElement('tr');
-        preventiveRow.innerHTML = `
-            <td>Prevent</td>
-            <td>${stats['Preventive'].total}</td>
-            <td>${stats['Preventive'].upgraded}</td>
-            <td>${preventiveRate}%</td>
-        `;
-        tbody.appendChild(preventiveRow);
-
-        // Render Overall row
-        const overallRow = document.createElement('tr');
-        overallRow.className = 'overall-row';
-        overallRow.innerHTML = `
-            <td>Overall</td>
-            <td>${overallTotal}</td>
-            <td>${overallUpgraded}</td>
-            <td>${overallRate}%</td>
-        `;
-        tbody.appendChild(overallRow);
-
-        console.log('📈 Service upgrade rate rendered:', overallTotal, 'total patients');
-
-    } catch (error) {
-        console.error('Error rendering service upgrade rate:', error);
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc2626; padding: 20px;">Error loading data</td></tr>';
-    }
+    // Highlight latest value
 }
 
 // Render calendar
@@ -1915,21 +1721,7 @@ function mapServiceName(serviceName) {
         'Restorative': 'Restorations',
         'Extraction': 'Extraction',
         'Implant': 'Implant',
-
-        // External booking page service names (kebab-case) -> Internal categories
-        'general-family': 'General',
-        'general-treatment': 'General',
-        'general-consultation': 'General',
-        'preventive-care': 'Preventive',
-        'preventive-cleaning': 'Preventive',
-        'root-canals': 'Root Canal',
-        'implant-crown': 'Implant',
-        'implant-consultation': 'Implant',
-        'cosmetic': 'Cosmetic',
-        'orthodontics': 'Orthodontics',
-        'periodontics': 'Periodontics',
-        'restorations': 'Restorations',
-        'extraction': 'Extraction'
+        // Add any other old names here
     };
 
     // Return mapped name or original if not in map
@@ -1953,8 +1745,8 @@ async function pollPendingAppointments() {
             return;
         }
 
-        // ✅ Get user role and clinics from auth guard
-        const role = userRole || window.intranetAuthGuard?.getUserProfile()?.role;
+        // Get user role and clinics
+        const role = await getUserRole();
         const accessibleClinics = getAccessibleClinics();
 
         if (!role || accessibleClinics.length === 0) {
@@ -2079,8 +1871,8 @@ async function updateDashboardStats() {
             return;
         }
 
-        // ✅ Get user role and clinics from auth guard
-        const role = userRole || window.intranetAuthGuard?.getUserProfile()?.role;
+        // Get user role and clinics
+        const role = await getUserRole();
         const accessibleClinics = getAccessibleClinics();
 
         if (!role || accessibleClinics.length === 0) {
