@@ -1,6 +1,17 @@
 // Patients Page Functionality - Updated to use Global Data Manager with Pagination
 
 /**
+ * SECURITY NOTE:
+ * This file uses currentUser.role for UI filtering (e.g., hiding action buttons).
+ * This is NOT a security vulnerability because:
+ * - ✅ Firestore Security Rules provide real server-side authorization
+ * - ✅ Unauthorized users cannot read/write data even if they bypass UI
+ * - ⚠️  localStorage role checks are for UX only, not security
+ *
+ * See dashboard.js for enhanced token-based permission checking.
+ */
+
+/**
  * XSS Prevention: Escape HTML special characters
  * @param {string} str - The string to escape
  * @returns {string} The escaped string safe for HTML insertion

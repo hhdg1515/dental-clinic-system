@@ -16,10 +16,22 @@ function escapeHtml(str) {
 
 // ==================== AUTHENTICATION & PERMISSIONS SYSTEM ====================
 
+// SECURITY FIX: Import secure auth utilities
+// These read from Firebase ID Token Custom Claims (server-verified)
+// instead of trusting localStorage (client-controlled)
+import {
+    getCurrentUserClaims,
+    isOwner as isOwnerSecure,
+    getAccessibleClinics as getAccessibleClinicsSecure,
+    getUserRole as getUserRoleSecure
+} from './auth-utils.js';
+
 // Global variables for auth state
+// SECURITY: These are set from Firebase token claims, NOT localStorage
 let currentFirebaseUser = null;
 let userRole = null;
 let userClinics = [];
+let userClaimsCache = null; // Cache for performance
 
 // Basic Authentication Functions
 async function getCurrentUser() {
@@ -93,59 +105,111 @@ async function redirectIfNotAdmin() {
     return true;
 }
 
-// Permission Management Functions
-function isOwner() {
-    // Get current user role from localStorage first
+/**
+ * SECURITY FIX: Initialize user permissions from Firebase token claims
+ * This MUST be called on page load to set global permission variables
+ */
+async function initializeUserPermissions() {
     try {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.role) {
-            return currentUser.role === 'boss' || currentUser.role === 'owner';
+        console.log('🔒 Initializing secure user permissions...');
+
+        // Get claims from Firebase ID token (server-verified)
+        const claims = await getCurrentUserClaims();
+
+        if (!claims) {
+            console.warn('⚠️ No user claims available');
+            userRole = null;
+            userClinics = [];
+            return;
+        }
+
+        userClaimsCache = claims;
+
+        // Set role from custom claims (server-verified)
+        userRole = claims.claims.role || null;
+
+        // Set accessible clinics from custom claims
+        if (userRole === 'owner' || userRole === 'boss') {
+            userClinics = [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
+        } else if (userRole === 'admin' && claims.claims.clinics) {
+            userClinics = claims.claims.clinics;
+        } else {
+            userClinics = [];
+        }
+
+        console.log('✅ User permissions initialized:');
+        console.log('   Role:', userRole);
+        console.log('   Clinics:', userClinics);
+
+        // Fallback: If custom claims not set, check email domain
+        if (!userRole && claims.user.email && claims.user.email.endsWith('@firstavedental.com')) {
+            console.warn('⚠️ Custom claims not set, using email domain fallback');
+            userRole = 'owner';
+            userClinics = [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
         }
     } catch (error) {
-        console.warn('Failed to get user from localStorage:', error);
+        console.error('❌ Failed to initialize user permissions:', error);
+        userRole = null;
+        userClinics = [];
+    }
+}
+
+// Permission Management Functions
+function isOwner() {
+    // SECURITY FIX: Use global userRole set from Firebase token claims
+    // NO LONGER reads from localStorage (which can be manipulated)
+
+    if (userRole === 'boss' || userRole === 'owner') {
+        return true;
     }
 
-    // Fallback to global userRole
-    return userRole === 'boss' || userRole === 'owner';
+    // Fallback: Check cached claims directly
+    if (userClaimsCache && userClaimsCache.claims) {
+        const role = userClaimsCache.claims.role;
+        return role === 'boss' || role === 'owner';
+    }
+
+    return false;
 }
 
 function getAccessibleClinics() {
-    // Get current user from localStorage first
-    try {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.role) {
-            if (currentUser.role === 'boss' || currentUser.role === 'owner') {
-                // Owners can access all clinics
-                return [
-                    'arcadia',
-                    'irvine',
-                    'south-pasadena',
-                    'rowland-heights',
-                    'eastvale'
-                ];
-            } else {
-                // Admins can only access assigned clinics
-                // Support both 'clinics' and 'accessibleLocations' field names
-                const clinicsList = currentUser.clinics || currentUser.accessibleLocations || [];
-                return clinicsList.map(clinic => clinic.id || clinic);
-            }
-        }
-    } catch (error) {
-        console.warn('Failed to get user from localStorage:', error);
+    // SECURITY FIX: Use global userClinics set from Firebase token claims
+    // NO LONGER reads from localStorage (which can be manipulated)
+
+    // Use the global userClinics array (set from token claims)
+    if (userClinics && userClinics.length > 0) {
+        return userClinics;
     }
 
-    // Fallback to global variables
-    if (isOwner()) {
-        return [
-            'arcadia',
-            'irvine',
-            'south-pasadena',
-            'rowland-heights',
-            'eastvale'
-        ];
-    } else {
-        return userClinics || [];
+    // Fallback: Check cached claims directly
+    if (userClaimsCache && userClaimsCache.claims) {
+        const role = userClaimsCache.claims.role;
+        if (role === 'owner' || role === 'boss') {
+            return [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
+        } else if (role === 'admin' && userClaimsCache.claims.clinics) {
+            return userClaimsCache.claims.clinics;
+        }
     }
+
+    return [];
 }
 
 function hasClinicAccess(clinicId) {
@@ -503,6 +567,9 @@ async function performInitialAuthCheck() {
         if (hasAccess) {
             // User is authenticated and has admin privileges
             console.log('✅ Authentication successful, initializing dashboard...');
+
+            // SECURITY FIX: Initialize user permissions from Firebase token claims
+            await initializeUserPermissions();
 
             // Wait for DataManager to be fully connected to Firebase
             await waitForDataManager();

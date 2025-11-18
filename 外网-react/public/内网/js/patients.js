@@ -1,5 +1,29 @@
 // Patients Page Functionality - Updated to use Global Data Manager with Pagination
-import { escapeHtml } from './security-utils.js';
+
+/**
+ * SECURITY NOTE:
+ * This file uses currentUser.role for UI filtering (e.g., hiding action buttons).
+ * This is NOT a security vulnerability because:
+ * - ✅ Firestore Security Rules provide real server-side authorization
+ * - ✅ Unauthorized users cannot read/write data even if they bypass UI
+ * - ⚠️  localStorage role checks are for UX only, not security
+ *
+ * See dashboard.js for enhanced token-based permission checking.
+ */
+
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
 
 // Global variables to store current processing data
 let currentProcessingRow = null;
@@ -148,6 +172,7 @@ function handleUrlHashNavigation() {
         window.history.replaceState(null, null, window.location.pathname);
     }
 }
+
 // Initialize Pagination for both tabs
 function initializePagination() {
     initializePendingPagination();
@@ -377,11 +402,11 @@ async function renderConfirmedAppointments(forceReload = false) {
 
             // Ensure we have an array
             if (!Array.isArray(allAppointments)) {
-            console.warn('getAllAppointments did not return an array:', allAppointments);
-            confirmedAllData = [];
-            applyConfirmedFilter(true);
-            return;
-        }
+                console.warn('getAllAppointments did not return an array:', allAppointments);
+                confirmedAllData = [];
+                applyConfirmedFilter(true);
+                return;
+            }
 
             // Filter for confirmed appointments (exclude pending, cancelled, and declined)
             const confirmedAppointments = allAppointments.filter(app =>

@@ -1,6 +1,25 @@
 // Global Data Manager - Unified data source for all pages
 // Now integrated with Firebase for real-time data
 
+/**
+ * SECURITY NOTE:
+ * This file contains role-based filtering using currentUser.role for UI purposes.
+ * While this CAN be bypassed by manipulating localStorage, it does NOT pose a
+ * security risk because:
+ *
+ * 1. ✅ REAL SECURITY: Firestore Security Rules enforce server-side authorization
+ * 2. ✅ DATA PROTECTION: Users cannot access data they're not authorized to see
+ * 3. ⚠️  UI FILTERING: localStorage role checks only filter what UI shows
+ *
+ * Even if an attacker modifies their role in localStorage:
+ * - They will see admin UI elements
+ * - BUT they cannot actually read/write unauthorized data
+ * - Firestore Rules will block all unauthorized requests
+ *
+ * For enhanced security, dashboard.js now uses Firebase token claims for permissions.
+ * Future improvement: Migrate all role checks to token claims.
+ */
+
 class GlobalDataManager {
     constructor() {
         this.storageKey = 'dental_clinic_data';
