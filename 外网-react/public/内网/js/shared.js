@@ -83,9 +83,10 @@ async function handleLogout(event) {
         // Step 4: Show success message
         showSuccessMessage('Logged out successfully. Redirecting...');
 
-        // Step 5: Redirect to external landing page
+        // Step 5: Redirect to home page
+        // Redirects to the application home/landing page
         setTimeout(() => {
-            window.location.href = '../外网/landingpage.html';
+            window.location.href = '/';
         }, 1000);
     } catch (error) {
         console.error('❌ Logout failed:', error);
