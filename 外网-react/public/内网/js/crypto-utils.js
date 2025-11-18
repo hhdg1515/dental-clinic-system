@@ -197,25 +197,28 @@ export async function decryptMedicalRecord(encryptedDataBase64, ivBase64, key, m
  * @returns {Promise<{key: CryptoKey, keyBase64: string}>}
  */
 export async function initializeEncryption() {
-    // WARNING: In production, the master key should be:
-    // 1. Generated server-side
-    // 2. Stored in a secure key management system (e.g., AWS KMS, Google Cloud KMS)
-    // 3. Never exposed to the client
+    // SECURITY IMPROVEMENT: Using sessionStorage instead of localStorage
+    // - sessionStorage clears when browser tab is closed (more secure)
+    // - Reduces XSS attack window
+    // - Still NOT production-ready for HIPAA compliance
     //
-    // This client-side implementation is for demonstration only.
-    // For HIPAA compliance, keys must be managed server-side.
+    // PRODUCTION REQUIREMENTS:
+    // 1. Generate keys server-side
+    // 2. Store in secure key management system (AWS KMS, Google Cloud KMS)
+    // 3. Never expose keys to client
+    // 4. Use envelope encryption for patient records
 
-    let keyBase64 = localStorage.getItem('medical_records_encryption_key');
+    let keyBase64 = sessionStorage.getItem('medical_records_encryption_key');
 
     if (!keyBase64) {
         // Generate new master key
         const key = await generateEncryptionKey();
         keyBase64 = await exportKey(key);
 
-        // Store in localStorage (NOT secure for production!)
-        localStorage.setItem('medical_records_encryption_key', keyBase64);
+        // Store in sessionStorage (better than localStorage, but still client-side)
+        sessionStorage.setItem('medical_records_encryption_key', keyBase64);
 
-        console.warn('⚠️ Generated new encryption key. In production, use server-side key management!');
+        console.warn('⚠️ Generated new encryption key (session only). For HIPAA compliance, use server-side key management!');
 
         return { key, keyBase64 };
     }
@@ -230,5 +233,5 @@ export async function initializeEncryption() {
  * @returns {boolean}
  */
 export function isEncryptionInitialized() {
-    return localStorage.getItem('medical_records_encryption_key') !== null;
+    return sessionStorage.getItem('medical_records_encryption_key') !== null;
 }
