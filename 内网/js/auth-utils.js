@@ -7,7 +7,15 @@
  * @see https://firebase.google.com/docs/auth/admin/custom-claims
  */
 
-import { auth } from '../firebase-config.js';
+// Get auth from global window.firebase object (initialized by firebase-config.js)
+// Note: This file cannot use ES6 import because firebase-config.js doesn't export modules
+const getAuth = () => {
+    if (!window.firebase || !window.firebase.auth) {
+        console.error('❌ Firebase not initialized. Make sure firebase-config.js loads before auth-utils.js');
+        return null;
+    }
+    return window.firebase.auth;
+};
 
 /**
  * Get current Firebase user's ID token with custom claims
@@ -17,8 +25,13 @@ import { auth } from '../firebase-config.js';
  *
  * @returns {Promise<{claims: Object, user: Object} | null>}
  */
-export async function getCurrentUserClaims() {
+async function getCurrentUserClaims() {
     try {
+        const auth = getAuth();
+        if (!auth) {
+            return null;
+        }
+
         const user = auth.currentUser;
 
         if (!user) {
@@ -51,7 +64,7 @@ export async function getCurrentUserClaims() {
  *
  * @returns {Promise<boolean>}
  */
-export async function isOwner() {
+async function isOwner() {
     try {
         const result = await getCurrentUserClaims();
 
@@ -87,7 +100,7 @@ export async function isOwner() {
  *
  * @returns {Promise<string[]>}
  */
-export async function getAccessibleClinics() {
+async function getAccessibleClinics() {
     try {
         const result = await getCurrentUserClaims();
 
@@ -138,7 +151,7 @@ export async function getAccessibleClinics() {
  *
  * @returns {Promise<string>} - 'owner', 'admin', or 'customer'
  */
-export async function getUserRole() {
+async function getUserRole() {
     try {
         const result = await getCurrentUserClaims();
 
@@ -173,7 +186,7 @@ export async function getUserRole() {
  *
  * @param {Object} userData - User data from Firebase token
  */
-export function syncUserToLocalStorage(userData) {
+function syncUserToLocalStorage(userData) {
     try {
         // Only store non-sensitive display data
         const safeData = {
@@ -195,7 +208,7 @@ export function syncUserToLocalStorage(userData) {
  * Initialize secure auth on page load
  * Call this when user authenticates
  */
-export async function initializeSecureAuth() {
+async function initializeSecureAuth() {
     try {
         const result = await getCurrentUserClaims();
 
@@ -216,3 +229,15 @@ export async function initializeSecureAuth() {
         return null;
     }
 }
+
+// Make functions globally available (since we can't use ES6 export/import)
+window.AuthUtils = {
+    getCurrentUserClaims,
+    isOwner,
+    getAccessibleClinics,
+    getUserRole,
+    syncUserToLocalStorage,
+    initializeSecureAuth
+};
+
+console.log('✅ AuthUtils loaded and available globally');

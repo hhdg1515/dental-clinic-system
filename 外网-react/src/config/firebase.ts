@@ -4,13 +4,30 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Your web app's Firebase configuration
-// Using environment variables for better configuration management
+// Using environment variables for security
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyB5kla1coph39gz60jOhAw9ce3Trp9myHI",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "dental-clinic-demo-ce94b.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "dental-clinic-demo-ce94b",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "dental-clinic-demo-ce94b.firebasestorage.app"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET
 };
+
+// Validate that all required environment variables are present
+const requiredEnvVars = [
+  'VITE_FIREBASE_API_KEY',
+  'VITE_FIREBASE_AUTH_DOMAIN',
+  'VITE_FIREBASE_PROJECT_ID',
+  'VITE_FIREBASE_STORAGE_BUCKET'
+];
+
+const missingVars = requiredEnvVars.filter(varName => !import.meta.env[varName]);
+
+if (missingVars.length > 0) {
+  throw new Error(
+    `Missing required environment variables: ${missingVars.join(', ')}\n` +
+    'Please copy .env.example to .env.local and fill in your Firebase configuration.'
+  );
+}
 
 // Initialize Firebase services
 const app = initializeApp(firebaseConfig);
