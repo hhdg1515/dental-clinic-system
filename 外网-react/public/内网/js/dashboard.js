@@ -16,15 +16,10 @@ function escapeHtml(str) {
 
 // ==================== AUTHENTICATION & PERMISSIONS SYSTEM ====================
 
-// SECURITY FIX: Import secure auth utilities
+// SECURITY FIX: Use secure auth utilities from window.AuthUtils
 // These read from Firebase ID Token Custom Claims (server-verified)
 // instead of trusting localStorage (client-controlled)
-import {
-    getCurrentUserClaims,
-    isOwner as isOwnerSecure,
-    getAccessibleClinics as getAccessibleClinicsSecure,
-    getUserRole as getUserRoleSecure
-} from './auth-utils.js';
+// Note: auth-utils.js provides these via window.AuthUtils global object
 
 // Global variables for auth state
 // SECURITY: These are set from Firebase token claims, NOT localStorage
@@ -114,7 +109,7 @@ async function initializeUserPermissions() {
         console.log('🔒 Initializing secure user permissions...');
 
         // Get claims from Firebase ID token (server-verified)
-        const claims = await getCurrentUserClaims();
+        const claims = await window.AuthUtils.getCurrentUserClaims();
 
         if (!claims) {
             console.warn('⚠️ No user claims available');
