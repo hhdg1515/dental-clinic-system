@@ -41,4 +41,19 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- 法律页面 -->
+  <url>
+    <loc>https://firstavedentalortho.com/privacy-policy</loc>
+    <lastmod>2025-01-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://firstavedentalortho.com/terms-of-service</loc>
+    <lastmod>2025-01-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
 </urlset>

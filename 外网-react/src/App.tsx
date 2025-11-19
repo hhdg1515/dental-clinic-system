@@ -36,6 +36,16 @@ const AppAppointment = lazy(() =>
     default: module.AppAppointmentPage,
   }))
 );
+const TermsOfService = lazy(() =>
+  import('./pages/TermsOfService').then((module) => ({
+    default: module.TermsOfService,
+  }))
+);
+const PrivacyPolicy = lazy(() =>
+  import('./pages/PrivacyPolicy').then((module) => ({
+    default: module.PrivacyPolicy,
+  }))
+);
 
 function App() {
   const ALLOWED_KEYS = new Set(['preferred-language', 'sidebarCollapsed', 'dashboard:view-location']);
@@ -88,6 +98,8 @@ function App() {
         <Route path="/services/orthodontics" element={<ServicesDetail1 />} />
         <Route path="/services/root-canals" element={<ServicesDetail1 />} />
         <Route path="/services-detail-2" element={<ServicesDetail2 />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/app/login" element={<AppLogin />} />
         <Route path="/app/dashboard" element={<AppDashboard />} />
         <Route path="/app/appointment" element={<AppAppointment />} />
