@@ -720,3 +720,442 @@ html {
         background-attachment: scroll;
     }
 }
+
+/* =================== NEW SERVICE DETAIL COMPONENTS =================== */
+
+/* Service Hero Image */
+.service-hero-image {
+    margin: 40px 0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.service-hero-image .service-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Service Overview */
+.service-overview {
+    margin: 60px 0;
+    padding: 0 20px;
+}
+
+.overview-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: #263C38;
+    margin: 0 0 30px 0;
+    text-align: left;
+}
+
+.overview-content {
+    max-width: 900px;
+}
+
+.lead-paragraph {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.body-paragraph {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 18px;
+}
+
+.overview-highlight {
+    background: linear-gradient(135deg, #f5f0e8 0%, #fff9f0 100%);
+    border-left: 4px solid #D4A574;
+    padding: 20px 25px;
+    margin-top: 30px;
+    border-radius: 8px;
+}
+
+.overview-highlight p {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #263C38;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* Process Steps */
+.process-steps-section {
+    margin: 80px 0;
+    padding: 60px 40px;
+    background: #f9f9f9;
+    border-radius: 20px;
+}
+
+.process-steps-section .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.process-steps-section .section-title-elegant {
+    font-size: 2.5rem;
+    color: #263C38;
+}
+
+.process-steps-section .section-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin-top: 10px;
+}
+
+.steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.step-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.step-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 600;
+    color: #D4A574;
+    opacity: 0.3;
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    line-height: 1;
+}
+
+.step-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #263C38;
+    margin: 0 0 15px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.step-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #666;
+    margin: 0;
+}
+
+/* Benefits Grid */
+.benefits-section {
+    margin: 80px 0;
+}
+
+.benefits-section .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 35px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.benefit-card {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    text-align: center;
+    border: 2px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    border-color: #D4A574;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.benefit-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.benefit-icon .icon-text {
+    display: inline-block;
+}
+
+.benefit-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #263C38;
+    margin: 0 0 15px 0;
+}
+
+.benefit-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #666;
+    margin: 0;
+}
+
+/* Ideal Candidates */
+.ideal-candidates-section {
+    margin: 80px 0;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #f5f0e8 0%, #fff9f0 100%);
+    border-radius: 20px;
+}
+
+.ideal-candidates-section .section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.ideal-candidates-section .section-title-elegant {
+    color: #263C38;
+}
+
+.section-intro {
+    font-size: 1.1rem;
+    color: #555;
+    max-width: 700px;
+    margin: 15px auto 0;
+    line-height: 1.6;
+}
+
+.candidates-content {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+}
+
+.suitable-candidates,
+.not-suitable-candidates {
+    background: white;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.candidates-subtitle {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #263C38;
+    margin: 0 0 25px 0;
+    text-align: center;
+}
+
+.candidates-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.candidate-item {
+    padding: 12px 0 12px 35px;
+    position: relative;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #555;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.candidate-item:last-child {
+    border-bottom: none;
+}
+
+.checkmark,
+.crossmark {
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+    font-size: 1.3rem;
+    top: 10px;
+}
+
+.candidate-item.suitable .checkmark {
+    color: #72A84A;
+}
+
+.candidate-item.not-suitable .crossmark {
+    color: #d66;
+}
+
+/* Service FAQ */
+.service-faq-section {
+    margin: 80px 0;
+}
+
+.service-faq-section .section-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.faq-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: white;
+    border: 2px solid #f0f0f0;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    border-color: #D4A574;
+}
+
+.faq-item.open {
+    border-color: #D4A574;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.3s ease;
+}
+
+.faq-question:hover {
+    background: #f9f9f9;
+}
+
+.question-text {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #263C38;
+    flex: 1;
+    padding-right: 20px;
+}
+
+.toggle-icon {
+    font-size: 1.5rem;
+    color: #D4A574;
+    font-weight: 300;
+    width: 30px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.faq-item.open .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    padding: 0 30px 25px 30px;
+    animation: slideDown 0.3s ease;
+}
+
+.faq-answer p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #666;
+    margin: 0;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments for new components */
+@media (max-width: 768px) {
+    .overview-title {
+        font-size: 1.8rem;
+    }
+
+    .process-steps-section {
+        padding: 40px 20px;
+    }
+
+    .steps-container {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .candidates-content {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .ideal-candidates-section {
+        padding: 40px 20px;
+    }
+
+    .faq-question {
+        padding: 20px;
+    }
+
+    .faq-answer {
+        padding: 0 20px 20px 20px;
+    }
+
+    .question-text {
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .overview-title {
+        font-size: 1.6rem;
+    }
+
+    .lead-paragraph {
+        font-size: 1.05rem;
+    }
+
+    .body-paragraph {
+        font-size: 0.98rem;
+    }
+
+    .step-title {
+        font-size: 1.1rem;
+    }
+
+    .benefit-title {
+        font-size: 1.15rem;
+    }
+}

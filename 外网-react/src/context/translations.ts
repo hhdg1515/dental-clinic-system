@@ -358,7 +358,81 @@ export const translations = {
         'tips-general-4': 'Maintain daily dental care',
         'tips-general-title': 'General',
         'tips-title': 'TIPS FOR SMOOTH & COMFORTABLE VISITS',
-        'visit-california': 'Visit California'
+        'visit-california': 'Visit California',
+
+        // Service Detail Components - Universal
+        'ideal-for-title': 'Ideal For',
+        'not-ideal-for-title': 'May Not Be Suitable For',
+
+        // GENERAL & FAMILY SERVICE - Detailed Content
+        // Overview
+        'general-overview-title': 'What is General & Family Dentistry?',
+        'general-overview-p1': 'General and family dentistry forms the foundation of comprehensive oral health care for patients of all ages. Our practice focuses on preventive care, early detection of dental issues, and treatment of common dental problems to help you maintain a healthy, beautiful smile throughout your lifetime.',
+        'general-overview-p2': 'From your child\'s first dental visit to maintaining your smile in your golden years, our experienced team provides compassionate, patient-centered care. We use the latest technology and evidence-based techniques to ensure every family member receives the highest standard of dental care in a comfortable, welcoming environment.',
+        'general-overview-p3': 'Regular dental visits are essential for preventing tooth decay, gum disease, and other oral health issues. Our comprehensive approach includes thorough examinations, professional cleanings, patient education, and personalized treatment plans tailored to your unique needs.',
+        'general-overview-highlight': 'Studies show that regular dental checkups can reduce the risk of cavities by up to 60% and significantly lower the chance of developing serious gum disease.',
+
+        // Process Steps
+        'general-process-title': 'What to Expect During Your Visit',
+        'general-process-subtitle': 'A comprehensive approach to your oral health',
+        'general-process-step1-num': '01',
+        'general-process-step1-title': 'Comprehensive Examination',
+        'general-process-step1-desc': 'Your dentist will conduct a thorough examination of your teeth, gums, and oral tissues. Digital X-rays may be taken to detect issues not visible to the naked eye, including cavities between teeth, bone loss, and impacted teeth.',
+        'general-process-step2-num': '02',
+        'general-process-step2-title': 'Professional Cleaning',
+        'general-process-step2-desc': 'Our dental hygienist will remove plaque and tartar buildup from your teeth and below the gumline. This is followed by polishing to remove surface stains and fluoride treatment to strengthen tooth enamel.',
+        'general-process-step3-num': '03',
+        'general-process-step3-title': 'Personalized Assessment',
+        'general-process-step3-desc': 'We\'ll discuss our findings with you, review your oral health status, and answer any questions you may have. If treatment is needed, we\'ll explain your options and create a customized treatment plan.',
+        'general-process-step4-num': '04',
+        'general-process-step4-title': 'Prevention Planning',
+        'general-process-step4-desc': 'Receive personalized recommendations for at-home care, including proper brushing and flossing techniques. We\'ll schedule your next visit and discuss any preventive measures specific to your needs.',
+
+        // Benefits
+        'general-benefits-title': 'Benefits of Regular Dental Care',
+        'general-benefits-subtitle': 'Investing in your oral health pays lifelong dividends',
+        'general-benefit1-icon': '🦷',
+        'general-benefit1-title': 'Early Problem Detection',
+        'general-benefit1-desc': 'Regular checkups allow us to identify and address dental issues in their earliest stages, when treatment is simpler and more affordable. Early detection can prevent minor problems from becoming major dental emergencies.',
+        'general-benefit2-icon': '💰',
+        'general-benefit2-title': 'Cost-Effective Care',
+        'general-benefit2-desc': 'Preventive care is significantly less expensive than restorative treatments. By maintaining regular visits, you can avoid costly procedures like root canals, crowns, or tooth replacements down the line.',
+        'general-benefit3-icon': '⏱️',
+        'general-benefit3-title': 'Time-Saving',
+        'general-benefit3-desc': 'Routine cleanings and checkups take much less time than treating advanced dental problems. Prevention helps you spend less time in the dental chair and more time enjoying life.',
+        'general-benefit4-icon': '❤️',
+        'general-benefit4-title': 'Overall Health Benefits',
+        'general-benefit4-desc': 'Oral health is connected to overall health. Regular dental care can help reduce the risk of heart disease, diabetes complications, and other systemic health issues linked to poor oral hygiene.',
+        'general-benefit5-icon': '😊',
+        'general-benefit5-title': 'Confidence Boost',
+        'general-benefit5-desc': 'A healthy, clean smile enhances your appearance and boosts self-confidence. Professional cleanings remove stains and keep your teeth looking their best.',
+        'general-benefit6-icon': '👨‍👩‍👧‍👦',
+        'general-benefit6-title': 'Family-Friendly',
+        'general-benefit6-desc': 'We provide comprehensive care for all ages, from children to seniors. Establishing good dental habits early sets the foundation for a lifetime of healthy smiles.',
+
+        // Ideal Candidates
+        'general-candidates-title': 'Who Should Get Regular Dental Care?',
+        'general-candidates-intro': 'General and family dentistry is appropriate for nearly everyone. Regular dental visits are especially important for:',
+        'general-candidate1': 'Children and teenagers developing permanent teeth',
+        'general-candidate2': 'Adults seeking to maintain optimal oral health',
+        'general-candidate3': 'Seniors who want to preserve their natural teeth',
+        'general-candidate4': 'Patients with a history of cavities or gum disease',
+        'general-candidate5': 'Anyone who hasn\'t had a dental checkup in over 6 months',
+        'general-candidate6': 'Individuals with dental anxiety seeking a compassionate approach',
+
+        // FAQ
+        'general-faq-title': 'Frequently Asked Questions',
+        'general-faq-subtitle': 'Common questions about general dental care',
+        'general-faq1-q': 'How often should I visit the dentist?',
+        'general-faq1-a': 'Most patients should visit the dentist every six months for routine checkups and cleanings. However, those with gum disease, frequent cavities, or other dental issues may need more frequent visits. Your dentist will recommend a schedule based on your individual needs.',
+        'general-faq2-q': 'Is dental X-ray radiation safe?',
+        'general-faq2-a': 'Yes, dental X-rays are very safe. We use digital X-ray technology that emits up to 90% less radiation than traditional X-rays. The amount of radiation exposure from dental X-rays is extremely minimal and well within safe limits. We only take X-rays when clinically necessary.',
+        'general-faq3-q': 'Will teeth cleaning hurt?',
+        'general-faq3-a': 'Professional teeth cleaning is generally painless. You may feel some pressure during scraping, and if you have sensitive teeth or gum inflammation, you might experience mild discomfort. Let us know if you feel any sensitivity, and we can adjust our technique or apply a numbing gel.',
+        'general-faq4-q': 'What\'s the difference between a cleaning and a deep cleaning?',
+        'general-faq4-a': 'A regular cleaning (prophylaxis) removes plaque and tartar from above the gumline and is typically recommended every six months. A deep cleaning (scaling and root planing) is a therapeutic procedure that removes buildup below the gumline and is necessary when gum disease is present.',
+        'general-faq5-q': 'How can I prepare for my dental appointment?',
+        'general-faq5-a': 'Brush and floss before your appointment. Bring your insurance information and a list of current medications. Arrive 15 minutes early to complete any necessary paperwork. If you have dental anxiety, let us know in advance so we can make your visit more comfortable.'
     },
 
     zh: {
@@ -719,7 +793,81 @@ export const translations = {
         'tips-general-4': '保持口腔卫生',
         'tips-general-title': '日常保健',
         'tips-title': '顺利舒适就诊小贴士',
-        'visit-california': '访问加州'
+        'visit-california': '访问加州',
+
+        // Service Detail Components - Universal
+        'ideal-for-title': '适合人群',
+        'not-ideal-for-title': '可能不适合',
+
+        // GENERAL & FAMILY SERVICE - Detailed Content
+        // Overview
+        'general-overview-title': '什么是全科与家庭牙科？',
+        'general-overview-p1': '全科与家庭牙科是为所有年龄段患者提供全面口腔健康护理的基础。我们的诊所专注于预防护理、早期发现牙科问题以及治疗常见牙科疾病，帮助您在一生中保持健康美丽的笑容。',
+        'general-overview-p2': '从孩子的第一次牙科就诊到您晚年的笑容维护，我们经验丰富的团队提供富有同情心、以患者为中心的护理。我们使用最新技术和循证方法，确保每位家庭成员在舒适温馨的环境中获得最高标准的牙科护理。',
+        'general-overview-p3': '定期牙科就诊对于预防蛀牙、牙龈疾病和其他口腔健康问题至关重要。我们的综合方法包括全面检查、专业洁牙、患者教育以及针对您独特需求的个性化治疗计划。',
+        'general-overview-highlight': '研究表明，定期牙科检查可以将蛀牙风险降低60%，并显著降低患严重牙龈疾病的几率。',
+
+        // Process Steps
+        'general-process-title': '就诊流程',
+        'general-process-subtitle': '全面关注您的口腔健康',
+        'general-process-step1-num': '01',
+        'general-process-step1-title': '全面检查',
+        'general-process-step1-desc': '牙医将对您的牙齿、牙龈和口腔组织进行全面检查。可能会拍摄数字X光片以检测肉眼看不见的问题，包括牙齿之间的蛀牙、骨质流失和阻生牙。',
+        'general-process-step2-num': '02',
+        'general-process-step2-title': '专业洁牙',
+        'general-process-step2-desc': '我们的牙科卫生师将清除牙齿和牙龈线下的牙菌斑和牙石堆积。然后进行抛光以去除表面污渍，并进行氟化物治疗以强化牙釉质。',
+        'general-process-step3-num': '03',
+        'general-process-step3-title': '个性化评估',
+        'general-process-step3-desc': '我们将与您讨论检查结果，回顾您的口腔健康状况，并回答您可能有的任何问题。如果需要治疗，我们将解释您的选择并制定定制治疗计划。',
+        'general-process-step4-num': '04',
+        'general-process-step4-title': '预防规划',
+        'general-process-step4-desc': '获得个性化的家庭护理建议，包括正确的刷牙和使用牙线技巧。我们将安排您的下次就诊，并讨论针对您需求的任何预防措施。',
+
+        // Benefits
+        'general-benefits-title': '定期牙科护理的好处',
+        'general-benefits-subtitle': '投资口腔健康，受益终身',
+        'general-benefit1-icon': '🦷',
+        'general-benefit1-title': '早期发现问题',
+        'general-benefit1-desc': '定期检查使我们能够在最早阶段识别和处理牙科问题，此时治疗更简单、更经济。早期发现可以防止小问题变成重大牙科急症。',
+        'general-benefit2-icon': '💰',
+        'general-benefit2-title': '经济实惠',
+        'general-benefit2-desc': '预防护理比修复治疗便宜得多。通过保持定期就诊，您可以避免昂贵的手术，如根管治疗、牙冠或牙齿替换。',
+        'general-benefit3-icon': '⏱️',
+        'general-benefit3-title': '节省时间',
+        'general-benefit3-desc': '常规洁牙和检查比治疗晚期牙科问题花费的时间少得多。预防帮助您减少在牙椅上的时间，有更多时间享受生活。',
+        'general-benefit4-icon': '❤️',
+        'general-benefit4-title': '整体健康益处',
+        'general-benefit4-desc': '口腔健康与整体健康相关。定期牙科护理可以帮助降低心脏病、糖尿病并发症以及其他与口腔卫生不良相关的系统性健康问题的风险。',
+        'general-benefit5-icon': '😊',
+        'general-benefit5-title': '增强自信',
+        'general-benefit5-desc': '健康洁净的笑容提升您的外观并增强自信心。专业洁牙去除污渍，让您的牙齿保持最佳状态。',
+        'general-benefit6-icon': '👨‍👩‍👧‍👦',
+        'general-benefit6-title': '全家适用',
+        'general-benefit6-desc': '我们为所有年龄段提供全面护理，从儿童到老年人。及早建立良好的牙科习惯为终身健康笑容奠定基础。',
+
+        // Ideal Candidates
+        'general-candidates-title': '谁应该接受定期牙科护理？',
+        'general-candidates-intro': '全科和家庭牙科几乎适合所有人。定期牙科就诊对以下人群尤为重要：',
+        'general-candidate1': '正在发育恒牙的儿童和青少年',
+        'general-candidate2': '寻求保持最佳口腔健康的成年人',
+        'general-candidate3': '想要保留天然牙齿的老年人',
+        'general-candidate4': '有蛀牙或牙龈疾病史的患者',
+        'general-candidate5': '超过6个月未进行牙科检查的人',
+        'general-candidate6': '有牙科焦虑并寻求富有同情心的方法的个人',
+
+        // FAQ
+        'general-faq-title': '常见问题',
+        'general-faq-subtitle': '关于全科牙科护理的常见问题',
+        'general-faq1-q': '我应该多久看一次牙医？',
+        'general-faq1-a': '大多数患者应该每六个月看一次牙医进行常规检查和洁牙。然而，患有牙龈疾病、频繁蛀牙或其他牙科问题的人可能需要更频繁的就诊。您的牙医会根据您的个人需求推荐一个时间表。',
+        'general-faq2-q': '牙科X光辐射安全吗？',
+        'general-faq2-a': '是的，牙科X光非常安全。我们使用数字X光技术，其辐射量比传统X光少90%。牙科X光的辐射暴露量极小，完全在安全范围内。我们只在临床需要时才拍摄X光片。',
+        'general-faq3-q': '洗牙会痛吗？',
+        'general-faq3-a': '专业洗牙通常是无痛的。在刮除过程中您可能会感到一些压力，如果您有敏感牙齿或牙龈炎症，可能会感到轻微不适。如果您感到任何敏感，请告诉我们，我们可以调整技术或涂抹麻醉凝胶。',
+        'general-faq4-q': '普通洁牙和深度洁牙有什么区别？',
+        'general-faq4-a': '普通洁牙(预防性洁牙)清除牙龈线以上的牙菌斑和牙石，通常建议每六个月进行一次。深度洁牙(龈下刮治和根面平整)是一种治疗性程序，清除牙龈线以下的堆积物，在存在牙龈疾病时是必要的。',
+        'general-faq5-q': '我应该如何准备牙科预约？',
+        'general-faq5-a': '预约前刷牙和使用牙线。携带您的保险信息和当前药物清单。提前15分钟到达以完成任何必要的文书工作。如果您有牙科焦虑，请提前告知我们，以便我们让您的就诊更舒适。'
     }
 } as const;
 
