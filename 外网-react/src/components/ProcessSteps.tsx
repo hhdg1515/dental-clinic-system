@@ -1,10 +1,11 @@
+import { useState, useEffect } from 'react';
 import { useLanguage, type TranslationKey } from '../context/LanguageContext';
 
 interface ProcessStep {
   numberKey: TranslationKey;
   titleKey: TranslationKey;
   descriptionKey: TranslationKey;
-  iconPath?: string;
+  imageUrl?: string;
 }
 
 interface ProcessStepsProps {
@@ -15,24 +16,65 @@ interface ProcessStepsProps {
 
 export const ProcessSteps = ({ titleKey, subtitleKey, steps }: ProcessStepsProps) => {
   const { t } = useLanguage();
+  const [currentStep, setCurrentStep] = useState(0);
+
+  // Auto-advance carousel every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % steps.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [steps.length]);
+
+  const goToStep = (index: number) => {
+    setCurrentStep(index);
+  };
 
   return (
-    <div className="process-steps-section">
+    <div className="process-steps-carousel">
       <div className="section-header">
         <h3 className="section-title-elegant">{t(titleKey)}</h3>
         {subtitleKey && <p className="section-subtitle">{t(subtitleKey)}</p>}
       </div>
 
-      <div className="steps-container">
-        {steps.map((step) => (
-          <div key={step.titleKey} className="step-card">
-            <div className="step-number">{t(step.numberKey)}</div>
-            <div className="step-content">
-              <h4 className="step-title">{t(step.titleKey)}</h4>
-              <p className="step-description">{t(step.descriptionKey)}</p>
+      <div className="carousel-wrapper">
+        {/* Carousel Container with Image Background */}
+        <div className="carousel-container">
+          {steps.map((step, index) => (
+            <div
+              key={step.titleKey}
+              className={`carousel-slide ${index === currentStep ? 'active' : ''}`}
+              style={{
+                backgroundImage: step.imageUrl ? `url(${step.imageUrl})` : undefined,
+              }}
+            >
+              {/* Dark overlay for better text readability */}
+              <div className="carousel-overlay"></div>
+
+              {/* Text content - Left side */}
+              <div className="carousel-text-content">
+                <h4 className="step-title">{t(step.titleKey)}</h4>
+                <p className="step-description">{t(step.descriptionKey)}</p>
+              </div>
+
+              {/* Step number - Right bottom corner */}
+              <div className="step-number-badge">{t(step.numberKey)}</div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        {/* Navigation Dots */}
+        <div className="carousel-dots">
+          {steps.map((_, index) => (
+            <button
+              key={index}
+              className={`dot ${index === currentStep ? 'active' : ''}`}
+              onClick={() => goToStep(index)}
+              aria-label={`Go to step ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

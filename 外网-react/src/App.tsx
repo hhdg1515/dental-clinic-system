@@ -11,14 +11,9 @@ const Service = lazy(() =>
 const FAQ = lazy(() =>
   import('./pages/FAQ').then((module) => ({ default: module.FAQ }))
 );
-const ServicesDetail1 = lazy(() =>
-  import('./pages/ServicesDetail1').then((module) => ({
-    default: module.ServicesDetail1,
-  }))
-);
-const ServicesDetail2 = lazy(() =>
-  import('./pages/ServicesDetail2').then((module) => ({
-    default: module.ServicesDetail2,
+const ServiceDetail = lazy(() =>
+  import('./pages/ServiceDetail').then((module) => ({
+    default: module.ServiceDetail,
   }))
 );
 const AppLogin = lazy(() =>
@@ -92,12 +87,11 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/service" element={<Service />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/services-detail-1" element={<ServicesDetail1 />} />
-        <Route path="/services/general-family" element={<ServicesDetail1 />} />
-        <Route path="/services/cosmetic" element={<ServicesDetail1 />} />
-        <Route path="/services/orthodontics" element={<ServicesDetail1 />} />
-        <Route path="/services/root-canals" element={<ServicesDetail1 />} />
-        <Route path="/services-detail-2" element={<ServicesDetail2 />} />
+        {/* Dynamic service routes - SEO friendly */}
+        <Route path="/services/:slug" element={<ServiceDetail />} />
+        {/* Legacy routes - redirect to new routes */}
+        <Route path="/services-detail-1" element={<Navigate to="/services/general-family" replace />} />
+        <Route path="/services-detail-2" element={<Navigate to="/services/periodontics" replace />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/app/login" element={<AppLogin />} />

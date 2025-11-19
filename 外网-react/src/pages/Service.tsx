@@ -60,7 +60,7 @@ export const Service = () => {
         'service-general-cleanings',
         'service-general-fillings'
       ],
-      detailLink: '/services-detail-1#general-family',
+      detailLink: '/services/general-family',
       ctaKey: 'service-general-cta'
     },
     {
@@ -72,7 +72,7 @@ export const Service = () => {
         'service-cosmetic-veneers',
         'service-cosmetic-bonding'
       ],
-      detailLink: '/services-detail-1#cosmetic',
+      detailLink: '/services/cosmetic',
       ctaKey: 'service-cosmetic-cta'
     },
     {
@@ -84,7 +84,7 @@ export const Service = () => {
         'service-orthodontics-item2',
         'service-orthodontics-item3'
       ],
-      detailLink: '/services-detail-1#orthodontics',
+      detailLink: '/services/orthodontics',
       ctaKey: 'service-cosmetic-cta'
     },
     {
@@ -96,7 +96,7 @@ export const Service = () => {
         'service-rootcanal-procedures',
         'service-rootcanal-retreatment'
       ],
-      detailLink: '/services-detail-1#root-canals',
+      detailLink: '/services/root-canals',
       ctaKey: 'service-cosmetic-cta'
     }
   ] satisfies ServiceCard[];
@@ -111,7 +111,7 @@ export const Service = () => {
         'service-periodontics-item2',
         'service-periodontics-item3'
       ],
-      detailLink: '/services-detail-2#periodontics',
+      detailLink: '/services/periodontics',
       ctaKey: 'service-cosmetic-cta'
     },
     {
@@ -123,7 +123,7 @@ export const Service = () => {
         'service-restorations-item2',
         'service-restorations-item3'
       ],
-      detailLink: '/services-detail-2#restorations',
+      detailLink: '/services/restorations',
       ctaKey: 'service-cosmetic-cta'
     },
     {
@@ -135,7 +135,7 @@ export const Service = () => {
         'service-preventive-item2',
         'service-preventive-item3'
       ],
-      detailLink: '/services-detail-2#preventive',
+      detailLink: '/services/preventive',
       ctaKey: 'service-cosmetic-cta'
     },
     {
@@ -147,7 +147,7 @@ export const Service = () => {
         'service-oral-surgery-item2',
         'service-oral-surgery-item3'
       ],
-      detailLink: '/services-detail-2#oral-surgery',
+      detailLink: '/services/oral-surgery',
       ctaKey: 'service-cosmetic-cta'
     }
   ] satisfies ServiceCard[];

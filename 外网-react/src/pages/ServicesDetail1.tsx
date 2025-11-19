@@ -5,7 +5,6 @@ import { OptimizedImage } from '../components/OptimizedImage';
 import { SEO } from '../components/SEO';
 import { ServiceOverview } from '../components/ServiceOverview';
 import { ProcessSteps } from '../components/ProcessSteps';
-import { BenefitsGrid } from '../components/BenefitsGrid';
 import { IdealCandidates } from '../components/IdealCandidates';
 import { ServiceFAQ } from '../components/ServiceFAQ';
 import { useLanguage } from '../context/LanguageContext';
@@ -71,18 +70,7 @@ export const ServicesDetail1 = () => {
               <h3 className="section-subtitle-bold">{t('general-service-subtitle')}</h3>
             </div>
 
-            {/* Hero Image */}
-            <div className="service-hero-image">
-              <OptimizedImage
-                className="service-image"
-                src="/images/family.jpg"
-                alt={t('general-card-title')}
-                loading="lazy"
-                aspectRatio="16/9"
-              />
-            </div>
-
-            {/* Service Overview */}
+            {/* Service Overview with Image on Left */}
             <ServiceOverview
               titleKey="general-overview-title"
               paragraphs={[
@@ -91,9 +79,11 @@ export const ServicesDetail1 = () => {
                 'general-overview-p3'
               ]}
               highlightKey="general-overview-highlight"
+              imageSrc="/images/family.jpg"
+              imageAlt={t('general-card-title')}
             />
 
-            {/* Process Steps */}
+            {/* Process Steps Carousel */}
             <ProcessSteps
               titleKey="general-process-title"
               subtitleKey="general-process-subtitle"
@@ -101,60 +91,26 @@ export const ServicesDetail1 = () => {
                 {
                   numberKey: 'general-process-step1-num',
                   titleKey: 'general-process-step1-title',
-                  descriptionKey: 'general-process-step1-desc'
+                  descriptionKey: 'general-process-step1-desc',
+                  imageUrl: '/images/family.jpg'
                 },
                 {
                   numberKey: 'general-process-step2-num',
                   titleKey: 'general-process-step2-title',
-                  descriptionKey: 'general-process-step2-desc'
+                  descriptionKey: 'general-process-step2-desc',
+                  imageUrl: '/images/cosmetic.jpg'
                 },
                 {
                   numberKey: 'general-process-step3-num',
                   titleKey: 'general-process-step3-title',
-                  descriptionKey: 'general-process-step3-desc'
+                  descriptionKey: 'general-process-step3-desc',
+                  imageUrl: '/images/or.jpg'
                 },
                 {
                   numberKey: 'general-process-step4-num',
                   titleKey: 'general-process-step4-title',
-                  descriptionKey: 'general-process-step4-desc'
-                }
-              ]}
-            />
-
-            {/* Benefits */}
-            <BenefitsGrid
-              titleKey="general-benefits-title"
-              subtitleKey="general-benefits-subtitle"
-              benefits={[
-                {
-                  iconKey: 'general-benefit1-icon',
-                  titleKey: 'general-benefit1-title',
-                  descriptionKey: 'general-benefit1-desc'
-                },
-                {
-                  iconKey: 'general-benefit2-icon',
-                  titleKey: 'general-benefit2-title',
-                  descriptionKey: 'general-benefit2-desc'
-                },
-                {
-                  iconKey: 'general-benefit3-icon',
-                  titleKey: 'general-benefit3-title',
-                  descriptionKey: 'general-benefit3-desc'
-                },
-                {
-                  iconKey: 'general-benefit4-icon',
-                  titleKey: 'general-benefit4-title',
-                  descriptionKey: 'general-benefit4-desc'
-                },
-                {
-                  iconKey: 'general-benefit5-icon',
-                  titleKey: 'general-benefit5-title',
-                  descriptionKey: 'general-benefit5-desc'
-                },
-                {
-                  iconKey: 'general-benefit6-icon',
-                  titleKey: 'general-benefit6-title',
-                  descriptionKey: 'general-benefit6-desc'
+                  descriptionKey: 'general-process-step4-desc',
+                  imageUrl: '/images/ro.jpg'
                 }
               ]}
             />
@@ -173,7 +129,7 @@ export const ServicesDetail1 = () => {
               ]}
             />
 
-            {/* FAQ */}
+            {/* FAQ - Benefits integrated as FAQ items */}
             <ServiceFAQ
               titleKey="general-faq-title"
               subtitleKey="general-faq-subtitle"
@@ -197,6 +153,30 @@ export const ServicesDetail1 = () => {
                 {
                   questionKey: 'general-faq5-q',
                   answerKey: 'general-faq5-a'
+                },
+                {
+                  questionKey: 'general-faq6-q',
+                  answerKey: 'general-faq6-a'
+                },
+                {
+                  questionKey: 'general-faq7-q',
+                  answerKey: 'general-faq7-a'
+                },
+                {
+                  questionKey: 'general-faq8-q',
+                  answerKey: 'general-faq8-a'
+                },
+                {
+                  questionKey: 'general-faq9-q',
+                  answerKey: 'general-faq9-a'
+                },
+                {
+                  questionKey: 'general-faq10-q',
+                  answerKey: 'general-faq10-a'
+                },
+                {
+                  questionKey: 'general-faq11-q',
+                  answerKey: 'general-faq11-a'
                 }
               ]}
             />
