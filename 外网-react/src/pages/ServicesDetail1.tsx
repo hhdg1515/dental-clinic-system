@@ -3,6 +3,11 @@ import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
 import { OptimizedImage } from '../components/OptimizedImage';
 import { SEO } from '../components/SEO';
+import { ServiceOverview } from '../components/ServiceOverview';
+import { ProcessSteps } from '../components/ProcessSteps';
+import { BenefitsGrid } from '../components/BenefitsGrid';
+import { IdealCandidates } from '../components/IdealCandidates';
+import { ServiceFAQ } from '../components/ServiceFAQ';
 import { useLanguage } from '../context/LanguageContext';
 
 export const ServicesDetail1 = () => {
@@ -66,28 +71,137 @@ export const ServicesDetail1 = () => {
               <h3 className="section-subtitle-bold">{t('general-service-subtitle')}</h3>
             </div>
 
-            <div className="service-carousel">
-              <div className="carousel-content">
-                <div className="carousel-item active">
-                  <div className="image-section">
-                    <OptimizedImage className="service-image" src="/images/family.jpg" alt={t('general-card-title')} loading="lazy" aspectRatio="16/9" />
-                  </div>
-                  <div className="text-section">
-                    <h3 className="service-card-title">{t('general-card-title')}</h3>
-                    <ul className="service-details">
-                      <li>{t('general-detail-1')}</li>
-                      <li>{t('general-detail-2')}</li>
-                      <li>{t('general-detail-3')}</li>
-                      <li>{t('general-detail-4')}</li>
-                      <li>{t('general-detail-5')}</li>
-                      <li>{t('general-detail-6')}</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+            {/* Hero Image */}
+            <div className="service-hero-image">
+              <OptimizedImage
+                className="service-image"
+                src="/images/family.jpg"
+                alt={t('general-card-title')}
+                loading="lazy"
+                aspectRatio="16/9"
+              />
             </div>
 
-            {/* Pricing Section */}
+            {/* Service Overview */}
+            <ServiceOverview
+              titleKey="general-overview-title"
+              paragraphs={[
+                'general-overview-p1',
+                'general-overview-p2',
+                'general-overview-p3'
+              ]}
+              highlightKey="general-overview-highlight"
+            />
+
+            {/* Process Steps */}
+            <ProcessSteps
+              titleKey="general-process-title"
+              subtitleKey="general-process-subtitle"
+              steps={[
+                {
+                  numberKey: 'general-process-step1-num',
+                  titleKey: 'general-process-step1-title',
+                  descriptionKey: 'general-process-step1-desc'
+                },
+                {
+                  numberKey: 'general-process-step2-num',
+                  titleKey: 'general-process-step2-title',
+                  descriptionKey: 'general-process-step2-desc'
+                },
+                {
+                  numberKey: 'general-process-step3-num',
+                  titleKey: 'general-process-step3-title',
+                  descriptionKey: 'general-process-step3-desc'
+                },
+                {
+                  numberKey: 'general-process-step4-num',
+                  titleKey: 'general-process-step4-title',
+                  descriptionKey: 'general-process-step4-desc'
+                }
+              ]}
+            />
+
+            {/* Benefits */}
+            <BenefitsGrid
+              titleKey="general-benefits-title"
+              subtitleKey="general-benefits-subtitle"
+              benefits={[
+                {
+                  iconKey: 'general-benefit1-icon',
+                  titleKey: 'general-benefit1-title',
+                  descriptionKey: 'general-benefit1-desc'
+                },
+                {
+                  iconKey: 'general-benefit2-icon',
+                  titleKey: 'general-benefit2-title',
+                  descriptionKey: 'general-benefit2-desc'
+                },
+                {
+                  iconKey: 'general-benefit3-icon',
+                  titleKey: 'general-benefit3-title',
+                  descriptionKey: 'general-benefit3-desc'
+                },
+                {
+                  iconKey: 'general-benefit4-icon',
+                  titleKey: 'general-benefit4-title',
+                  descriptionKey: 'general-benefit4-desc'
+                },
+                {
+                  iconKey: 'general-benefit5-icon',
+                  titleKey: 'general-benefit5-title',
+                  descriptionKey: 'general-benefit5-desc'
+                },
+                {
+                  iconKey: 'general-benefit6-icon',
+                  titleKey: 'general-benefit6-title',
+                  descriptionKey: 'general-benefit6-desc'
+                }
+              ]}
+            />
+
+            {/* Ideal Candidates */}
+            <IdealCandidates
+              titleKey="general-candidates-title"
+              introKey="general-candidates-intro"
+              candidateKeys={[
+                'general-candidate1',
+                'general-candidate2',
+                'general-candidate3',
+                'general-candidate4',
+                'general-candidate5',
+                'general-candidate6'
+              ]}
+            />
+
+            {/* FAQ */}
+            <ServiceFAQ
+              titleKey="general-faq-title"
+              subtitleKey="general-faq-subtitle"
+              faqs={[
+                {
+                  questionKey: 'general-faq1-q',
+                  answerKey: 'general-faq1-a'
+                },
+                {
+                  questionKey: 'general-faq2-q',
+                  answerKey: 'general-faq2-a'
+                },
+                {
+                  questionKey: 'general-faq3-q',
+                  answerKey: 'general-faq3-a'
+                },
+                {
+                  questionKey: 'general-faq4-q',
+                  answerKey: 'general-faq4-a'
+                },
+                {
+                  questionKey: 'general-faq5-q',
+                  answerKey: 'general-faq5-a'
+                }
+              ]}
+            />
+
+            {/* Pricing Section - Now at the end */}
             <div className="pricing-section">
               <h3 className="pricing-title">{t('pricing-title')}</h3>
               <div className="pricing-cards">
