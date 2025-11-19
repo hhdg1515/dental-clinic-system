@@ -1481,8 +1481,7 @@ async function handleQuickAddAppointment() {
             location: document.getElementById('location')?.value,
             phone: document.getElementById('phoneNumber')?.value
         };
-        
-        
+
         if (!formData.patientName || !formData.date || !formData.time || !formData.service || !formData.location) {
             if (typeof showErrorMessage === 'function') {
                 showErrorMessage('Please fill in all required fields');
@@ -1491,7 +1490,7 @@ async function handleQuickAddAppointment() {
             }
             return;
         }
-        
+
         if (window.dataManager && dataManager.addAppointment) {
             try {
                 await dataManager.addAppointment(formData);
@@ -1510,7 +1509,6 @@ async function handleQuickAddAppointment() {
                 }
             }
         }
-        
     } catch (error) {
         console.error('Error adding appointment:', error);
         if (typeof showErrorMessage === 'function') {

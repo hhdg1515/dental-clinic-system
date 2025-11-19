@@ -587,15 +587,20 @@ class FirebaseDataService {
             // Create proper appointment timestamp from date and time
             const appointmentDateTime = await this.createAppointmentTimestamp(appointmentData.date, appointmentData.time);
 
+            // Get current user ID for Firebase Rules compliance
+            const currentUserId = this.auth?.currentUser?.uid || 'system';
+
             const appointment = {
+                userId: currentUserId, // REQUIRED by Firebase Rules
                 patientName: appointmentData.patientName,
+                patientPhone: appointmentData.phone || '', // REQUIRED by Firebase Rules
                 service: appointmentData.service,
                 appointmentTime: appointmentData.time, // Keep original time string for display
                 appointmentDate: appointmentData.date, // Keep original date string for display
                 appointmentDateTime: appointmentDateTime, // Add proper timestamp for queries
                 status: 'scheduled',
                 clinicLocation: clinicId, // IMPORTANT: Store normalized lowercase format
-                phone: appointmentData.phone || '',
+                phone: appointmentData.phone || '', // Keep for backward compatibility
                 email: appointmentData.email || `${appointmentData.patientName.toLowerCase().replace(/\s+/g, '.')}@email.com`,
                 notes: appointmentData.notes || '',
                 dateKey: appointmentData.date, // Keep for backward compatibility
@@ -603,7 +608,7 @@ class FirebaseDataService {
                 clinicId: clinicId
             };
 
-            // Fixed: Use flat appointments collection structure to match read methods
+            // Use flat appointments collection structure to match read methods
             const db = this.validateDatabase();
             const appointmentsRef = collection(db, 'appointments');
             const docRef = await addDoc(appointmentsRef, appointment);
@@ -1547,8 +1552,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else if (typeof window !== 'undefined') {
     window.FirebaseDataService = FirebaseDataService;
 }
-                recordDebugLog('firebase.findAppointmentById.fallbackQuery', {
-                    patientName,
-                    appointmentDate,
-                    appointmentTime
-                });

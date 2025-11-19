@@ -2553,6 +2553,10 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
 
     // Allow clicking on all dates
     if (dateObj) {
+        // Use a click timer to distinguish single click from double click
+        let clickTimer = null;
+        let clickCount = 0;
+
         dateElement.addEventListener('click', (e) => {
             // Check if clicked on add appointment icon
             if (!isOtherMonth && e.target.closest('.add-appointment-icon')) {
@@ -2561,19 +2565,29 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
                 return;
             }
 
-            // Highlight selected day in month view
-            document.querySelectorAll('.month-date.selected').forEach(el => el.classList.remove('selected'));
-            dateElement.classList.add('selected');
+            clickCount++;
 
-            // Update sidebar with this day's appointments
-            updateMonthSidebar(dateObj, appointments);
-        });
-
-        dateElement.addEventListener('dblclick', (e) => {
-            if (!isOtherMonth && e.target.closest('.add-appointment-icon')) {
-                return;
+            // Clear existing timer
+            if (clickTimer) {
+                clearTimeout(clickTimer);
             }
-            switchToDayView(dateObj);
+
+            // Wait to see if it's a double click
+            clickTimer = setTimeout(() => {
+                if (clickCount === 1) {
+                    // Single click action
+                    // Highlight selected day in month view
+                    document.querySelectorAll('.month-date.selected').forEach(el => el.classList.remove('selected'));
+                    dateElement.classList.add('selected');
+
+                    // Update sidebar with this day's appointments
+                    updateMonthSidebar(dateObj, appointments);
+                } else if (clickCount >= 2) {
+                    // Double click action - switch to day view
+                    switchToDayView(dateObj);
+                }
+                clickCount = 0;
+            }, 300); // 300ms delay to detect double click
         });
     }
 
@@ -2695,35 +2709,42 @@ async function createMonthDateElement(date, isOtherMonth = false, isToday = fals
 
 function switchToDayView(selectedDate) {
     if (!(selectedDate instanceof Date) || isNaN(selectedDate.getTime())) {
+        console.error('Invalid date passed to switchToDayView:', selectedDate);
         return;
     }
-    
+
     // Create a clean date object
     const cleanDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 12, 0, 0);
-    
+
     // Update current date
     currentDate = cleanDate;
-    
-    // Update day view with selected date
+
+    // Update day view with selected date (if element exists)
     const dayDateElement = document.getElementById('dayDate');
     if (dayDateElement) {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = cleanDate.toLocaleDateString('en-US', options);
         dayDateElement.textContent = formattedDate;
     }
-    
+
     // Switch to day view
     document.querySelectorAll('.view-content').forEach(content => content.classList.remove('active'));
-    document.getElementById('day-view').classList.add('active');
-    
+    const dayViewElement = document.getElementById('day-view');
+    if (dayViewElement) {
+        dayViewElement.classList.add('active');
+    }
+
     document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('[data-view="day"]').classList.add('active');
-    
+    const dayViewBtn = document.querySelector('[data-view="day"]');
+    if (dayViewBtn) {
+        dayViewBtn.classList.add('active');
+    }
+
     currentView = 'day';
-    
+
     // Render day view with unified data
     renderDayView();
-    
+
     // Update live time indicator
     updateLiveTimeIndicator();
 }

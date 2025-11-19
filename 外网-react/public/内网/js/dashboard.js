@@ -1481,8 +1481,7 @@ async function handleQuickAddAppointment() {
             location: document.getElementById('location')?.value,
             phone: document.getElementById('phoneNumber')?.value
         };
-        
-        
+
         if (!formData.patientName || !formData.date || !formData.time || !formData.service || !formData.location) {
             if (typeof showErrorMessage === 'function') {
                 showErrorMessage('Please fill in all required fields');
@@ -1491,7 +1490,7 @@ async function handleQuickAddAppointment() {
             }
             return;
         }
-        
+
         if (window.dataManager && dataManager.addAppointment) {
             try {
                 await dataManager.addAppointment(formData);
@@ -1510,7 +1509,6 @@ async function handleQuickAddAppointment() {
                 }
             }
         }
-        
     } catch (error) {
         console.error('Error adding appointment:', error);
         if (typeof showErrorMessage === 'function') {
@@ -1741,20 +1739,44 @@ function renderDashboardCalendar() {
     for (let i = 0; i < 42; i++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + i);
-        
+
         const dateElement = document.createElement('div');
         dateElement.className = 'calendar-date';
         dateElement.textContent = currentDate.getDate();
-        
+
         // Add style classes
         if (currentDate.getMonth() !== currentMonth) {
             dateElement.classList.add('other-month');
         }
-        
+
         if (currentDate.toDateString() === today.toDateString()) {
             dateElement.classList.add('today');
         }
-        
+
+        // Add click and double-click event handlers
+        const dateForHandler = new Date(currentDate); // Capture the date in closure
+
+        // Single click - could show simple info (optional)
+        dateElement.addEventListener('click', function(e) {
+            // Currently just visual feedback
+            console.log('Single click on date:', dateForHandler.toLocaleDateString());
+        });
+
+        // Double click - navigate to day view in appointments page
+        dateElement.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            console.log('Double click on date:', dateForHandler.toLocaleDateString());
+
+            // Format date as YYYY-MM-DD for URL parameter
+            const year = dateForHandler.getFullYear();
+            const month = String(dateForHandler.getMonth() + 1).padStart(2, '0');
+            const day = String(dateForHandler.getDate()).padStart(2, '0');
+            const dateParam = `${year}-${month}-${day}`;
+
+            // Navigate to appointments page with date parameter and view mode
+            window.location.href = `appointments.html?date=${dateParam}&view=day`;
+        });
+
         calendarDates.appendChild(dateElement);
     }
 }
