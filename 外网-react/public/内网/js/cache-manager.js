@@ -7,17 +7,17 @@ class GlobalCacheManager {
         this.dateCache = new Map();              // 单日期查询缓存 {dateKey: appointments[]}
         this.allAppointmentsCache = null;        // getAllAppointments 缓存
         this.cancelledAppointmentsCache = null;  // 取消的预约缓存
-        this.serviceSuccessRateCache = null;      // 服务成功率缓存 (24小时)
+        this.dentalChartsCache = new Map();      // 牙科图表缓存 {userId: chartData}
 
         // 时间戳管理
         this.dateCacheTimestamps = new Map();    // {dateKey: timestamp}
         this.allAppointmentsTimestamp = null;
         this.cancelledAppointmentsTimestamp = null;
-        this.serviceSuccessRateTimestamp = null;
+        this.dentalChartTimestamps = new Map();  // {userId: timestamp}
 
         // 缓存配置
         this.CACHE_DURATION = 5 * 60 * 1000;     // 5分钟过期
-        this.SERVICE_SUCCESS_RATE_DURATION = 24 * 60 * 60 * 1000; // 24小时过期
+        this.DENTAL_CHART_CACHE_DURATION = 12 * 60 * 60 * 1000;  // 12小时过期（牙科图表变化频率低）
         this.MAX_DATE_CACHE = 30;                 // 最多缓存30个日期
 
         // 统计数据 (可选 - 用于监控)
@@ -253,51 +253,66 @@ class GlobalCacheManager {
         console.log(`🔄 Cache invalidated after deleting appointment on ${dateKey}`);
     }
 
-    // ========== 服务成功率缓存 (24小时) ==========
+    // ========== 牙科图表缓存 ==========
 
     /**
-     * 获取服务成功率缓存
+     * 获取牙科图表缓存
+     * @param {string} userId - 患者用户ID
+     * @returns {Object|null}
      */
-    getServiceSuccessRateCache() {
-        if (!this.isServiceSuccessRateCacheValid()) {
+    getDentalChartCache(userId) {
+        if (!this.isDentalChartCacheValid(userId)) {
             this.stats.misses++;
             return null;
         }
 
         this.stats.hits++;
         this.stats.savedReads++;
-        console.log('📦 Cache HIT: serviceSuccessRate (saved computation)');
-        return this.serviceSuccessRateCache;
+        console.log(`📦 Cache HIT: dentalChart/${userId} (saved Firebase read)`);
+        return this.dentalChartsCache.get(userId);
     }
 
     /**
-     * 设置服务成功率缓存
+     * 设置牙科图表缓存
+     * @param {string} userId - 患者用户ID
+     * @param {Object} chartData - 牙科图表数据
      */
-    setServiceSuccessRateCache(data) {
-        this.serviceSuccessRateCache = data;
-        this.serviceSuccessRateTimestamp = Date.now();
-        console.log(`💾 Cached: serviceSuccessRate (${Object.keys(data).length} services)`);
+    setDentalChartCache(userId, chartData) {
+        this.dentalChartsCache.set(userId, chartData);
+        this.dentalChartTimestamps.set(userId, Date.now());
+        console.log(`💾 Cached: dentalChart/${userId}`);
     }
 
     /**
-     * 检查服务成功率缓存是否有效
+     * 检查牙科图表缓存是否有效
      */
-    isServiceSuccessRateCacheValid() {
-        if (!this.serviceSuccessRateCache || !this.serviceSuccessRateTimestamp) {
+    isDentalChartCacheValid(userId) {
+        if (!this.dentalChartsCache.has(userId) || !this.dentalChartTimestamps.has(userId)) {
             return false;
         }
 
-        const age = Date.now() - this.serviceSuccessRateTimestamp;
-        return age < this.SERVICE_SUCCESS_RATE_DURATION;
+        const timestamp = this.dentalChartTimestamps.get(userId);
+        const age = Date.now() - timestamp;
+        return age < this.DENTAL_CHART_CACHE_DURATION;
     }
 
     /**
-     * 使服务成功率缓存失效
+     * 使牙科图表缓存失效
      */
-    invalidateServiceSuccessRate() {
-        this.serviceSuccessRateCache = null;
-        this.serviceSuccessRateTimestamp = null;
-        console.log('❌ Invalidated cache: serviceSuccessRate');
+    invalidateDentalChart(userId) {
+        if (this.dentalChartsCache.has(userId)) {
+            this.dentalChartsCache.delete(userId);
+            this.dentalChartTimestamps.delete(userId);
+            console.log(`❌ Invalidated cache: dentalChart/${userId}`);
+        }
+    }
+
+    /**
+     * 当牙科图表更新时调用
+     */
+    onDentalChartUpdated(userId) {
+        this.invalidateDentalChart(userId);
+        console.log(`🔄 Cache invalidated after updating dentalChart/${userId}`);
     }
 
     // ========== 工具方法 ==========
@@ -312,8 +327,8 @@ class GlobalCacheManager {
         this.allAppointmentsTimestamp = null;
         this.cancelledAppointmentsCache = null;
         this.cancelledAppointmentsTimestamp = null;
-        this.serviceSuccessRateCache = null;
-        this.serviceSuccessRateTimestamp = null;
+        this.dentalChartsCache.clear();
+        this.dentalChartTimestamps.clear();
 
         console.log('🗑️ All caches cleared');
     }
@@ -346,10 +361,13 @@ class GlobalCacheManager {
             cleanedCount++;
         }
 
-        // 清理过期的服务成功率缓存 (24小时)
-        if (this.serviceSuccessRateTimestamp && now - this.serviceSuccessRateTimestamp >= this.SERVICE_SUCCESS_RATE_DURATION) {
-            this.invalidateServiceSuccessRate();
-            cleanedCount++;
+        // 清理过期的牙科图表缓存
+        for (const [userId, timestamp] of this.dentalChartTimestamps.entries()) {
+            if (now - timestamp >= this.DENTAL_CHART_CACHE_DURATION) {
+                this.dentalChartsCache.delete(userId);
+                this.dentalChartTimestamps.delete(userId);
+                cleanedCount++;
+            }
         }
 
         if (cleanedCount > 0) {
@@ -373,8 +391,7 @@ class GlobalCacheManager {
             dateCacheSize: this.dateCache.size,
             hasAllCache: !!this.allAppointmentsCache,
             hasCancelledCache: !!this.cancelledAppointmentsCache,
-            hasServiceSuccessRateCache: !!this.serviceSuccessRateCache,
-            totalCacheSize: this.dateCache.size + (this.allAppointmentsCache ? 1 : 0) + (this.cancelledAppointmentsCache ? 1 : 0) + (this.serviceSuccessRateCache ? 1 : 0)
+            totalCacheSize: this.dateCache.size + (this.allAppointmentsCache ? 1 : 0) + (this.cancelledAppointmentsCache ? 1 : 0)
         };
     }
 

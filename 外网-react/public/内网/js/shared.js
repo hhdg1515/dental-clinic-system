@@ -71,11 +71,11 @@ async function handleLogout(event) {
             console.warn('⚠️ Firebase auth not available, skipping Firebase signOut');
         }
 
-        // Step 2: Clear localStorage (UI preferences only - no identity data stored)
-        // ✅ Identity data is managed by Firebase Auth + Firestore, not localStorage
-        // Only clear UI preferences if needed
-        localStorage.removeItem('intranet:view-location');
-        localStorage.removeItem('sidebarCollapsed');
+        // Step 2: Clear localStorage
+        const possibleKeys = ['currentUser', 'user', 'userData', 'authUser'];
+        possibleKeys.forEach(key => {
+            localStorage.removeItem(key);
+        });
 
         // Step 3: Clear session storage
         sessionStorage.removeItem('internal_auth_checked');
@@ -83,9 +83,10 @@ async function handleLogout(event) {
         // Step 4: Show success message
         showSuccessMessage('Logged out successfully. Redirecting...');
 
-        // Step 5: Redirect to React app home page
+        // Step 5: Redirect to home page
+        // Redirects to the application home/landing page
         setTimeout(() => {
-            window.location.href = '/'; // 跳转到React应用首页
+            window.location.href = '/';
         }, 1000);
     } catch (error) {
         console.error('❌ Logout failed:', error);

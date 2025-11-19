@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from 'firebase/auth';
+import { useLocation } from 'react-router-dom';
 import {
   signUpUser,
   signInUser,
@@ -15,11 +16,13 @@ interface AuthContextType {
   currentUser: User | null;
   userData: UserData | null;
   loading: boolean;
+  authReady: boolean;
   signUp: (email: string, password: string, additionalInfo?: Partial<UserData>) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  requestAuthInit: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,9 +42,28 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [authInitialized, setAuthInitialized] = useState(false);
+  const [initRequested, setInitRequested] = useState(false);
+  const location = useLocation();
+
+  const requestAuthInit = useCallback(() => {
+    setInitRequested(true);
+  }, []);
 
   useEffect(() => {
+    if (location.pathname.startsWith('/app')) {
+      setInitRequested(true);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!initRequested) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
     const unsubscribe = listenForAuthStateChange((authData) => {
       if (authData) {
         setCurrentUser(authData.user);
@@ -50,11 +72,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setCurrentUser(null);
         setUserData(null);
       }
+      setAuthInitialized(true);
       setLoading(false);
     });
 
-    return unsubscribe;
-  }, []);
+    return () => {
+      unsubscribe();
+      setAuthInitialized(false);
+    };
+  }, [initRequested]);
 
   const signUp = async (email: string, password: string, additionalInfo?: Partial<UserData>) => {
     const { user, userData: newUserData } = await signUpUser(email, password, additionalInfo);
@@ -85,13 +111,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const value: AuthContextType = {
     currentUser,
     userData,
-    loading,
+    loading: initRequested ? loading : false,
+    authReady: !initRequested || authInitialized,
     signUp,
     signIn,
     signInGoogle,
     signOut,
-    isAdmin
+    isAdmin,
+    requestAuthInit
   };
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

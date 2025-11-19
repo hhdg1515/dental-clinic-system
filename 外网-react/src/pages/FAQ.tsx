@@ -1,5 +1,7 @@
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
+import { OptimizedImage } from '../components/OptimizedImage';
+import { SEO } from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 import { useAmenitiesCarousel } from '../hooks/useAmenitiesCarousel';
 import { useTipsCarousel } from '../hooks/useTipsCarousel';
@@ -125,22 +127,55 @@ export const FAQ = () => {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <div className="flex-1">
-      {/* Hero Section - 使用正确的FAQ背景图片 */}
-      <section className="hero-section" style={{ backgroundImage: 'url(/images/forest35.jpg)' }}>
-        <Navigation variant="plain" />
+    <>
+      <SEO
+        title="FAQ - Frequently Asked Questions | First Ave Dental"
+        description="常见问题解答：了解牙科治疗、预约流程、保险覆盖、诊所设施等信息。提供专业牙科建议，解答您的疑问。"
+        keywords="牙科FAQ, 牙科常见问题, 牙科预约, 牙科保险, 治疗费用, 洗牙问题"
+        ogTitle="牙科常见问题 - First Ave Dental & Orthodontics"
+        ogDescription="专业解答牙科相关问题，提供详细的治疗说明和建议"
+      />
+      <div className="flex min-h-screen flex-col">
+        <div className="flex-1">
+        {/* Hero Section - 使用OptimizedImage替代CSS background */}
+      <section className="hero-section" style={{ position: 'relative', overflow: 'hidden' }}>
+        {/* Background Image using OptimizedImage */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 0
+        }}>
+          <OptimizedImage
+            src="/images/forest35.jpg"
+            alt="FAQ Background"
+            loading="eager"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center'
+            }}
+          />
+        </div>
 
-        <div className="hero-content">
-          <div className="breadcrumb-wrapper">
-            <ul className="breadcrumbs">
-              <li><a href="/">{t('nav-home')}</a></li>
-              <li>{t('breadcrumb-faq')}</li>
-            </ul>
+        {/* Content overlay */}
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <Navigation variant="plain" />
+
+          <div className="hero-content">
+            <div className="breadcrumb-wrapper">
+              <ul className="breadcrumbs">
+                <li><a href="/" aria-label="Go to home page">{t('nav-home')}</a></li>
+                <li>{t('breadcrumb-faq')}</li>
+              </ul>
+            </div>
+
+            <h1>{t('faq-page-title')}</h1>
+            <p className="hero-description">{t('faq-page-desc')}</p>
           </div>
-
-          <h1>{t('faq-page-title')}</h1>
-          <p className="hero-description">{t('faq-page-desc')}</p>
         </div>
       </section>
 
@@ -304,7 +339,12 @@ export const FAQ = () => {
                     className={`carousel-item ${index === amenitiesSlide ? 'active' : ''}`}
                   >
                     <div className="image-section">
-                      <img className="left-image" src={amenity.image} alt={t(amenity.titleKey as any)} />
+                      <OptimizedImage
+                        className="left-image"
+                        src={amenity.image}
+                        alt={t(amenity.titleKey as any)}
+                        loading="lazy"
+                      />
                     </div>
                     <div className="text-section">
                       <h3 className="amenity-title">{t(amenity.titleKey as any)}</h3>
@@ -368,10 +408,11 @@ export const FAQ = () => {
                         key={tip.id}
                         className={`tips-carousel-item ${index === tipsSlide ? 'active' : ''}`}
                       >
-                        <img
+                        <OptimizedImage
                           className="tips-image-section"
                           src={tip.image}
                           alt={t(tip.titleKey as any)}
+                          loading="lazy"
                         />
 
                         <div className="tips-text-section">
@@ -422,6 +463,7 @@ export const FAQ = () => {
 
       {/* Footer */}
       <Footer />
-    </div>
+      </div>
+    </>
   );
 };

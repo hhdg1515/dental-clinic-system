@@ -1022,126 +1022,299 @@
     text-align: center;
 }
 
+.month-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
 .month-calendar {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    overflow: hidden;
-    box-shadow:
-        3px 0 8px 0 rgba(37, 99, 235, 0.03),
-        0 4px 10px 0 rgba(37, 99, 235, 0.04);
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    flex: 1 1 auto;
+    max-width: calc(100% - 360px);
+    margin: 0;
+    position: relative;
+}
+
+.month-calendar::before {
+    display: none;
 }
 
 .month-weekdays {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(15px) saturate(180%);
-    -webkit-backdrop-filter: blur(15px) saturate(180%);
-    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .weekday {
-    padding: 12px;
+    padding: 8px 0;
     text-align: center;
     font-weight: 600;
-    color: var(--color-text-secondary);
+    color: #c5ccd9;
     font-size: 12px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
 .month-dates {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 10px;
+    position: relative;
+    z-index: 1;
 }
 
 .month-date {
     aspect-ratio: 1;
-    border-right: 1px solid rgba(37, 99, 235, 0.08);
-    border-bottom: 1px solid rgba(37, 99, 235, 0.08);
-    padding: 8px;
+    border: none;
+    padding: 16px 12px 12px;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 24px;
+    transition: all 0.25s ease;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    overflow: hidden;
+}
+
+.month-date::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.6), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.25s ease;
 }
 
 .month-date:hover {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(15px) saturate(150%);
-    -webkit-backdrop-filter: blur(15px) saturate(150%);
-    box-shadow:
-        0 2px 6px 0 rgba(37, 99, 235, 0.04),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.month-date:hover::after {
+    opacity: 1;
+}
+
+.month-date:nth-child(14n + 1),
+.month-date:nth-child(14n + 2),
+.month-date:nth-child(14n + 3),
+.month-date:nth-child(14n + 4),
+.month-date:nth-child(14n + 5),
+.month-date:nth-child(14n + 6),
+.month-date:nth-child(14n + 7),
+.month-date:nth-child(14n + 15),
+.month-date:nth-child(14n + 16),
+.month-date:nth-child(14n + 17),
+.month-date:nth-child(14n + 18),
+.month-date:nth-child(14n + 19),
+.month-date:nth-child(14n + 20),
+.month-date:nth-child(14n + 21),
+.month-date:nth-child(14n + 29),
+.month-date:nth-child(14n + 30),
+.month-date:nth-child(14n + 31),
+.month-date:nth-child(14n + 32),
+.month-date:nth-child(14n + 33),
+.month-date:nth-child(14n + 34),
+.month-date:nth-child(14n + 35) {
+    background: rgba(240, 241, 243, 0.55);
+}
+
+.month-date:nth-child(14n + 8),
+.month-date:nth-child(14n + 9),
+.month-date:nth-child(14n + 10),
+.month-date:nth-child(14n + 11),
+.month-date:nth-child(14n + 12),
+.month-date:nth-child(14n + 13),
+.month-date:nth-child(14n + 14),
+.month-date:nth-child(14n + 22),
+.month-date:nth-child(14n + 23),
+.month-date:nth-child(14n + 24),
+.month-date:nth-child(14n + 25),
+.month-date:nth-child(14n + 26),
+.month-date:nth-child(14n + 27),
+.month-date:nth-child(14n + 28) {
+    background: rgba(231, 240, 249, 0.95);
 }
 
 .month-date.other-month {
-    color: #d1d5db;
+    color: #838fa7;
+    background: rgba(240, 241, 243, 0.55);
 }
 
 .month-date.today {
-    background: rgba(37, 99, 235, 0.15);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    color: var(--color-primary-dark);
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(93, 157, 255, 0.65);
+}
+
+.month-date.selected {
+    border: 1px solid rgba(148, 163, 184, 0.9);
+}
+
+/* Month sidebar */
+.month-sidebar {
+    flex: 0 0 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.month-sidebar-header {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 14px 16px 12px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.month-sidebar-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+
+.month-sidebar-date {
+    font-size: 16px;
     font-weight: 600;
-    box-shadow:
-        0 2px 8px 0 rgba(37, 99, 235, 0.1),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+    color: #0f172a;
+}
+
+.month-sidebar-count {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.month-sidebar-empty {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.month-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.month-sidebar-card {
+    position: relative;
+    border-radius: 18px;
+    padding: 10px 12px 10px 14px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.month-sidebar-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.month-sidebar-time {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.month-sidebar-status {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+}
+
+.month-sidebar-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.month-sidebar-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.month-sidebar-card.status-completed {
+    background: rgba(246, 255, 237, 0.92);
+}
+
+.month-sidebar-card.status-no-show {
+    background: rgba(255, 242, 240, 0.92);
+}
+
+.month-sidebar-card.status-held {
+    background: rgba(255, 241, 195, 0.9);
+}
+
+.month-sidebar-card.status-arrived {
+    background: rgba(219, 234, 254, 0.92);
+}
+
+.month-sidebar-card.status-scheduled {
+    background: rgba(244, 246, 249, 0.95);
 }
 
 .date-number {
-    font-size: 14px;
-    margin-bottom: 4px;
+    font-size: 22px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #9da3af;
+    line-height: 1.4;
 }
 
 /* Appointment Count Badge */
 .appointment-count {
-    background: var(--color-primary);
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
+    background: rgba(37, 99, 235, 0.15);
+    color: #1d4ed8;
+    border-radius: 999px;
+    padding: 2px 10px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     position: absolute;
-    bottom: 4px;
-    right: 4px;
+    bottom: 10px;
+    right: 10px;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.15);
 }
 
 .month-date.other-month .appointment-count {
-    background: #9ca3af;
-    opacity: 0.7;
+    background: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
 }
 
 /* Add Appointment Icon */
 .add-appointment-icon {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    background: var(--color-primary);
-    color: white;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    top: 10px;
+    right: 10px;
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--color-primary);
+    border-radius: 12px;
+    width: 22px;
+    height: 22px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
+    font-size: 11px;
     opacity: 0;
     transition: opacity 0.2s ease;
     cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.15);
 }
 
 .month-date:not(.other-month):hover .add-appointment-icon {
@@ -1149,7 +1322,7 @@
 }
 
 .month-date.other-month:hover {
-    background: var(--color-bg-muted);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.65), rgba(236, 240, 255, 0.4));
     cursor: pointer;
 }
 

@@ -1,0 +1,16 @@
+# robots.txt for Dental Clinic System
+# 允许所有搜索引擎爬取所有内容
+
+User-agent: *
+Allow: /
+
+# 禁止爬取内网系统（如果有）
+Disallow: /内网/
+Disallow: /admin/
+Disallow: /*.json$
+
+# Sitemap 位置
+Sitemap: https://firstavedentalortho.com/sitemap.xml
+
+# 爬取延迟（可选，防止服务器过载）
+Crawl-delay: 1

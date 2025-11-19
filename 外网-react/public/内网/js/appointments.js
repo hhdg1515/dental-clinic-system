@@ -1,10 +1,11 @@
-/* 
+/*
  * Dynamic CSS classes used in this file:
  * .week-appointment, .week-patient, .week-more-indicator
  * .day-appointment-card, .concurrent-appointments-container
  * Defined in appointments.css
  */
 // Appointments Page Functionality - Updated to use Global Data Manager
+import { escapeHtml } from './security-utils.js';
 
 // Current view and date state
 let currentView = 'week';
@@ -1155,26 +1156,26 @@ function showAppointmentDetails(element, appointmentData = null) {
     const detailsContent = document.getElementById('appointmentDetailsContent');
     if (detailsContent) {
         detailsContent.innerHTML = `
-            <h4>${patientName}</h4>
+            <h4>${escapeHtml(patientName)}</h4>
             <div class="detail-row">
                 <span class="detail-label">Date & Time:</span>
-                <span class="detail-value">${datetime}</span>
+                <span class="detail-value">${escapeHtml(datetime)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${service}</span>
+                <span class="detail-value">${escapeHtml(service)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Location:</span>
-                <span class="detail-value">${location}</span>
+                <span class="detail-value">${escapeHtml(location)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Phone:</span>
-                <span class="detail-value">${tel}</span>
+                <span class="detail-value">${escapeHtml(tel)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">${status}</span>
+                <span class="detail-value">${escapeHtml(status)}</span>
             </div>
             ${additionalInfo}
         `;
@@ -1499,22 +1500,6 @@ async function renderMonthView() {
     await generateMonthCalendar();
 }
 
-function createMonthDateElement(date, isOtherMonth = false, isToday = false) {
-    const dateElement = document.createElement('div');
-    dateElement.className = 'month-date';
-    
-    if (isOtherMonth) {
-        dateElement.classList.add('other-month');
-    }
-    
-    if (isToday) {
-        dateElement.classList.add('today');
-    }
-    
-    dateElement.textContent = date.toString();
-    
-    return dateElement;
-}
 // Helper function to get time position in pixels
 function getTimePosition(timeString) {
     const timeMatch = /^(\d{1,2}):(\d{2})$/.exec(timeString);
@@ -1875,8 +1860,12 @@ function openProcessModal(element, appointmentData = null) {
         status, 
         element, 
         appointmentId,
-        phone: appointmentData?.phone || '' // Add phone number
+        phone: appointmentData?.phone || '',
+        rawAppointment: appointmentData || null
     };
+    if (typeof window !== 'undefined') {
+        window.__currentAppointmentData = currentAppointmentData;
+    }
     
     // Populate modal
     const summary = document.getElementById('appointmentSummary');
@@ -1887,18 +1876,18 @@ function openProcessModal(element, appointmentData = null) {
             phone = appointmentData.phone;
         }
         summary.innerHTML = `
-            <h4>${patientName}</h4>
+            <h4>${escapeHtml(patientName)}</h4>
             <div class="detail-row">
                 <span class="detail-label">Phone:</span>
-                <span class="detail-value">${phone}</span>
+                <span class="detail-value">${escapeHtml(phone)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${service}</span>
+                <span class="detail-value">${escapeHtml(service)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">${capitalizeFirst(status.replace('-', ' '))}</span>
+                <span class="detail-value">${escapeHtml(capitalizeFirst(status.replace('-', ' ')))}</span>
             </div>
         `;
     }
@@ -2474,8 +2463,55 @@ async function generateMonthCalendar() {
         monthDatesElement.appendChild(dateElement);
     }
 
+    pruneTrailingOtherMonthRows(monthDatesElement);
+
+    // Default sidebar selection (prefer today's date if visible)
+    let defaultDateObj;
+    let defaultAppointments;
+    if (year === today.getFullYear() && month === today.getMonth()) {
+        defaultDateObj = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 12, 0, 0);
+        defaultAppointments = appointmentsByDate[formatDateToKey(defaultDateObj)] || [];
+        const todayElement = monthDatesElement.querySelector('.month-date.today');
+        if (todayElement) {
+            todayElement.classList.add('selected');
+        }
+    } else {
+        defaultDateObj = new Date(year, month, 1, 12, 0, 0);
+        defaultAppointments = appointmentsByDate[formatDateToKey(defaultDateObj)] || [];
+        const firstCurrent = monthDatesElement.querySelector('.month-date:not(.other-month)');
+        if (firstCurrent) {
+            firstCurrent.classList.add('selected');
+        }
+    }
+
+    if (defaultDateObj) {
+        updateMonthSidebar(defaultDateObj, defaultAppointments);
+    }
+
     console.log('Calendar: Optimized month calendar generation completed');
 }
+
+function pruneTrailingOtherMonthRows(container) {
+    const cells = Array.from(container.children);
+    if (cells.length % 7 !== 0) return;
+
+    let rows = cells.length / 7;
+    while (rows > 0) {
+        const startIndex = (rows - 1) * 7;
+        const rowCells = cells.slice(startIndex, startIndex + 7);
+        const allOther = rowCells.every(cell => cell.classList.contains('other-month'));
+
+        if (allOther) {
+            rowCells.forEach(cell => container.removeChild(cell));
+            cells.splice(startIndex, 7);
+            rows--;
+        } else {
+            break;
+        }
+    }
+}
+
+let currentMonthSidebarDate = null;
 
 // Optimized version that uses pre-fetched appointment data
 function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = false, dateObj = null, appointments = []) {
@@ -2517,6 +2553,10 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
 
     // Allow clicking on all dates
     if (dateObj) {
+        // Use a click timer to distinguish single click from double click
+        let clickTimer = null;
+        let clickCount = 0;
+
         dateElement.addEventListener('click', (e) => {
             // Check if clicked on add appointment icon
             if (!isOtherMonth && e.target.closest('.add-appointment-icon')) {
@@ -2525,12 +2565,90 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
                 return;
             }
 
-            // Navigate to Day View with selected date
-            switchToDayView(dateObj);
+            clickCount++;
+
+            // Clear existing timer
+            if (clickTimer) {
+                clearTimeout(clickTimer);
+            }
+
+            // Wait to see if it's a double click
+            clickTimer = setTimeout(() => {
+                if (clickCount === 1) {
+                    // Single click action
+                    // Highlight selected day in month view
+                    document.querySelectorAll('.month-date.selected').forEach(el => el.classList.remove('selected'));
+                    dateElement.classList.add('selected');
+
+                    // Update sidebar with this day's appointments
+                    updateMonthSidebar(dateObj, appointments);
+                } else if (clickCount >= 2) {
+                    // Double click action - switch to day view
+                    switchToDayView(dateObj);
+                }
+                clickCount = 0;
+            }, 300); // 300ms delay to detect double click
         });
     }
 
     return dateElement;
+}
+
+function updateMonthSidebar(dateObj, appointments) {
+    const sidebarDateEl = document.getElementById('monthSidebarDate');
+    const sidebarCountEl = document.getElementById('monthSidebarCount');
+    const sidebarEmptyEl = document.getElementById('monthSidebarEmpty');
+    const sidebarListEl = document.getElementById('monthSidebarList');
+
+    if (!sidebarDateEl || !sidebarCountEl || !sidebarEmptyEl || !sidebarListEl) {
+        return;
+    }
+
+    currentMonthSidebarDate = dateObj;
+
+    const options = { weekday: 'long', month: 'short', day: 'numeric' };
+    sidebarDateEl.textContent = dateObj.toLocaleDateString('en-US', options);
+
+    const count = appointments.length;
+    if (count === 0) {
+        sidebarCountEl.textContent = '';
+        sidebarEmptyEl.style.display = 'block';
+        sidebarListEl.innerHTML = '';
+        return;
+    }
+
+    sidebarCountEl.textContent = count === 1 ? '1 appointment' : `${count} appointments`;
+    sidebarEmptyEl.style.display = 'none';
+
+    // Sort appointments by time (HH:MM)
+    const sorted = [...appointments].sort((a, b) => {
+        const ta = (a.time || '00:00').padStart(5, '0');
+        const tb = (b.time || '00:00').padStart(5, '0');
+        return ta.localeCompare(tb);
+    });
+
+    sidebarListEl.innerHTML = '';
+
+    sorted.forEach(app => {
+        const card = document.createElement('div');
+        const status = (app.status || 'scheduled').toLowerCase();
+        card.className = `month-sidebar-card status-${status}`;
+
+        const timeText = app.time ? app.time : 'Time TBC';
+        const serviceText = app.service || 'Dental visit';
+        const locationText = app.location || '';
+
+        card.innerHTML = `
+            <div class="month-sidebar-card-header">
+                <div class="month-sidebar-time">${timeText}</div>
+                <div class="month-sidebar-status">${status}</div>
+            </div>
+            <div class="month-sidebar-title">${app.patientName || 'Unnamed patient'}</div>
+            <div class="month-sidebar-subtitle">${serviceText}${locationText ? ' · ' + locationText : ''}</div>
+        `;
+
+        sidebarListEl.appendChild(card);
+    });
 }
 
 async function createMonthDateElement(date, isOtherMonth = false, isToday = false, dateObj = null) {
@@ -2591,35 +2709,42 @@ async function createMonthDateElement(date, isOtherMonth = false, isToday = fals
 
 function switchToDayView(selectedDate) {
     if (!(selectedDate instanceof Date) || isNaN(selectedDate.getTime())) {
+        console.error('Invalid date passed to switchToDayView:', selectedDate);
         return;
     }
-    
+
     // Create a clean date object
     const cleanDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 12, 0, 0);
-    
+
     // Update current date
     currentDate = cleanDate;
-    
-    // Update day view with selected date
+
+    // Update day view with selected date (if element exists)
     const dayDateElement = document.getElementById('dayDate');
     if (dayDateElement) {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = cleanDate.toLocaleDateString('en-US', options);
         dayDateElement.textContent = formattedDate;
     }
-    
+
     // Switch to day view
     document.querySelectorAll('.view-content').forEach(content => content.classList.remove('active'));
-    document.getElementById('day-view').classList.add('active');
-    
+    const dayViewElement = document.getElementById('day-view');
+    if (dayViewElement) {
+        dayViewElement.classList.add('active');
+    }
+
     document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('[data-view="day"]').classList.add('active');
-    
+    const dayViewBtn = document.querySelector('[data-view="day"]');
+    if (dayViewBtn) {
+        dayViewBtn.classList.add('active');
+    }
+
     currentView = 'day';
-    
+
     // Render day view with unified data
     renderDayView();
-    
+
     // Update live time indicator
     updateLiveTimeIndicator();
 }
@@ -2632,10 +2757,12 @@ async function updateAppointmentStatus(newStatus, additionalData = {}) {
     }
     
     try {
+        const appointmentContext = currentAppointmentData?.rawAppointment || null;
         const success = await dataManager.updateAppointmentStatus(
             currentAppointmentData.appointmentId,
             newStatus,
-            additionalData
+            additionalData,
+            appointmentContext
         );
         
         if (!success) {
@@ -2700,15 +2827,15 @@ function updateProcessModalDisplay(appointmentData) {
             <h4>Appointment Details</h4>
             <div class="detail-row">
                 <span class="detail-label">Patient:</span>
-                <span class="detail-value">${appointmentData.patientName}</span>
+                <span class="detail-value">${escapeHtml(appointmentData.patientName)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Service:</span>
-                <span class="detail-value">${appointmentData.service}</span>
+                <span class="detail-value">${escapeHtml(appointmentData.service)}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">${capitalizeFirst(appointmentData.status.replace('-', ' '))}</span>
+                <span class="detail-value">${escapeHtml(capitalizeFirst(appointmentData.status.replace('-', ' ')))}</span>
             </div>
         `;
     }
@@ -2954,7 +3081,7 @@ document.addEventListener('DOMContentLoaded', fixAppointmentTimeOptions);
 // Patient Account Modal Functions
 let currentAccountPatient = null;
 
-function showPatientAccountModal(patientData) {
+async function showPatientAccountModal(patientData) {
     currentAccountPatient = patientData;
 
     // DEBUG: Log the patient data structure
@@ -2967,7 +3094,7 @@ function showPatientAccountModal(patientData) {
     
     // Update status toggle
     const statusToggle = document.getElementById('patientStatusToggle');
-    const hasUpcomingAppointments = checkHasUpcomingAppointments(patientData.patientName);
+    const hasUpcomingAppointments = await checkHasUpcomingAppointments(patientData);
     
     if (hasUpcomingAppointments) {
         statusToggle.classList.add('active');
@@ -2981,10 +3108,13 @@ function showPatientAccountModal(patientData) {
     
     // Load appointment history - pass full patient data for userId access
     loadAccountHistory(patientData);
-    
+
     // Load medical records
     loadAccountRecords(patientData);
-    
+
+    // Load dental chart
+    loadDentalChart(patientData);
+
     // Load next treatments - pass full patient data for userId access
     loadNextTreatments(patientData);
     
@@ -3008,14 +3138,17 @@ function showPatientAccountModal(patientData) {
 }, 200);
 }
 
-async function checkHasUpcomingAppointments(patientName) {
-    const today = new Date();
-    const allAppointments = await dataManager.getAllAppointments();
-    
+async function checkHasUpcomingAppointments(patientData) {
+    const allAppointments = await dataManager.getAllAppointments() || [];
+    const todayString = new Date().toISOString().split('T')[0];
+
     return allAppointments.some(appointment => {
-        if (appointment.patientName !== patientName) return false;
-        const appointmentDate = new Date(appointment.dateKey);
-        return appointmentDate >= today;
+        const samePatient = (patientData.userId && appointment.userId)
+            ? appointment.userId === patientData.userId
+            : appointment.patientName === patientData.patientName;
+
+        if (!samePatient) return false;
+        return appointment.dateKey >= todayString;
     });
 }
 
@@ -3071,15 +3204,15 @@ async function loadAccountHistory(patientData) {
         
         historyItem.innerHTML = `
             <div class="account-history-header">
-                <span class="account-history-date">${formattedDate} - ${formattedTime}</span>
-                <span class="status-badge ${appointment.status}">${capitalizeFirst(appointment.status)}</span>
+                <span class="account-history-date">${escapeHtml(formattedDate)} - ${escapeHtml(formattedTime)}</span>
+                <span class="status-badge ${appointment.status}">${escapeHtml(capitalizeFirst(appointment.status))}</span>
             </div>
             <div class="account-history-details">
-                <div><strong>Service:</strong> ${appointment.serviceType || appointment.service || 'Unknown Service'}</div>
-                <div><strong>Location:</strong> ${appointment.location}</div>
+                <div><strong>Service:</strong> ${escapeHtml(appointment.serviceType || appointment.service || 'Unknown Service')}</div>
+                <div><strong>Location:</strong> ${escapeHtml(appointment.location)}</div>
                 <div><strong>Duration:</strong> 60 minutes</div>
             </div>
-            ${appointment.notes ? `<div class="account-history-notes"><strong>Notes:</strong> ${appointment.notes}</div>` : ''}
+            ${appointment.notes ? `<div class="account-history-notes"><strong>Notes:</strong> ${escapeHtml(appointment.notes)}</div>` : ''}
         `;
         
         historyContainer.appendChild(historyItem);
@@ -3148,22 +3281,40 @@ async function loadAccountRecords(patientData) {
                 <div class="record-info">
                     <i class="${iconClass} record-icon"></i>
                     <div class="record-details">
-                        <div class="record-name">${record.originalName}</div>
-                        <div class="record-date">Uploaded: ${formattedDate}</div>
+                        <div class="record-name">${escapeHtml(record.originalName)}</div>
+                        <div class="record-date">Uploaded: ${escapeHtml(formattedDate)}</div>
                     </div>
                 </div>
                 <div class="record-actions">
-                    <button class="record-action" onclick="downloadRecord('${record.id}', \`${record.base64Data.replace(/`/g, '\\`')}\`, '${record.originalName}')" title="Download">
+                    <button class="record-action" data-record-id="${escapeHtml(record.id)}" data-record-name="${escapeHtml(record.originalName)}" data-action="download" title="Download">
                         <i class="fas fa-download"></i>
                     </button>
-                    <button class="record-action" onclick="renameRecord('${record.id}', '${record.originalName}')" title="Rename">
+                    <button class="record-action" data-record-id="${escapeHtml(record.id)}" data-record-name="${escapeHtml(record.originalName)}" data-action="rename" title="Rename">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="record-action" onclick="deleteRecord('${record.id}', '${record.originalName}')" title="Delete">
+                    <button class="record-action" data-record-id="${escapeHtml(record.id)}" data-record-name="${escapeHtml(record.originalName)}" data-action="delete" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             `;
+
+            // Add event listeners to buttons (safer than inline onclick)
+            const buttons = recordItem.querySelectorAll('.record-action');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const recordId = this.getAttribute('data-record-id');
+                    const recordName = this.getAttribute('data-record-name');
+
+                    if (action === 'download') {
+                        downloadRecord(recordId, record.base64Data, recordName);
+                    } else if (action === 'rename') {
+                        renameRecord(recordId, recordName);
+                    } else if (action === 'delete') {
+                        deleteRecord(recordId, recordName);
+                    }
+                });
+            });
 
             recordsList.appendChild(recordItem);
         });
@@ -3253,12 +3404,12 @@ async function loadNextTreatments(patientData) {
         treatmentCard.innerHTML = `
             <div class="treatment-header">
                 <div class="treatment-info">
-                    <h4>${appointment.serviceType || appointment.service || 'Unknown Service'} - ${appointment.location}</h4>
-                    <div class="treatment-date">${formattedDate} at ${formattedTime}</div>
+                    <h4>${escapeHtml(appointment.serviceType || appointment.service || 'Unknown Service')} - ${escapeHtml(appointment.location)}</h4>
+                    <div class="treatment-date">${escapeHtml(formattedDate)} at ${escapeHtml(formattedTime)}</div>
                 </div>
-                <span class="status-badge ${appointment.status}">${capitalizeFirst(appointment.status)}</span>
+                <span class="status-badge ${appointment.status}">${escapeHtml(capitalizeFirst(appointment.status))}</span>
             </div>
-            ${appointment.notes ? `<div class="treatment-desc">${appointment.notes}</div>` : ''}
+            ${appointment.notes ? `<div class="treatment-desc">${escapeHtml(appointment.notes)}</div>` : ''}
         `;
         
         treatmentContainer.appendChild(treatmentCard);
@@ -3873,5 +4024,236 @@ function applyLocationPermissionsToNewAppointmentModal() {
         locationSelect.style.backgroundColor = 'white';
         locationSelect.style.cursor = 'pointer';
         console.log('🔓 Boss mode: All locations accessible');
+    }
+}
+
+// ==================== DENTAL CHART FUNCTIONS ====================
+
+let currentDentalChart = null;
+
+/**
+ * Load and render dental chart for patient
+ */
+async function loadDentalChart(patientData) {
+    try {
+        const userId = patientData.userId || `patient_${patientData.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+        console.log('📊 Loading dental chart for userId:', userId);
+
+        // Check cache first
+        let chartData = window.cacheManager.getDentalChartCache(userId);
+
+        if (!chartData) {
+            // Fetch from Firebase
+            chartData = await window.firebaseDataService.getDentalChart(userId);
+
+            if (!chartData) {
+                // Initialize new chart if doesn't exist
+                console.log('ℹ️ Dental chart not found, initializing new one...');
+                await window.firebaseDataService.initializeDentalChart(userId, patientData.patientName);
+                chartData = await window.firebaseDataService.getDentalChart(userId);
+            }
+
+            // Cache the chart
+            if (chartData) {
+                window.cacheManager.setDentalChartCache(userId, chartData);
+            }
+        }
+
+        // Render dental chart
+        const container = document.getElementById('dentalChartContainer');
+        if (container && chartData) {
+            currentDentalChart = new DentalChart('dentalChartContainer', {
+                mode: 'edit',
+                teethData: chartData.teeth || {},
+                onToothSelect: (toothNum, toothData) => {
+                    showToothDetails(userId, toothNum, toothData);
+                }
+            });
+            console.log('✅ Dental chart rendered successfully');
+        }
+    } catch (error) {
+        console.error('❌ Error loading dental chart:', error);
+    }
+}
+
+/**
+ * Show tooth details panel when tooth is selected
+ */
+function showToothDetails(userId, toothNum, toothData) {
+    const panel = document.getElementById('toothDetailsPanel');
+    const title = document.getElementById('selectedToothTitle');
+    const statusSelect = document.getElementById('toothStatusSelect');
+    const treatmentsList = document.getElementById('treatmentsList');
+
+    // Update title
+    title.textContent = `Tooth ${toothNum}`;
+
+    // Update status select
+    statusSelect.value = toothData.status || 'healthy';
+
+    // Clear and populate treatments list
+    treatmentsList.innerHTML = '';
+
+    if (toothData.treatments && toothData.treatments.length > 0) {
+        toothData.treatments.forEach((treatment, idx) => {
+            const treatmentEl = document.createElement('div');
+            treatmentEl.className = 'treatment-item';
+            treatmentEl.innerHTML = `
+                <div class="treatment-date">${new Date(treatment.date).toLocaleDateString()}</div>
+                <div class="treatment-type">${treatment.type || 'Note'}</div>
+                <div class="treatment-notes">${treatment.notes || ''}</div>
+                <button class="btn-small btn-danger" onclick="deleteToothTreatment('${userId}', ${toothNum}, '${treatment.id}')">Delete</button>
+            `;
+            treatmentsList.appendChild(treatmentEl);
+        });
+    } else {
+        treatmentsList.innerHTML = '<p class="treatment-placeholder">No treatment records yet</p>';
+    }
+
+    // Store current values for update
+    window.currentToothData = {
+        userId: userId,
+        toothNum: toothNum
+    };
+
+    // Show panel
+    panel.style.display = 'block';
+}
+
+/**
+ * Close tooth details panel
+ */
+function closeToothDetails() {
+    const panel = document.getElementById('toothDetailsPanel');
+    const title = document.getElementById('selectedToothTitle');
+    const treatmentsList = document.getElementById('treatmentsList');
+    const statusSelect = document.getElementById('toothStatusSelect');
+    panel.style.display = 'none';
+    window.currentToothData = null;
+
+    if (title) {
+        title.textContent = 'Select a tooth';
+    }
+    if (statusSelect) {
+        statusSelect.value = 'healthy';
+    }
+    if (treatmentsList) {
+        treatmentsList.innerHTML = '<p class="treatment-placeholder">Select a tooth to view history</p>';
+    }
+}
+
+/**
+ * Update tooth status
+ */
+async function updateToothStatus() {
+    if (!window.currentToothData) return;
+
+    const { userId, toothNum } = window.currentToothData;
+    const status = document.getElementById('toothStatusSelect').value;
+
+    try {
+        await window.firebaseDataService.updateToothStatus(userId, toothNum, { status });
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        // Update UI
+        if (currentDentalChart) {
+            const toothData = currentDentalChart.getToothData(toothNum);
+            if (toothData) {
+                toothData.status = status;
+                currentDentalChart.updateToothData(toothNum, toothData);
+            }
+        }
+
+        showNotification('✅ Tooth status updated successfully');
+    } catch (error) {
+        console.error('❌ Error updating tooth status:', error);
+        showNotification('❌ Failed to update tooth status');
+    }
+}
+
+/**
+ * Add treatment record to tooth
+ */
+async function addTreatmentRecord() {
+    if (!window.currentToothData) return;
+
+    const { userId, toothNum } = window.currentToothData;
+    const notes = document.getElementById('treatmentNotes').value.trim();
+
+    if (!notes) {
+        showNotification('⚠️ Please enter treatment notes');
+        return;
+    }
+
+    try {
+        const treatment = {
+            type: 'note',
+            notes: notes
+        };
+
+        await window.firebaseDataService.addToothTreatment(userId, toothNum, treatment);
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        // Refresh chart
+        await loadDentalChart({ userId });
+
+        // Clear form
+        document.getElementById('treatmentNotes').value = '';
+
+        showNotification('✅ Treatment record added successfully');
+    } catch (error) {
+        console.error('❌ Error adding treatment record:', error);
+        showNotification('❌ Failed to add treatment record');
+    }
+}
+
+/**
+ * Unified save: update status first, then add record (if any)
+ */
+async function saveToothUpdates() {
+    if (!window.currentToothData) return;
+
+    // Always update status first
+    await updateToothStatus();
+
+    // Then add record if notes/file provided
+    const notes = document.getElementById('treatmentNotes').value.trim();
+
+    if (!notes) {
+        // No record to add; status already updated
+        return;
+    }
+
+    await addTreatmentRecord();
+}
+
+/**
+ * Delete treatment record
+ */
+async function deleteToothTreatment(userId, toothNum, treatmentId) {
+    if (!confirm('Are you sure you want to delete this treatment record?')) return;
+
+    try {
+        await window.firebaseDataService.deleteToothTreatment(userId, toothNum, treatmentId);
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        // Refresh details
+        const chartData = await window.firebaseDataService.getDentalChart(userId);
+        if (chartData) {
+            const toothData = chartData.teeth[toothNum.toString()];
+            showToothDetails(userId, toothNum, toothData);
+        }
+
+        showNotification('✅ Treatment record deleted');
+    } catch (error) {
+        console.error('❌ Error deleting treatment record:', error);
+        showNotification('❌ Failed to delete treatment record');
     }
 }

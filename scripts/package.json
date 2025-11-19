@@ -1,0 +1,12 @@
+{
+  "name": "firebase-admin-scripts",
+  "version": "1.0.0",
+  "description": "Firebase Admin scripts for custom claims",
+  "main": "set-custom-claims.js",
+  "scripts": {
+    "set-claims": "node set-custom-claims.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

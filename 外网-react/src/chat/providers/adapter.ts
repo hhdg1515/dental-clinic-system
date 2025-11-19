@@ -1,6 +1,5 @@
 import type { KBEntry } from '../knowledge/schema';
 import { MIN_SCORE, getHitReasons, searchKB } from '../knowledge/loader';
-import { auth } from '../../config/firebase';
 
 type Locale = KBEntry['locale'];
 
@@ -123,7 +122,7 @@ export const infer = async ({ locale, message, tags }: InferRequest): Promise<In
     };
   }
 
-  const uid = auth.currentUser?.uid ?? 'anonymous';
+  const uid = getStoredUid() ?? 'anonymous';
   const { key, remaining } = readRemainingQuota(uid);
 
   if (remaining <= 0) {
@@ -144,4 +143,30 @@ export const infer = async ({ locale, message, tags }: InferRequest): Promise<In
     maxScore,
     hitsCount: hits.length
   };
+};
+const getStoredUid = (): string | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (!key || !key.startsWith('firebase:authUser:')) {
+        continue;
+      }
+
+      const value = window.localStorage.getItem(key);
+      if (!value) continue;
+
+      const parsed = JSON.parse(value) as { uid?: string } | null;
+      if (parsed?.uid) {
+        return parsed.uid;
+      }
+    }
+  } catch (_error) {
+    // Ignore storage parsing errors
+  }
+
+  return null;
 };

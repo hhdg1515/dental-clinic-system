@@ -1,0 +1,465 @@
+/* Dental Chart Styles */
+
+/* Layout inside Patient Account modal */
+.dental-chart-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.2fr);
+    grid-template-areas: "chart details";
+    gap: 16px;
+    padding-top: 4px;
+    align-items: stretch;
+}
+
+/* Dental chart canvas container (left side) */
+.dental-chart-container {
+    grid-area: chart;
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #f7fbff 0%, #eef3ff 60%, #f9fbff 100%);
+    box-shadow:
+        0 18px 36px rgba(15, 23, 42, 0.08),
+        0 1px 0 rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(37, 99, 235, 0.12);
+}
+
+.dental-chart-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 12% 18%, rgba(37, 99, 235, 0.14), transparent 35%),
+        radial-gradient(circle at 85% 12%, rgba(56, 189, 248, 0.15), transparent 45%),
+        radial-gradient(circle at 20% 80%, rgba(45, 212, 191, 0.12), transparent 45%);
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+/* Tooth Details Panel (right side) */
+.tooth-details-panel {
+    grid-area: details;
+    background: #ffffff;
+    padding: 18px 18px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.details-header h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.details-close {
+    background: rgba(148, 163, 184, 0.12);
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #475569;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    transition: all 0.18s ease;
+}
+
+.details-close:hover {
+    color: #ef4444;
+    background-color: rgba(248, 113, 113, 0.12);
+    box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.2);
+}
+
+.details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.tooth-status {
+    padding: 4px 0 6px;
+    border-radius: 12px;
+    background: transparent;
+}
+
+.tooth-status label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #111827;
+    font-size: 13px;
+}
+
+.tooth-status-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #0f172a;
+    background-color: #f8fafc;
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.35);
+    transition: all 0.18s ease;
+}
+
+.tooth-status-select:focus {
+    box-shadow:
+        inset 0 0 0 1px rgba(37, 99, 235, 0.5),
+        0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+.treatment-history {
+    padding: 4px 0 4px;
+    border-radius: 14px;
+    background: transparent;
+}
+
+.treatment-history h5 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.treatments-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    padding: 6px 0;
+    background: transparent;
+}
+
+.treatment-placeholder {
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: left;
+    margin: 0 0 6px 2px;
+}
+
+.treatment-item {
+    padding: 8px 4px 10px;
+    font-size: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.24);
+    margin-bottom: 8px;
+}
+
+.treatment-item:last-child {
+    margin-bottom: 0;
+}
+
+.treatment-date {
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 3px;
+}
+
+.treatment-type {
+    color: #9ca3af;
+    font-size: 11px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.treatment-notes {
+    color: #111827;
+    margin-bottom: 6px;
+    line-height: 1.45;
+}
+
+.add-treatment {
+    padding-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add-treatment textarea {
+    width: 100%;
+    min-height: 64px;
+    resize: vertical;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: none;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #111827;
+    outline: none;
+    background: #f8fafc;
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.35);
+    transition: all 0.18s ease;
+}
+
+.add-treatment textarea:focus {
+    box-shadow:
+        inset 0 0 0 1px rgba(37, 99, 235, 0.5),
+        0 4px 12px rgba(37, 99, 235, 0.12);
+    background: #ffffff;
+}
+
+.add-treatment input[type="file"] {
+    font-size: 12px;
+    color: #4b5563;
+    padding: 6px 0;
+}
+
+/* Button Styles */
+.btn-small {
+    padding: 10px 14px;
+    font-size: 13px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.dental-chart-wrapper {
+    position: relative;
+    z-index: 1;
+    padding: 18px 18px 16px;
+    color: #0f172a;
+}
+
+.chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    margin-bottom: 16px;
+    color: #0f172a;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+/* Quadrants Layout */
+.chart-quadrants {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.quadrant {
+    background: #ffffff;
+    padding: 14px 12px 12px;
+    border-radius: 14px;
+    box-shadow:
+        0 10px 25px rgba(15, 23, 42, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.08);
+}
+
+.quadrant-label {
+    font-weight: 500;
+    font-size: 11px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+/* Tooth Row */
+.teeth-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+}
+
+/* Tooth Button */
+.tooth-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 999px;
+    background-color: #e7f0ff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-weight: 600;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+    color: #0f172a;
+}
+
+.tooth-btn:hover {
+    transform: translateY(-1px) scale(1.03);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+}
+
+.tooth-btn.selected {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 16px 30px rgba(37, 99, 235, 0.22);
+    background-color: #d6e6ff;
+}
+
+.tooth-btn:active {
+    transform: scale(0.95);
+}
+
+.tooth-number {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Treatment Badge */
+.treatment-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.status-dot {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Legend */
+.legend {
+    background: transparent;
+    padding: 4px 4px 0;
+    border-radius: 0;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: none;
+}
+
+.legend-title {
+    font-weight: 600;
+    font-size: 11px;
+    color: #1f2937;
+    letter-spacing: 0.12em;
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #1f2937;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dental-chart-section {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "chart"
+            "details";
+    }
+
+    .dental-chart-container {
+        border-radius: 16px;
+    }
+
+    .chart-quadrants {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .quadrant {
+        padding: 10px;
+    }
+
+    .tooth-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tooth-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 10px;
+        border-width: 2px;
+    }
+
+    .treatment-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 10px;
+    }
+}

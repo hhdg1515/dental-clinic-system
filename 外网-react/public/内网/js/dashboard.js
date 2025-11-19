@@ -1,86 +1,210 @@
 // Dashboard functionality - Complete rewrite to fix all issues
 
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 // ==================== AUTHENTICATION & PERMISSIONS SYSTEM ====================
 
+// SECURITY FIX: Use secure auth utilities from window.AuthUtils
+// These read from Firebase ID Token Custom Claims (server-verified)
+// instead of trusting localStorage (client-controlled)
+// Note: auth-utils.js provides these via window.AuthUtils global object
+
 // Global variables for auth state
+// SECURITY: These are set from Firebase token claims, NOT localStorage
 let currentFirebaseUser = null;
 let userRole = null;
 let userClinics = [];
+let userClaimsCache = null; // Cache for performance
 
-// ✅ REMOVED: Old localStorage-based authentication functions are replaced by intranetAuthGuard
-// Authentication is handled by intranet-auth-guard.js using Firebase Auth + Firestore users/{uid}
-// The auth guard blocks page rendering until authentication completes, so this function is no longer needed
+// Basic Authentication Functions
+async function getCurrentUser() {
+    try {
+        // 使用与auth-check.js相同的逻辑获取用户数据
+        const possibleKeys = ['currentUser', 'user', 'userData', 'authUser'];
+
+        for (const key of possibleKeys) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const parsed = JSON.parse(data);
+                // 验证数据结构
+                if (parsed && (parsed.role || parsed.email)) {
+                    currentFirebaseUser = parsed;
+                    return parsed;
+                }
+            }
+        }
+        return null;
+    } catch (error) {
+        console.error('解析用户数据失败:', error);
+        return null;
+    }
+}
+
+async function getUserRole() {
+    const user = await getCurrentUser();
+    if (!user) return null;
+
+    try {
+        // 直接从localStorage用户数据获取角色
+        if (user.role) {
+            userRole = user.role;
+            // Support both 'clinics' and 'accessibleLocations' field names
+            userClinics = user.clinics || user.accessibleLocations || [];
+            return userRole;
+        }
+
+        // 备用：根据邮箱推断角色
+        if (user.email) {
+            if (user.email.includes('admin') || user.email.includes('boss') || user.email.includes('owner')) {
+                userRole = 'admin';
+                return userRole;
+            }
+        }
+
+        return null; // 没有找到admin角色
+    } catch (error) {
+        console.error('Error getting user role:', error);
+        return null;
+    }
+}
 
 async function redirectIfNotAdmin() {
-    // ✅ Wait for auth guard to complete initialization
-    if (!window.intranetAuthGuard) {
-        console.warn('⚠️ Auth guard not available');
+    const user = await getCurrentUser();
+    const role = await getUserRole();
+
+    if (!user) {
+        console.log('No user logged in, showing login message...');
+        showAuthError('Please login first through the external website to access the internal dashboard.');
         return false;
     }
 
-    // ✅ Wait for authentication to complete (auth guard will handle redirects if needed)
-    if (!window.intranetAuthGuard.isAuthReady) {
-        console.log('⏳ Waiting for authentication to complete...');
-        try {
-            await window.intranetAuthGuard.waitForAuth();
-        } catch (error) {
-            console.error('❌ Auth wait failed:', error);
-            return false;
-        }
-    }
-
-    const userProfile = window.intranetAuthGuard.getUserProfile();
-
-    if (!userProfile) {
-        console.log('No user logged in');
-        return false;
-    }
-
-    const role = userProfile.role;
-    if (!role || (role !== 'admin' && role !== 'owner')) {
+    if (!role || (role !== 'admin' && role !== 'boss' && role !== 'owner')) {
         console.log('User does not have admin privileges');
+        showAuthError('Access denied. Admin privileges required for internal dashboard.');
         return false;
     }
-
-    // Store in global variables for compatibility with existing code
-    currentFirebaseUser = userProfile;
-    userRole = userProfile.role;
-    userClinics = userProfile.clinics || [];
 
     console.log(`✅ User authenticated as ${role}`);
     return true;
 }
 
+/**
+ * SECURITY FIX: Initialize user permissions from Firebase token claims
+ * This MUST be called on page load to set global permission variables
+ */
+async function initializeUserPermissions() {
+    try {
+        console.log('🔒 Initializing secure user permissions...');
+
+        // Get claims from Firebase ID token (server-verified)
+        const claims = await window.AuthUtils.getCurrentUserClaims();
+
+        if (!claims) {
+            console.warn('⚠️ No user claims available');
+            userRole = null;
+            userClinics = [];
+            return;
+        }
+
+        userClaimsCache = claims;
+
+        // Set role from custom claims (server-verified)
+        userRole = claims.claims.role || null;
+
+        // Set accessible clinics from custom claims
+        if (userRole === 'owner' || userRole === 'boss') {
+            userClinics = [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
+        } else if (userRole === 'admin' && claims.claims.clinics) {
+            userClinics = claims.claims.clinics;
+        } else {
+            userClinics = [];
+        }
+
+        console.log('✅ User permissions initialized:');
+        console.log('   Role:', userRole);
+        console.log('   Clinics:', userClinics);
+
+        // Fallback: If custom claims not set, check email domain
+        if (!userRole && claims.user.email && claims.user.email.endsWith('@firstavedental.com')) {
+            console.warn('⚠️ Custom claims not set, using email domain fallback');
+            userRole = 'owner';
+            userClinics = [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
+        }
+    } catch (error) {
+        console.error('❌ Failed to initialize user permissions:', error);
+        userRole = null;
+        userClinics = [];
+    }
+}
+
 // Permission Management Functions
-// ✅ UPDATED: Now uses intranet auth guard instead of localStorage
 function isOwner() {
-    // ✅ Get from new auth guard (Firebase Auth + Firestore users/{uid})
-    if (window.intranetAuthGuard) {
-        return window.intranetAuthGuard.isOwner();
+    // SECURITY FIX: Use global userRole set from Firebase token claims
+    // NO LONGER reads from localStorage (which can be manipulated)
+
+    if (userRole === 'boss' || userRole === 'owner') {
+        return true;
     }
 
-    // Fallback for backward compatibility during development
-    return userRole === 'boss' || userRole === 'owner';
+    // Fallback: Check cached claims directly
+    if (userClaimsCache && userClaimsCache.claims) {
+        const role = userClaimsCache.claims.role;
+        return role === 'boss' || role === 'owner';
+    }
+
+    return false;
 }
 
 function getAccessibleClinics() {
-    // ✅ Get from new auth guard (Firebase Auth + Firestore users/{uid})
-    if (window.intranetAuthGuard) {
-        return window.intranetAuthGuard.getAllowedClinics();
+    // SECURITY FIX: Use global userClinics set from Firebase token claims
+    // NO LONGER reads from localStorage (which can be manipulated)
+
+    // Use the global userClinics array (set from token claims)
+    if (userClinics && userClinics.length > 0) {
+        return userClinics;
     }
 
-    // Fallback for backward compatibility during development
-    if (isOwner()) {
-        return [
-            'arcadia',
-            'irvine',
-            'south-pasadena',
-            'rowland-heights',
-            'eastvale'
-        ];
-    } else {
-        return userClinics || [];
+    // Fallback: Check cached claims directly
+    if (userClaimsCache && userClaimsCache.claims) {
+        const role = userClaimsCache.claims.role;
+        if (role === 'owner' || role === 'boss') {
+            return [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
+        } else if (role === 'admin' && userClaimsCache.claims.clinics) {
+            return userClaimsCache.claims.clinics;
+        }
     }
+
+    return [];
 }
 
 function hasClinicAccess(clinicId) {
@@ -256,41 +380,36 @@ function getStartOfWeek(date) {
     return startOfWeek;
 }
 
-// ✅ UPDATED: Safe dataManager access functions (no longer reads from localStorage)
+// Safe dataManager access functions
 function safeGetCurrentUser() {
     try {
-        // ✅ Get from DataManager which now uses intranetAuthGuard
-        if (window.dataManager && dataManager.getCurrentUser) {
-            return dataManager.getCurrentUser();
+        // First try to get user from localStorage (same as test page)
+        const possibleKeys = ['currentUser', 'user', 'userData', 'authUser'];
+
+        for (const key of possibleKeys) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const parsed = JSON.parse(data);
+                if (parsed && (parsed.role || parsed.email)) {
+                    return parsed;
+                }
+            }
         }
 
-        // ✅ Direct fallback to auth guard if dataManager not ready
-        if (window.intranetAuthGuard) {
-            const userProfile = window.intranetAuthGuard.getUserProfile();
-            if (userProfile) {
-                return {
-                    name: userProfile.displayName || userProfile.email?.split('@')[0] || 'Admin',
-                    role: userProfile.role,
-                    clinics: userProfile.clinics || [],
-                    assignedLocation: userProfile.assignedLocation || (userProfile.clinics?.[0]) || 'arcadia',
-                    currentViewLocation: window.intranetAuthGuard.getCurrentViewLocation() || 'arcadia',
-                    email: userProfile.email,
-                    uid: userProfile.uid
-                };
-            }
+        // Fallback to DataManager
+        if (window.dataManager && dataManager.getCurrentUser) {
+            return dataManager.getCurrentUser();
         }
     } catch (error) {
         console.warn('DataManager access failed:', error);
     }
 
-    // Fallback user for development only
-    console.warn('⚠️ No auth data available, returning fallback user');
+    // Fallback user
     return {
         name: 'Sunny',
-        role: 'owner',
+        role: 'boss',
         currentViewLocation: 'arcadia',
-        assignedLocation: 'arcadia',
-        clinics: ['arcadia', 'irvine', 'south-pasadena', 'rowland-heights', 'eastvale']
+        assignedLocation: 'arcadia'
     };
 }
 
@@ -318,22 +437,6 @@ function safeGetCurrentLocation() {
     } else {
         return currentUser.assignedLocation || 'arcadia';
     }
-}
-
-async function safeGetAppointmentsForDate(dateKey) {
-    try {
-        if (window.dataManager && dataManager.getAppointmentsForDate) {
-            let appointments = await dataManager.getAppointmentsForDate(dateKey) || [];
-
-            // Apply role-based filtering
-            appointments = filterDataByRole(appointments, 'appointments');
-
-            return appointments;
-        }
-    } catch (error) {
-        console.warn('Failed to get appointments for date:', error);
-    }
-    return [];
 }
 
 // Asynchronous wrapper to use Firebase data source (like other pages)
@@ -443,6 +546,9 @@ async function performInitialAuthCheck() {
         if (hasAccess) {
             // User is authenticated and has admin privileges
             console.log('✅ Authentication successful, initializing dashboard...');
+
+            // SECURITY FIX: Initialize user permissions from Firebase token claims
+            await initializeUserPermissions();
 
             // Wait for DataManager to be fully connected to Firebase
             await waitForDataManager();
@@ -679,8 +785,6 @@ async function refreshDashboardData() {
     await renderTodaysAppointments();
     await renderServiceChart();
     await renderTrendChart();
-    await renderServiceSuccessRate();
-    await renderServiceUpgradeRate();
 
     // Render asynchronous pending confirmations
     await renderPendingConfirmations();
@@ -929,12 +1033,12 @@ for (let i = 0; i < 6; i++) {
         const appointment = displayAppointments[i];
         const timeFormatted = formatTime(appointment.time);
         const statusFormatted = getStatusDisplayName(appointment.status);
-        
+
         row.innerHTML = `
-            <td>${appointment.patientName}</td>
-            <td>${timeFormatted}</td>
-            <td>${appointment.service}</td>
-            <td><span class="status-badge ${appointment.status}">${statusFormatted}</span></td>
+            <td>${escapeHtml(appointment.patientName)}</td>
+            <td>${escapeHtml(timeFormatted)}</td>
+            <td>${escapeHtml(appointment.service)}</td>
+            <td><span class="status-badge ${appointment.status}">${escapeHtml(statusFormatted)}</span></td>
         `;
     } else {
         // Empty rows
@@ -979,36 +1083,38 @@ async function renderPendingConfirmations() {
 
         const displayItems = pendingConfirmations.slice(0, 3);
 
-        // Get patient icons in batch (optimized)
-        let iconsMap = new Map();
-        if (window.dataManager && window.dataManager.getPatientIconsBatch) {
-            try {
-                iconsMap = await window.dataManager.getPatientIconsBatch(displayItems);
-                console.log('👤 Dashboard: Got patient icons for', iconsMap.size, 'confirmations');
-            } catch (error) {
-                console.warn('Failed to get patient icons:', error);
-            }
-        }
-
         displayItems.forEach(confirmation => {
-            // Get patient icon
-            const icon = iconsMap.get(confirmation.id) || '';
-
             const item = document.createElement('div');
             item.className = 'pending-item';
             item.innerHTML = `
                 <div class="pending-info">
-                    <div class="pending-patient-name">${confirmation.patientName}${icon}</div>
+                    <div class="pending-patient-name">${escapeHtml(confirmation.patientName)}</div>
                     <div class="pending-details">
-                        ${confirmation.dateTime}<br>
-                        ${confirmation.service} • ${confirmation.location}
+                        ${escapeHtml(confirmation.dateTime)}<br>
+                        ${escapeHtml(confirmation.service)} • ${escapeHtml(confirmation.location)}
                     </div>
                 </div>
                 <div class="pending-actions">
-                    <button class="btn-icon" onclick="handleConfirmAction('${confirmation.id}')" title="Confirm">✓</button>
-                    <button class="btn-icon" onclick="handleDeclineAction('${confirmation.id}')" title="Decline">✗</button>
+                    <button class="btn-icon" data-confirmation-id="${escapeHtml(confirmation.id)}" data-action="confirm" title="Confirm">✓</button>
+                    <button class="btn-icon" data-confirmation-id="${escapeHtml(confirmation.id)}" data-action="decline" title="Decline">✗</button>
                 </div>
             `;
+
+            // Add event listeners to avoid inline onclick handlers
+            const buttons = item.querySelectorAll('.btn-icon');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const confirmationId = this.getAttribute('data-confirmation-id');
+
+                    if (action === 'confirm') {
+                        handleConfirmAction(confirmationId);
+                    } else if (action === 'decline') {
+                        handleDeclineAction(confirmationId);
+                    }
+                });
+            });
+
             pendingList.appendChild(item);
         });
     } catch (error) {
@@ -1255,10 +1361,10 @@ function updateChartLegend(container, data) {
     allServices.forEach(service => {
         const legendItem = document.createElement('div');
         legendItem.className = 'legend-item';
-        
+
         legendItem.innerHTML = `
-            <div class="legend-color" style="background-color: ${service.color}"></div>
-            <span>${service.label}</span>
+            <div class="legend-color" style="background-color: ${escapeHtml(service.color)}"></div>
+            <span>${escapeHtml(service.label)}</span>
         `;
         container.appendChild(legendItem);
     });
@@ -1375,8 +1481,7 @@ async function handleQuickAddAppointment() {
             location: document.getElementById('location')?.value,
             phone: document.getElementById('phoneNumber')?.value
         };
-        
-        
+
         if (!formData.patientName || !formData.date || !formData.time || !formData.service || !formData.location) {
             if (typeof showErrorMessage === 'function') {
                 showErrorMessage('Please fill in all required fields');
@@ -1385,7 +1490,7 @@ async function handleQuickAddAppointment() {
             }
             return;
         }
-        
+
         if (window.dataManager && dataManager.addAppointment) {
             try {
                 await dataManager.addAppointment(formData);
@@ -1404,7 +1509,6 @@ async function handleQuickAddAppointment() {
                 }
             }
         }
-        
     } catch (error) {
         console.error('Error adding appointment:', error);
         if (typeof showErrorMessage === 'function') {
@@ -1606,255 +1710,6 @@ async function renderTrendChart() {
     ctx.stroke();
 }
 
-/**
- * Renders service success rate analysis for the current month
- * Success rate = completed appointments / total appointments for each service
- */
-async function renderServiceSuccessRate() {
-    const tbody = document.getElementById('serviceSuccessRateList');
-    if (!tbody) {
-        console.error('serviceSuccessRateList not found');
-        return;
-    }
-
-    try {
-        // Get current location and all appointments
-        const currentLocation = safeGetCurrentLocation();
-        let allAppointments = [];
-
-        try {
-            allAppointments = await dataManager.getAllAppointments() || [];
-            // Apply role-based filtering
-            allAppointments = filterDataByRole(allAppointments, 'appointments');
-        } catch (error) {
-            console.warn('Failed to get all appointments for service success rate:', error);
-            allAppointments = [];
-        }
-
-        // Filter by location
-        const filteredAppointments = allAppointments.filter(app => {
-            if (currentLocation === 'all') return true;
-            return app.location.toLowerCase().replace(/\s+/g, '-') === currentLocation;
-        });
-
-        // Filter for current month only
-        const currentDate = new Date();
-        const currentMonth = currentDate.getMonth();
-        const currentYear = currentDate.getFullYear();
-
-        const monthAppointments = filteredAppointments.filter(app => {
-            const appDate = new Date(app.dateKey);
-            const isCurrentMonth = appDate.getMonth() === currentMonth && appDate.getFullYear() === currentYear;
-
-            // 排除 pending 状态的预约（未确认的不算入成功率统计）
-            const isConfirmed = app.status !== 'pending';
-
-            return isCurrentMonth && isConfirmed;
-        });
-
-        // Group by service
-        const serviceStats = {};
-        monthAppointments.forEach(appointment => {
-            const mappedService = mapServiceName(appointment.service);
-            if (!serviceStats[mappedService]) {
-                serviceStats[mappedService] = {
-                    total: 0,
-                    completed: 0
-                };
-            }
-
-            serviceStats[mappedService].total++;
-            if (appointment.status === 'completed') {
-                serviceStats[mappedService].completed++;
-            }
-        });
-
-        // Clear existing rows
-        tbody.innerHTML = '';
-
-        // Check if there's data
-        if (Object.keys(serviceStats).length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280; padding: 20px;">No appointments this month</td></tr>';
-            return;
-        }
-
-        // Create rows sorted by success rate (descending)
-        const sortedServices = Object.entries(serviceStats).sort(([, a], [, b]) => {
-            const rateA = a.total > 0 ? (a.completed / a.total) * 100 : 0;
-            const rateB = b.total > 0 ? (b.completed / b.total) * 100 : 0;
-            return rateB - rateA;
-        });
-
-        sortedServices.forEach(([service, stats]) => {
-            const rate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
-
-            // Determine rate class
-            let rateClass = 'poor';
-            if (rate >= 90) rateClass = 'excellent';
-            else if (rate >= 75) rateClass = 'good';
-            else if (rate >= 60) rateClass = 'fair';
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${service}</td>
-                <td>${stats.total}</td>
-                <td>${stats.completed}</td>
-                <td>${rate}%</td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        console.log('📊 Service success rate rendered:', Object.keys(serviceStats).length, 'services');
-
-    } catch (error) {
-        console.error('Error rendering service success rate:', error);
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc2626; padding: 20px;">Error loading data</td></tr>';
-    }
-}
-
-/**
- * Renders service upgrade rate analysis (All Time)
- * Shows conversion from low-value services (General, Preventive) to high-value services
- */
-async function renderServiceUpgradeRate() {
-    const tbody = document.getElementById('serviceUpgradeRateList');
-    if (!tbody) {
-        console.error('serviceUpgradeRateList not found');
-        return;
-    }
-
-    try {
-        // Get current location and all appointments
-        const currentLocation = safeGetCurrentLocation();
-        let allAppointments = [];
-
-        try {
-            allAppointments = await dataManager.getAllAppointments() || [];
-            // Apply role-based filtering
-            allAppointments = filterDataByRole(allAppointments, 'appointments');
-        } catch (error) {
-            console.warn('Failed to get all appointments for service upgrade rate:', error);
-            allAppointments = [];
-        }
-
-        // Filter by location
-        const filteredAppointments = allAppointments.filter(app => {
-            if (currentLocation === 'all') return true;
-            return app.location.toLowerCase().replace(/\s+/g, '-') === currentLocation;
-        });
-
-        // Only include confirmed appointments (status !== 'pending')
-        const confirmedAppointments = filteredAppointments.filter(app => app.status !== 'pending');
-
-        // Define service categories
-        const lowValueServices = ['General', 'Preventive'];
-        const highValueServices = ['Root Canal', 'Periodontics', 'Extraction', 'Implant', 'Orthodontics'];
-
-        // Group appointments by userId
-        const userGroups = {};
-        confirmedAppointments.forEach(app => {
-            if (!app.userId) return; // Skip appointments without userId
-            if (!userGroups[app.userId]) {
-                userGroups[app.userId] = [];
-            }
-            userGroups[app.userId].push(app);
-        });
-
-        // Calculate upgrade statistics
-        const stats = {
-            'General': { total: 0, upgraded: 0 },
-            'Preventive': { total: 0, upgraded: 0 }
-        };
-
-        Object.values(userGroups).forEach(appointments => {
-            // Sort by date to find first appointment
-            appointments.sort((a, b) => new Date(a.dateKey) - new Date(b.dateKey));
-            const firstAppointment = appointments[0];
-
-            // Check if first appointment is low-value service
-            const mappedFirstService = mapServiceName(firstAppointment.service);
-            if (!lowValueServices.includes(mappedFirstService)) {
-                return; // First appointment is not a low-value service, skip
-            }
-
-            // Count this user for the initial service
-            stats[mappedFirstService].total++;
-
-            // Check if user has any high-value service appointments after the first one
-            const hasUpgraded = appointments.some(app => {
-                const mappedService = mapServiceName(app.service);
-                return highValueServices.includes(mappedService) &&
-                       new Date(app.dateKey) > new Date(firstAppointment.dateKey);
-            });
-
-            if (hasUpgraded) {
-                stats[mappedFirstService].upgraded++;
-            }
-        });
-
-        // Calculate Overall statistics
-        const overallTotal = stats['General'].total + stats['Preventive'].total;
-        const overallUpgraded = stats['General'].upgraded + stats['Preventive'].upgraded;
-        const overallRate = overallTotal > 0 ? Math.round((overallUpgraded / overallTotal) * 100) : 0;
-
-        // Clear existing rows
-        tbody.innerHTML = '';
-
-        // Check if there's data
-        if (overallTotal === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280; padding: 20px;">No patient data available</td></tr>';
-            return;
-        }
-
-        // Helper function to determine rate class
-        const getRateClass = (rate) => {
-            if (rate >= 60) return 'excellent';
-            if (rate >= 45) return 'good';
-            if (rate >= 30) return 'fair';
-            return 'poor';
-        };
-
-        // Render General row
-        const generalRate = stats['General'].total > 0 ? Math.round((stats['General'].upgraded / stats['General'].total) * 100) : 0;
-        const generalRow = document.createElement('tr');
-        generalRow.innerHTML = `
-            <td>General</td>
-            <td>${stats['General'].total}</td>
-            <td>${stats['General'].upgraded}</td>
-            <td>${generalRate}%</td>
-        `;
-        tbody.appendChild(generalRow);
-
-        // Render Preventive row
-        const preventiveRate = stats['Preventive'].total > 0 ? Math.round((stats['Preventive'].upgraded / stats['Preventive'].total) * 100) : 0;
-        const preventiveRow = document.createElement('tr');
-        preventiveRow.innerHTML = `
-            <td>Prevent</td>
-            <td>${stats['Preventive'].total}</td>
-            <td>${stats['Preventive'].upgraded}</td>
-            <td>${preventiveRate}%</td>
-        `;
-        tbody.appendChild(preventiveRow);
-
-        // Render Overall row
-        const overallRow = document.createElement('tr');
-        overallRow.className = 'overall-row';
-        overallRow.innerHTML = `
-            <td>Overall</td>
-            <td>${overallTotal}</td>
-            <td>${overallUpgraded}</td>
-            <td>${overallRate}%</td>
-        `;
-        tbody.appendChild(overallRow);
-
-        console.log('📈 Service upgrade rate rendered:', overallTotal, 'total patients');
-
-    } catch (error) {
-        console.error('Error rendering service upgrade rate:', error);
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #dc2626; padding: 20px;">Error loading data</td></tr>';
-    }
-}
-
 // Render calendar
 function renderDashboardCalendar() {
     const calendarDates = document.getElementById('calendarDates');
@@ -1884,20 +1739,44 @@ function renderDashboardCalendar() {
     for (let i = 0; i < 42; i++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + i);
-        
+
         const dateElement = document.createElement('div');
         dateElement.className = 'calendar-date';
         dateElement.textContent = currentDate.getDate();
-        
+
         // Add style classes
         if (currentDate.getMonth() !== currentMonth) {
             dateElement.classList.add('other-month');
         }
-        
+
         if (currentDate.toDateString() === today.toDateString()) {
             dateElement.classList.add('today');
         }
-        
+
+        // Add click and double-click event handlers
+        const dateForHandler = new Date(currentDate); // Capture the date in closure
+
+        // Single click - could show simple info (optional)
+        dateElement.addEventListener('click', function(e) {
+            // Currently just visual feedback
+            console.log('Single click on date:', dateForHandler.toLocaleDateString());
+        });
+
+        // Double click - navigate to day view in appointments page
+        dateElement.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            console.log('Double click on date:', dateForHandler.toLocaleDateString());
+
+            // Format date as YYYY-MM-DD for URL parameter
+            const year = dateForHandler.getFullYear();
+            const month = String(dateForHandler.getMonth() + 1).padStart(2, '0');
+            const day = String(dateForHandler.getDate()).padStart(2, '0');
+            const dateParam = `${year}-${month}-${day}`;
+
+            // Navigate to appointments page with date parameter and view mode
+            window.location.href = `appointments.html?date=${dateParam}&view=day`;
+        });
+
         calendarDates.appendChild(dateElement);
     }
 }
@@ -1915,21 +1794,7 @@ function mapServiceName(serviceName) {
         'Restorative': 'Restorations',
         'Extraction': 'Extraction',
         'Implant': 'Implant',
-
-        // External booking page service names (kebab-case) -> Internal categories
-        'general-family': 'General',
-        'general-treatment': 'General',
-        'general-consultation': 'General',
-        'preventive-care': 'Preventive',
-        'preventive-cleaning': 'Preventive',
-        'root-canals': 'Root Canal',
-        'implant-crown': 'Implant',
-        'implant-consultation': 'Implant',
-        'cosmetic': 'Cosmetic',
-        'orthodontics': 'Orthodontics',
-        'periodontics': 'Periodontics',
-        'restorations': 'Restorations',
-        'extraction': 'Extraction'
+        // Add any other old names here
     };
 
     // Return mapped name or original if not in map
@@ -1953,8 +1818,8 @@ async function pollPendingAppointments() {
             return;
         }
 
-        // ✅ Get user role and clinics from auth guard
-        const role = userRole || window.intranetAuthGuard?.getUserProfile()?.role;
+        // Get user role and clinics
+        const role = await getUserRole();
         const accessibleClinics = getAccessibleClinics();
 
         if (!role || accessibleClinics.length === 0) {
@@ -2079,8 +1944,8 @@ async function updateDashboardStats() {
             return;
         }
 
-        // ✅ Get user role and clinics from auth guard
-        const role = userRole || window.intranetAuthGuard?.getUserProfile()?.role;
+        // Get user role and clinics
+        const role = await getUserRole();
         const accessibleClinics = getAccessibleClinics();
 
         if (!role || accessibleClinics.length === 0) {

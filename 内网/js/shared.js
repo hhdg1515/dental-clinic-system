@@ -1,4 +1,19 @@
 // Shared functionality across all pages
+
+/**
+ * Escape HTML to prevent XSS attacks
+ * @param {string} str - String to escape
+ * @returns {string} Escaped HTML string
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 // Initialize shared functionality when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeNavigation();
@@ -83,9 +98,10 @@ async function handleLogout(event) {
         // Step 4: Show success message
         showSuccessMessage('Logged out successfully. Redirecting...');
 
-        // Step 5: Redirect to external landing page
+        // Step 5: Redirect to home page
+        // Redirects to the application home/landing page
         setTimeout(() => {
-            window.location.href = '../外网/landingpage.html';
+            window.location.href = '/';
         }, 1000);
     } catch (error) {
         console.error('❌ Logout failed:', error);
@@ -774,9 +790,9 @@ function initializeGlobalSearch() {
             resultsDropdown.innerHTML = '<div class="search-no-results">No patients found</div>';
         } else {
             resultsDropdown.innerHTML = results.map(patient => `
-                <div class="search-result-item" data-phone="${patient.phone}">
-                    <span class="search-result-name">${patient.patientName}</span>
-                    <span class="search-result-phone">${formatPhoneForDisplay(patient.phone)}</span>
+                <div class="search-result-item" data-phone="${escapeHtml(patient.phone)}">
+                    <span class="search-result-name">${escapeHtml(patient.patientName)}</span>
+                    <span class="search-result-phone">${escapeHtml(formatPhoneForDisplay(patient.phone))}</span>
                 </div>
             `).join('');
 

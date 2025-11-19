@@ -1,6 +1,47 @@
 // Global Data Manager - Unified data source for all pages
 // Now integrated with Firebase for real-time data
 
+/**
+ * SECURITY NOTE:
+ * This file contains role-based filtering using currentUser.role for UI purposes.
+ * While this CAN be bypassed by manipulating localStorage, it does NOT pose a
+ * security risk because:
+ *
+ * 1. ✅ REAL SECURITY: Firestore Security Rules enforce server-side authorization
+ * 2. ✅ DATA PROTECTION: Users cannot access data they're not authorized to see
+ * 3. ⚠️  UI FILTERING: localStorage role checks only filter what UI shows
+ *
+ * Even if an attacker modifies their role in localStorage:
+ * - They will see admin UI elements
+ * - BUT they cannot actually read/write unauthorized data
+ * - Firestore Rules will block all unauthorized requests
+ *
+ * For enhanced security, dashboard.js now uses Firebase token claims for permissions.
+ * Future improvement: Migrate all role checks to token claims.
+ */
+
+if (typeof window !== 'undefined' && !window.__intranetDebugLog) {
+    window.__intranetDebugLog = [];
+}
+
+function recordDebugLog(label, payload) {
+    try {
+        if (typeof window === 'undefined') {
+            return;
+        }
+        if (!window.__intranetDebugLog) {
+            window.__intranetDebugLog = [];
+        }
+        window.__intranetDebugLog.push({
+            ts: new Date().toISOString(),
+            label,
+            payload
+        });
+    } catch (_error) {
+        // ignore
+    }
+}
+
 class GlobalDataManager {
     constructor() {
         this.storageKey = 'dental_clinic_data';
@@ -182,7 +223,10 @@ class GlobalDataManager {
             try {
                 // 1. Check cache first
                 if (window.cacheManager) {
-                    const cached = window.cacheManager.getDateCache(dateKey);
+                    let cached = window.cacheManager.getDateCache(dateKey);
+                    if (cached && typeof cached.then === 'function') {
+                        cached = await cached;
+                    }
                     if (cached) {
                         return cached;
                     }
@@ -298,7 +342,10 @@ class GlobalDataManager {
             try {
                 // 1. Check cache first
                 if (window.cacheManager) {
-                    const cached = window.cacheManager.getAllCache();
+                    let cached = window.cacheManager.getAllCache();
+                    if (cached && typeof cached.then === 'function') {
+                        cached = await cached;
+                    }
                     if (cached) {
                         return cached;
                     }
@@ -310,7 +357,6 @@ class GlobalDataManager {
                 const userClinics = this.getUserClinics(currentUser);
 
                 const appointments = await this.firebaseService.getAllAppointments(userRole, userClinics, includeAllStatuses);
-
                 // Ensure we return an array
                 if (Array.isArray(appointments)) {
                     // 3. Store in cache
@@ -318,9 +364,6 @@ class GlobalDataManager {
                         window.cacheManager.setAllCache(appointments);
                     }
                     return appointments;
-                } else {
-                    console.warn('Firebase getAllAppointments did not return an array:', appointments);
-                    return this.getAllAppointmentsLocal();
                 }
             } catch (error) {
                 console.warn('Firebase failed, falling back to localStorage:', error);
@@ -427,7 +470,12 @@ class GlobalDataManager {
     }
 
     // Update appointment status
-    async updateAppointmentStatus(appointmentId, newStatus, additionalData = {}) {
+    async updateAppointmentStatus(appointmentId, newStatus, additionalData = {}, appointmentContext = null) {
+        recordDebugLog('dataManager.updateAppointmentStatus', {
+            appointmentId,
+            newStatus,
+            appointmentContext
+        });
         if (this.useFirebase && this.firebaseService) {
             try {
                 const currentUser = this.getCurrentUser();
@@ -435,10 +483,22 @@ class GlobalDataManager {
                 const userClinics = this.getUserClinics(currentUser);
 
                 // Find the appointment to get its date before updating
-                const appointment = await this.firebaseService.findAppointmentById(appointmentId, userRole, userClinics);
+                const appointment = await this.firebaseService.findAppointmentById(
+                    appointmentId,
+                    userRole,
+                    userClinics,
+                    appointmentContext
+                );
                 const dateKey = appointment?.dateKey || appointment?.date;
 
-                const result = await this.firebaseService.updateAppointmentStatus(appointmentId, newStatus, additionalData, userRole, userClinics);
+                const result = await this.firebaseService.updateAppointmentStatus(
+                    appointmentId,
+                    newStatus,
+                    additionalData,
+                    userRole,
+                    userClinics,
+                    appointmentContext
+                );
 
                 // Invalidate cache after updating
                 if (window.cacheManager && dateKey) {
@@ -953,4 +1013,3 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.dataManager = dataManager;
 }
-

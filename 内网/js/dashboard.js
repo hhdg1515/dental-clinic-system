@@ -1,11 +1,32 @@
 // Dashboard functionality - Complete rewrite to fix all issues
 
+/**
+ * XSS Prevention: Escape HTML special characters
+ * @param {string} str - The string to escape
+ * @returns {string} The escaped string safe for HTML insertion
+ */
+function escapeHtml(str) {
+    if (str === null || str === undefined) {
+        return '';
+    }
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 // ==================== AUTHENTICATION & PERMISSIONS SYSTEM ====================
 
+// SECURITY FIX: Use secure auth utilities from window.AuthUtils
+// These read from Firebase ID Token Custom Claims (server-verified)
+// instead of trusting localStorage (client-controlled)
+// Note: auth-utils.js provides these via window.AuthUtils global object
+
 // Global variables for auth state
+// SECURITY: These are set from Firebase token claims, NOT localStorage
 let currentFirebaseUser = null;
 let userRole = null;
 let userClinics = [];
+let userClaimsCache = null; // Cache for performance
 
 // Basic Authentication Functions
 async function getCurrentUser() {
@@ -79,59 +100,111 @@ async function redirectIfNotAdmin() {
     return true;
 }
 
-// Permission Management Functions
-function isOwner() {
-    // Get current user role from localStorage first
+/**
+ * SECURITY FIX: Initialize user permissions from Firebase token claims
+ * This MUST be called on page load to set global permission variables
+ */
+async function initializeUserPermissions() {
     try {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.role) {
-            return currentUser.role === 'boss' || currentUser.role === 'owner';
+        console.log('🔒 Initializing secure user permissions...');
+
+        // Get claims from Firebase ID token (server-verified)
+        const claims = await window.AuthUtils.getCurrentUserClaims();
+
+        if (!claims) {
+            console.warn('⚠️ No user claims available');
+            userRole = null;
+            userClinics = [];
+            return;
+        }
+
+        userClaimsCache = claims;
+
+        // Set role from custom claims (server-verified)
+        userRole = claims.claims.role || null;
+
+        // Set accessible clinics from custom claims
+        if (userRole === 'owner' || userRole === 'boss') {
+            userClinics = [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
+        } else if (userRole === 'admin' && claims.claims.clinics) {
+            userClinics = claims.claims.clinics;
+        } else {
+            userClinics = [];
+        }
+
+        console.log('✅ User permissions initialized:');
+        console.log('   Role:', userRole);
+        console.log('   Clinics:', userClinics);
+
+        // Fallback: If custom claims not set, check email domain
+        if (!userRole && claims.user.email && claims.user.email.endsWith('@firstavedental.com')) {
+            console.warn('⚠️ Custom claims not set, using email domain fallback');
+            userRole = 'owner';
+            userClinics = [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
         }
     } catch (error) {
-        console.warn('Failed to get user from localStorage:', error);
+        console.error('❌ Failed to initialize user permissions:', error);
+        userRole = null;
+        userClinics = [];
+    }
+}
+
+// Permission Management Functions
+function isOwner() {
+    // SECURITY FIX: Use global userRole set from Firebase token claims
+    // NO LONGER reads from localStorage (which can be manipulated)
+
+    if (userRole === 'boss' || userRole === 'owner') {
+        return true;
     }
 
-    // Fallback to global userRole
-    return userRole === 'boss' || userRole === 'owner';
+    // Fallback: Check cached claims directly
+    if (userClaimsCache && userClaimsCache.claims) {
+        const role = userClaimsCache.claims.role;
+        return role === 'boss' || role === 'owner';
+    }
+
+    return false;
 }
 
 function getAccessibleClinics() {
-    // Get current user from localStorage first
-    try {
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.role) {
-            if (currentUser.role === 'boss' || currentUser.role === 'owner') {
-                // Owners can access all clinics
-                return [
-                    'arcadia',
-                    'irvine',
-                    'south-pasadena',
-                    'rowland-heights',
-                    'eastvale'
-                ];
-            } else {
-                // Admins can only access assigned clinics
-                // Support both 'clinics' and 'accessibleLocations' field names
-                const clinicsList = currentUser.clinics || currentUser.accessibleLocations || [];
-                return clinicsList.map(clinic => clinic.id || clinic);
-            }
-        }
-    } catch (error) {
-        console.warn('Failed to get user from localStorage:', error);
+    // SECURITY FIX: Use global userClinics set from Firebase token claims
+    // NO LONGER reads from localStorage (which can be manipulated)
+
+    // Use the global userClinics array (set from token claims)
+    if (userClinics && userClinics.length > 0) {
+        return userClinics;
     }
 
-    // Fallback to global variables
-    if (isOwner()) {
-        return [
-            'arcadia',
-            'irvine',
-            'south-pasadena',
-            'rowland-heights',
-            'eastvale'
-        ];
-    } else {
-        return userClinics || [];
+    // Fallback: Check cached claims directly
+    if (userClaimsCache && userClaimsCache.claims) {
+        const role = userClaimsCache.claims.role;
+        if (role === 'owner' || role === 'boss') {
+            return [
+                'arcadia',
+                'irvine',
+                'south-pasadena',
+                'rowland-heights',
+                'eastvale'
+            ];
+        } else if (role === 'admin' && userClaimsCache.claims.clinics) {
+            return userClaimsCache.claims.clinics;
+        }
     }
+
+    return [];
 }
 
 function hasClinicAccess(clinicId) {
@@ -366,22 +439,6 @@ function safeGetCurrentLocation() {
     }
 }
 
-async function safeGetAppointmentsForDate(dateKey) {
-    try {
-        if (window.dataManager && dataManager.getAppointmentsForDate) {
-            let appointments = await dataManager.getAppointmentsForDate(dateKey) || [];
-
-            // Apply role-based filtering
-            appointments = filterDataByRole(appointments, 'appointments');
-
-            return appointments;
-        }
-    } catch (error) {
-        console.warn('Failed to get appointments for date:', error);
-    }
-    return [];
-}
-
 // Asynchronous wrapper to use Firebase data source (like other pages)
 async function safeGetAppointmentsForDate(dateKey) {
     try {
@@ -489,6 +546,9 @@ async function performInitialAuthCheck() {
         if (hasAccess) {
             // User is authenticated and has admin privileges
             console.log('✅ Authentication successful, initializing dashboard...');
+
+            // SECURITY FIX: Initialize user permissions from Firebase token claims
+            await initializeUserPermissions();
 
             // Wait for DataManager to be fully connected to Firebase
             await waitForDataManager();
@@ -973,12 +1033,12 @@ for (let i = 0; i < 6; i++) {
         const appointment = displayAppointments[i];
         const timeFormatted = formatTime(appointment.time);
         const statusFormatted = getStatusDisplayName(appointment.status);
-        
+
         row.innerHTML = `
-            <td>${appointment.patientName}</td>
-            <td>${timeFormatted}</td>
-            <td>${appointment.service}</td>
-            <td><span class="status-badge ${appointment.status}">${statusFormatted}</span></td>
+            <td>${escapeHtml(appointment.patientName)}</td>
+            <td>${escapeHtml(timeFormatted)}</td>
+            <td>${escapeHtml(appointment.service)}</td>
+            <td><span class="status-badge ${appointment.status}">${escapeHtml(statusFormatted)}</span></td>
         `;
     } else {
         // Empty rows
@@ -1028,17 +1088,33 @@ async function renderPendingConfirmations() {
             item.className = 'pending-item';
             item.innerHTML = `
                 <div class="pending-info">
-                    <div class="pending-patient-name">${confirmation.patientName}</div>
+                    <div class="pending-patient-name">${escapeHtml(confirmation.patientName)}</div>
                     <div class="pending-details">
-                        ${confirmation.dateTime}<br>
-                        ${confirmation.service} • ${confirmation.location}
+                        ${escapeHtml(confirmation.dateTime)}<br>
+                        ${escapeHtml(confirmation.service)} • ${escapeHtml(confirmation.location)}
                     </div>
                 </div>
                 <div class="pending-actions">
-                    <button class="btn-icon" onclick="handleConfirmAction('${confirmation.id}')" title="Confirm">✓</button>
-                    <button class="btn-icon" onclick="handleDeclineAction('${confirmation.id}')" title="Decline">✗</button>
+                    <button class="btn-icon" data-confirmation-id="${escapeHtml(confirmation.id)}" data-action="confirm" title="Confirm">✓</button>
+                    <button class="btn-icon" data-confirmation-id="${escapeHtml(confirmation.id)}" data-action="decline" title="Decline">✗</button>
                 </div>
             `;
+
+            // Add event listeners to avoid inline onclick handlers
+            const buttons = item.querySelectorAll('.btn-icon');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    const confirmationId = this.getAttribute('data-confirmation-id');
+
+                    if (action === 'confirm') {
+                        handleConfirmAction(confirmationId);
+                    } else if (action === 'decline') {
+                        handleDeclineAction(confirmationId);
+                    }
+                });
+            });
+
             pendingList.appendChild(item);
         });
     } catch (error) {
@@ -1285,10 +1361,10 @@ function updateChartLegend(container, data) {
     allServices.forEach(service => {
         const legendItem = document.createElement('div');
         legendItem.className = 'legend-item';
-        
+
         legendItem.innerHTML = `
-            <div class="legend-color" style="background-color: ${service.color}"></div>
-            <span>${service.label}</span>
+            <div class="legend-color" style="background-color: ${escapeHtml(service.color)}"></div>
+            <span>${escapeHtml(service.label)}</span>
         `;
         container.appendChild(legendItem);
     });
@@ -1405,8 +1481,7 @@ async function handleQuickAddAppointment() {
             location: document.getElementById('location')?.value,
             phone: document.getElementById('phoneNumber')?.value
         };
-        
-        
+
         if (!formData.patientName || !formData.date || !formData.time || !formData.service || !formData.location) {
             if (typeof showErrorMessage === 'function') {
                 showErrorMessage('Please fill in all required fields');
@@ -1415,7 +1490,7 @@ async function handleQuickAddAppointment() {
             }
             return;
         }
-        
+
         if (window.dataManager && dataManager.addAppointment) {
             try {
                 await dataManager.addAppointment(formData);
@@ -1434,7 +1509,6 @@ async function handleQuickAddAppointment() {
                 }
             }
         }
-        
     } catch (error) {
         console.error('Error adding appointment:', error);
         if (typeof showErrorMessage === 'function') {
@@ -1665,20 +1739,44 @@ function renderDashboardCalendar() {
     for (let i = 0; i < 42; i++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + i);
-        
+
         const dateElement = document.createElement('div');
         dateElement.className = 'calendar-date';
         dateElement.textContent = currentDate.getDate();
-        
+
         // Add style classes
         if (currentDate.getMonth() !== currentMonth) {
             dateElement.classList.add('other-month');
         }
-        
+
         if (currentDate.toDateString() === today.toDateString()) {
             dateElement.classList.add('today');
         }
-        
+
+        // Add click and double-click event handlers
+        const dateForHandler = new Date(currentDate); // Capture the date in closure
+
+        // Single click - could show simple info (optional)
+        dateElement.addEventListener('click', function(e) {
+            // Currently just visual feedback
+            console.log('Single click on date:', dateForHandler.toLocaleDateString());
+        });
+
+        // Double click - navigate to day view in appointments page
+        dateElement.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            console.log('Double click on date:', dateForHandler.toLocaleDateString());
+
+            // Format date as YYYY-MM-DD for URL parameter
+            const year = dateForHandler.getFullYear();
+            const month = String(dateForHandler.getMonth() + 1).padStart(2, '0');
+            const day = String(dateForHandler.getDate()).padStart(2, '0');
+            const dateParam = `${year}-${month}-${day}`;
+
+            // Navigate to appointments page with date parameter and view mode
+            window.location.href = `appointments.html?date=${dateParam}&view=day`;
+        });
+
         calendarDates.appendChild(dateElement);
     }
 }
