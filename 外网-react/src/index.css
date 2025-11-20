@@ -12,11 +12,15 @@
   }
 
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth h-full;
   }
 
   body {
-    @apply bg-surface-base text-neutral-900 font-sans antialiased;
+    @apply bg-surface-base text-neutral-900 font-sans antialiased h-full;
+  }
+
+  #root {
+    @apply min-h-full flex flex-col;
   }
 
   a {

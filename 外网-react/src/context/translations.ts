@@ -731,7 +731,283 @@ export const translations = {
         'oralsurgery-faq4-q': 'Should I be worried about wisdom teeth removal?',
         'oralsurgery-faq4-a': 'Wisdom teeth removal is one of the most common oral surgeries performed. With modern techniques and anesthesia, it\'s routine and predictable. Removing problematic wisdom teeth prevents serious issues like infection, crowding, and cyst formation. Most patients recover quickly and are glad they had the procedure.',
         'oralsurgery-faq5-q': 'Are dental implants really worth the investment?',
-        'oralsurgery-faq5-a': 'Absolutely! Dental implants are the gold standard for tooth replacement. They look, feel, and function like natural teeth, prevent bone loss, don\'t affect adjacent teeth, and can last a lifetime with proper care. While the upfront cost is higher than bridges or dentures, their longevity and benefits make them an excellent long-term investment.'
+        'oralsurgery-faq5-a': 'Absolutely! Dental implants are the gold standard for tooth replacement. They look, feel, and function like natural teeth, prevent bone loss, don\'t affect adjacent teeth, and can last a lifetime with proper care. While the upfront cost is higher than bridges or dentures, their longevity and benefits make them an excellent long-term investment.',
+
+        // Privacy Policy Page
+        'privacy-title': 'Privacy Policy',
+        'privacy-subtitle': 'Notice of Privacy Practices',
+        'privacy-effective': 'Effective Date: January 1, 2025',
+        'privacy-intro-p1': 'This Notice of Privacy Practices describes how First Ave Dental & Orthodontics may use and disclose your protected health information (PHI) to carry out treatment, payment, or health care operations, and for other purposes permitted or required by law. It also describes your rights regarding your health information.',
+        'privacy-intro-p2': 'We are required by law to maintain the privacy and security of your protected health information, to notify you of our legal duties and privacy practices with respect to your health information, and to follow the terms of our current Notice of Privacy Practices.',
+        'privacy-hipaa-title': 'HIPAA and California Law Compliance',
+        'privacy-hipaa-desc': 'First Ave Dental & Orthodontics complies with the Health Insurance Portability and Accountability Act (HIPAA) Privacy Rule and the California Confidentiality of Medical Information Act (CMIA). This notice outlines our obligations and your rights under these laws.',
+
+        'privacy-section1-title': '1. Information We Collect',
+        'privacy-section1-1-title': '1.1 Protected Health Information (PHI)',
+        'privacy-section1-1-intro': 'We collect and maintain health information necessary to provide quality dental care, including:',
+        'privacy-section1-1-item1': '• Personal identification (name, date of birth, address, phone number, email)',
+        'privacy-section1-1-item2': '• Social Security number and insurance information',
+        'privacy-section1-1-item3': '• Medical and dental history',
+        'privacy-section1-1-item4': '• Current medications and allergies',
+        'privacy-section1-1-item5': '• Treatment records, diagnosis, and clinical notes',
+        'privacy-section1-1-item6': '• X-rays, photographs, and other diagnostic images',
+        'privacy-section1-1-item7': '• Payment and billing information',
+        'privacy-section1-1-item8': '• Emergency contact information',
+
+        'privacy-section1-2-title': '1.2 Website and Online Information',
+        'privacy-section1-2-intro': 'When you use our website or online services, we may collect:',
+        'privacy-section1-2-item1': '• Login credentials and account information',
+        'privacy-section1-2-item2': '• Appointment scheduling information',
+        'privacy-section1-2-item3': '• Communication preferences',
+        'privacy-section1-2-item4': '• Device information and IP address',
+        'privacy-section1-2-item5': '• Browser type and usage patterns',
+        'privacy-section1-2-item6': '• Cookies and similar tracking technologies',
+
+        'privacy-section2-title': '2. How We Use and Disclose Your Health Information',
+        'privacy-section2-1-title': '2.1 Treatment',
+        'privacy-section2-1-intro': 'We use your health information to provide dental treatment and services. This includes:',
+        'privacy-section2-1-item1': '• Diagnosing and treating dental conditions',
+        'privacy-section2-1-item2': '• Coordinating care with other healthcare providers',
+        'privacy-section2-1-item3': '• Consulting with specialists about your care',
+        'privacy-section2-1-item4': '• Obtaining pre-authorization for procedures',
+        'privacy-section2-1-item5': '• Prescribing medications',
+        'privacy-section2-1-example': 'Example: We may share your X-rays with an oral surgeon if you need a tooth extraction, or send treatment records to your general physician if requested.',
+
+        'privacy-section2-2-title': '2.2 Payment',
+        'privacy-section2-2-intro': 'We use your information to obtain payment for services rendered, including:',
+        'privacy-section2-2-item1': '• Billing you or your insurance company',
+        'privacy-section2-2-item2': '• Submitting claims to your dental insurance',
+        'privacy-section2-2-item3': '• Determining insurance eligibility and coverage',
+        'privacy-section2-2-item4': '• Collecting outstanding balances',
+        'privacy-section2-2-item5': '• Processing payment arrangements',
+        'privacy-section2-2-example': 'Example: We send your treatment information to your insurance company to process claims and determine coverage.',
+
+        'privacy-section2-3-title': '2.3 Health Care Operations',
+        'privacy-section2-3-intro': 'We may use your information to support our business operations, such as:',
+        'privacy-section2-3-item1': '• Quality assessment and improvement activities',
+        'privacy-section2-3-item2': '• Staff training and credentialing',
+        'privacy-section2-3-item3': '• Auditing and compliance programs',
+        'privacy-section2-3-item4': '• Business planning and management',
+        'privacy-section2-3-item5': '• Patient satisfaction surveys',
+        'privacy-section2-3-example': 'Example: We may review patient records to evaluate the quality of care provided by our dentists.',
+
+        'privacy-section2-4-title': '2.4 Appointment Reminders and Communications',
+        'privacy-section2-4-desc': 'We may contact you to provide appointment reminders, treatment follow-ups, and information about services that may benefit you. We may contact you via phone, email, text message, or mail unless you opt out.',
+
+        'privacy-section2-5-title': '2.5 Other Uses Requiring Authorization',
+        'privacy-section2-5-desc': 'Other uses and disclosures not described in this notice will be made only with your written authorization. You may revoke such authorization in writing at any time, except to the extent we have already taken action in reliance on it.',
+
+        'privacy-section3-title': '3. Disclosures Without Your Authorization',
+        'privacy-section3-intro': 'In certain situations, we may disclose your health information without your authorization as required or permitted by law:',
+        'privacy-section3-item1': '• Public Health Activities: Reporting communicable diseases, adverse reactions to medications, or suspected abuse/neglect to appropriate authorities.',
+        'privacy-section3-item2': '• Health Oversight: Providing information to government agencies authorized to oversee the healthcare system, such as licensing boards or fraud investigators.',
+        'privacy-section3-item3': '• Legal Proceedings: Responding to court orders, subpoenas, or other lawful requests in legal proceedings.',
+        'privacy-section3-item4': '• Law Enforcement: Complying with law enforcement requests in specific circumstances, such as identifying suspects or reporting gunshot wounds.',
+        'privacy-section3-item5': "• Worker's Compensation: Disclosing information necessary to process worker's compensation claims.",
+        'privacy-section3-item6': '• Emergencies: Using or disclosing information to prevent serious threats to health or safety.',
+        'privacy-section3-item7': '• Coroners and Funeral Directors: Providing information to coroners, medical examiners, or funeral directors as necessary.',
+
+        'privacy-section4-title': '4. Your Rights Regarding Your Health Information',
+        'privacy-section4-1-title': '4.1 Right to Inspect and Copy',
+        'privacy-section4-1-desc': 'You have the right to inspect and obtain a copy of your health information, including dental records and billing records. To request copies, submit a written request to our Privacy Officer. We may charge a reasonable fee for copying and mailing records as permitted by California law.',
+
+        'privacy-section4-2-title': '4.2 Right to Amend',
+        'privacy-section4-2-desc': 'If you believe information in your records is incorrect or incomplete, you may request that we amend it. Your request must be in writing and include the reason for the amendment. We may deny your request in certain circumstances, such as when the information is accurate and complete.',
+
+        'privacy-section4-3-title': '4.3 Right to an Accounting of Disclosures',
+        'privacy-section4-3-desc': 'You have the right to request an accounting of certain disclosures of your health information made by our practice. This does not include disclosures for treatment, payment, or healthcare operations. Submit your request in writing to our Privacy Officer.',
+
+        'privacy-section4-4-title': '4.4 Right to Request Restrictions',
+        'privacy-section4-4-desc': 'You have the right to request restrictions on how we use or disclose your health information. We are not required to agree to your request except in cases where you pay out-of-pocket in full and request that we not disclose information to your health plan for payment purposes.',
+
+        'privacy-section4-5-title': '4.5 Right to Confidential Communications',
+        'privacy-section4-5-desc': 'You may request that we communicate with you about your health information by alternative means or at alternative locations. For example, you may request that we contact you only at work or via a specific email address. We will accommodate reasonable requests.',
+
+        'privacy-section4-6-title': '4.6 Right to a Paper Copy',
+        'privacy-section4-6-desc': 'You have the right to obtain a paper copy of this Notice of Privacy Practices at any time, even if you have agreed to receive it electronically. You may request a copy from any of our office locations.',
+
+        'privacy-section4-7-title': '4.7 Right to Notification of Breach',
+        'privacy-section4-7-desc': 'You have the right to be notified if there is a breach of your unsecured protected health information. We will notify you in writing within 60 days of discovering such a breach.',
+
+        'privacy-section5-title': '5. How We Protect Your Information',
+        'privacy-section5-1-title': '5.1 Physical Safeguards',
+        'privacy-section5-1-item1': '• Secure storage of paper records in locked filing cabinets',
+        'privacy-section5-1-item2': '• Restricted access to areas containing patient records',
+        'privacy-section5-1-item3': '• Proper disposal of records through shredding',
+        'privacy-section5-1-item4': '• Secure facilities with controlled access',
+
+        'privacy-section5-2-title': '5.2 Technical Safeguards',
+        'privacy-section5-2-item1': '• Encrypted electronic health records systems',
+        'privacy-section5-2-item2': '• Secure, password-protected computer systems',
+        'privacy-section5-2-item3': '• Firewalls and anti-virus protection',
+        'privacy-section5-2-item4': '• Regular security assessments and updates',
+        'privacy-section5-2-item5': '• Automatic logoff of inactive sessions',
+        'privacy-section5-2-item6': '• Secure data backup and recovery systems',
+
+        'privacy-section5-3-title': '5.3 Administrative Safeguards',
+        'privacy-section5-3-item1': '• Staff training on HIPAA and privacy practices',
+        'privacy-section5-3-item2': '• Written policies and procedures',
+        'privacy-section5-3-item3': '• Business Associate Agreements with vendors',
+        'privacy-section5-3-item4': '• Designated Privacy Officer and Security Officer',
+        'privacy-section5-3-item5': '• Regular compliance audits',
+
+        'privacy-section6-title': '6. Website Privacy and Cookies',
+        'privacy-section6-1-title': '6.1 Cookies and Tracking',
+        'privacy-section6-1-desc': 'Our website uses cookies and similar technologies to enhance your browsing experience, remember your preferences, and analyze site traffic. You can control cookie settings through your browser preferences.',
+
+        'privacy-section6-2-title': '6.2 Third-Party Services',
+        'privacy-section6-2-desc': 'We may use third-party services such as Google Analytics to analyze website usage. These services may collect information about your use of our website. We ensure all third-party vendors sign Business Associate Agreements and comply with HIPAA requirements.',
+
+        'privacy-section6-3-title': '6.3 Secure Communications',
+        'privacy-section6-3-desc': 'Our website uses SSL/TLS encryption to protect information transmitted between your browser and our servers. However, email is not a secure method of transmitting health information. Please use our secure patient portal for confidential communications.',
+
+        'privacy-section7-title': '7. Data Retention',
+        'privacy-section7-p1': 'We retain patient records in accordance with California law and dental practice standards. Adult patient records are typically maintained for a minimum of 7 years from the date of last treatment. Records for minors are retained until the patient reaches age 19 or for 7 years from the date of last treatment, whichever is longer.',
+        'privacy-section7-p2': 'When records are no longer needed, they are destroyed in a manner that protects confidentiality, such as shredding paper records and securely wiping electronic media.',
+
+        'privacy-section8-title': '8. Minors and Parental Access',
+        'privacy-section8-desc': 'For patients under 18 years of age, parents or legal guardians generally have the right to access their child\'s health information. However, California law provides certain privacy rights to minors regarding sensitive services. We comply with all applicable state and federal laws regarding minors\' privacy rights.',
+
+        'privacy-section9-title': '9. California Privacy Rights (CCPA/CPRA)',
+        'privacy-section9-intro': 'California residents have additional rights under the California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA), including:',
+        'privacy-section9-item1': '• Right to know what personal information is collected',
+        'privacy-section9-item2': '• Right to know if personal information is sold or shared',
+        'privacy-section9-item3': '• Right to opt-out of the sale or sharing of personal information',
+        'privacy-section9-item4': '• Right to request deletion of personal information',
+        'privacy-section9-item5': '• Right to correct inaccurate personal information',
+        'privacy-section9-item6': '• Right to limit use of sensitive personal information',
+        'privacy-section9-item7': '• Right to non-discrimination for exercising privacy rights',
+        'privacy-section9-note': 'Note: We do not sell patient health information. Health information regulated by HIPAA is generally exempt from CCPA/CPRA, but we respect all California privacy rights.',
+
+        'privacy-section10-title': '10. Changes to This Privacy Policy',
+        'privacy-section10-p1': 'We reserve the right to change our privacy practices and this Notice of Privacy Practices. Any changes will apply to health information we already have as well as information we receive in the future. We will post the current notice in our offices and on our website. The effective date is noted at the top of the notice.',
+        'privacy-section10-p2': 'If we make significant changes to our privacy practices, we will notify patients by mail or email and provide a revised notice at your next visit.',
+
+        'privacy-section11-title': '11. Complaints and Questions',
+        'privacy-section11-subtitle': 'Filing a Complaint',
+        'privacy-section11-intro': 'If you believe your privacy rights have been violated, you may file a complaint with our practice or with the U.S. Department of Health and Human Services. You will not be retaliated against for filing a complaint.',
+        'privacy-section11-contact-title': 'Contact Our Privacy Officer:',
+        'privacy-section11-practice-name': 'First Ave Dental & Orthodontics',
+        'privacy-section11-privacy-officer': 'Privacy Officer',
+        'privacy-section11-email': 'Email: privacy@firstavedentalortho.com',
+        'privacy-section11-phone': 'Phone: Available at any of our five locations',
+        'privacy-section11-federal-title': 'Or File with the Federal Government:',
+        'privacy-section11-hhs': 'U.S. Department of Health and Human Services',
+        'privacy-section11-ocr': 'Office for Civil Rights',
+        'privacy-section11-website': 'Website: www.hhs.gov/ocr/privacy/hipaa/complaints',
+        'privacy-section11-hhs-phone': 'Phone: 1-877-696-6775',
+
+        'privacy-section12-title': '12. Contact Information',
+        'privacy-section12-intro': 'For questions about this Privacy Policy or to exercise your rights:',
+        'privacy-section12-general-email': 'General Email: info@firstavedentalortho.com',
+        'privacy-section12-locations': 'Locations: Arcadia, Rowland Heights, Irvine, South Pasadena, Eastvale',
+
+        'privacy-acknowledgment-title': 'Acknowledgment of Receipt',
+        'privacy-acknowledgment-p1': 'You will be asked to acknowledge receipt of this Notice of Privacy Practices at your first visit or when significant changes are made. Your signature acknowledges that you have been provided with a copy of this notice.',
+        'privacy-acknowledgment-p2': 'This Notice of Privacy Practices is effective as of January 1, 2025, and complies with the Health Insurance Portability and Accountability Act (HIPAA) Privacy Rule (45 CFR Part 160 and Part 164, Subparts A and E) and the California Confidentiality of Medical Information Act (CMIA).',
+
+        // Terms of Service Page
+        'terms-title': 'Terms of Service',
+        'terms-effective': 'Effective Date: January 1, 2025',
+        'terms-intro': 'Welcome to First Ave Dental & Orthodontics. These Terms of Service ("Terms") govern your relationship with our dental practice and use of our services, including our website and online appointment scheduling system. By scheduling an appointment or using our services, you agree to comply with and be bound by these Terms.',
+
+        'terms-section1-title': '1. Services Provided',
+        'terms-section1-intro': 'First Ave Dental & Orthodontics offers comprehensive dental care services, including but not limited to:',
+        'terms-section1-item1': '• General and preventive dental care (cleanings, examinations, fillings)',
+        'terms-section1-item2': '• Cosmetic dentistry (teeth whitening, veneers, bonding)',
+        'terms-section1-item3': '• Orthodontic treatment (traditional braces, clear aligners)',
+        'terms-section1-item4': '• Restorative procedures (crowns, bridges, implants)',
+        'terms-section1-item5': '• Root canal therapy and endodontic treatment',
+        'terms-section1-item6': '• Periodontal care and gum disease treatment',
+        'terms-section1-item7': '• Oral surgery and tooth extractions',
+        'terms-section1-item8': '• Emergency dental services',
+        'terms-section1-note': 'All services are performed by licensed dental professionals in accordance with California state regulations and industry standards.',
+
+        'terms-section2-title': '2. Appointment Scheduling and Cancellation',
+        'terms-section2-1-title': '2.1 Scheduling',
+        'terms-section2-1-desc': 'Appointments may be scheduled through our online booking system, by telephone, or in person at any of our five locations. When booking online, you will receive a confirmation email. Please verify all appointment details for accuracy.',
+
+        'terms-section2-2-title': '2.2 Cancellation Policy',
+        'terms-section2-2-desc': 'We understand that schedules change. If you need to cancel or reschedule an appointment, please provide at least 24 hours advance notice. Cancellations made with less than 24 hours notice may be subject to a cancellation fee of up to $75, depending on the type of appointment.',
+
+        'terms-section2-3-title': '2.3 No-Show Policy',
+        'terms-section2-3-desc': 'Patients who fail to attend a scheduled appointment without prior notice ("no-show") may be charged a no-show fee. Repeated no-shows may result in dismissal from our practice and difficulty scheduling future appointments.',
+
+        'terms-section2-4-title': '2.4 Late Arrivals',
+        'terms-section2-4-desc': 'Please arrive 10-15 minutes before your scheduled appointment time for check-in. Patients arriving more than 15 minutes late may need to reschedule to ensure adequate time for treatment and consideration of other patients\' appointments.',
+
+        'terms-section3-title': '3. Payment Terms and Insurance',
+        'terms-section3-1-title': '3.1 Payment Responsibility',
+        'terms-section3-1-desc': 'Payment for services is due at the time treatment is provided unless prior financial arrangements have been made. We accept cash, credit cards (Visa, Mastercard, American Express, Discover), debit cards, and electronic payment methods.',
+
+        'terms-section3-2-title': '3.2 Insurance',
+        'terms-section3-2-desc': 'We accept most major dental insurance plans. As a courtesy, we will submit claims to your insurance provider on your behalf. However, you are ultimately responsible for all charges, regardless of insurance coverage. Any portion not covered by insurance is your responsibility and is due at the time of service.',
+
+        'terms-section3-3-title': '3.3 Treatment Estimates',
+        'terms-section3-3-desc': 'We provide treatment cost estimates based on available information. These are estimates only and not guarantees of final cost. Actual costs may vary based on treatment complexity, additional procedures required, or insurance coverage determinations.',
+
+        'terms-section3-4-title': '3.4 Outstanding Balances',
+        'terms-section3-4-desc': 'Accounts with outstanding balances for more than 90 days may be referred to a collection agency. You will be responsible for all collection costs, including attorney fees and court costs.',
+
+        'terms-section4-title': '4. Patient Responsibilities',
+        'terms-section4-1-title': '4.1 Accurate Information',
+        'terms-section4-1-desc': 'You agree to provide complete and accurate personal, medical, and insurance information. You must notify us promptly of any changes to this information, including address, phone number, insurance coverage, or medical conditions.',
+
+        'terms-section4-2-title': '4.2 Medical History',
+        'terms-section4-2-desc': 'You must disclose your complete medical history, including all medications, allergies, previous dental work, and existing health conditions. Failure to provide accurate medical information may compromise treatment safety and effectiveness.',
+
+        'terms-section4-3-title': '4.3 Treatment Compliance',
+        'terms-section4-3-desc': 'You are responsible for following post-treatment instructions, taking prescribed medications as directed, and attending follow-up appointments. Failure to comply with treatment recommendations may affect outcomes and void warranties on dental work.',
+
+        'terms-section4-4-title': '4.4 Minors',
+        'terms-section4-4-desc': 'For patients under 18 years of age, a parent or legal guardian must accompany the minor to appointments and sign all necessary consent forms. The accompanying adult is responsible for payment of all charges.',
+
+        'terms-section5-title': '5. Informed Consent and Treatment Authorization',
+        'terms-section5-p1': 'Before receiving treatment, you will be informed of the nature of the procedure, expected benefits, potential risks, alternative treatments, and consequences of no treatment. You have the right to ask questions and receive clear answers before consenting to any procedure.',
+        'terms-section5-p2': 'By proceeding with treatment, you acknowledge that you have been fully informed and consent to the proposed dental care. You understand that dentistry is not an exact science and acknowledge that no guarantees have been made regarding treatment outcomes.',
+
+        'terms-section6-title': '6. Emergency Dental Care',
+        'terms-section6-p1': 'We provide emergency dental services during regular business hours. For after-hours emergencies, please call our office phone number for instructions. In case of a life-threatening emergency, call 911 or proceed to the nearest emergency room immediately.',
+        'terms-section6-p2': 'Emergency appointments may require different payment terms and may not be eligible for online scheduling. Emergency treatment may be limited to pain relief and stabilization, with comprehensive treatment scheduled for a later date.',
+
+        'terms-section7-title': '7. Medical Records and Privacy',
+        'terms-section7-p1': 'Your dental and medical records are maintained in accordance with HIPAA (Health Insurance Portability and Accountability Act) regulations and California state law. For detailed information about how we collect, use, and protect your personal health information, please review our Privacy Policy.',
+        'terms-section7-p2': 'You have the right to access your dental records. Requests for copies of records must be submitted in writing and may be subject to reasonable copying fees as permitted by law.',
+
+        'terms-section8-title': '8. Online Services and Website Use',
+        'terms-section8-1-title': '8.1 Account Security',
+        'terms-section8-1-desc': 'If you create an account on our website, you are responsible for maintaining the confidentiality of your login credentials. You agree to notify us immediately of any unauthorized access to your account.',
+
+        'terms-section8-2-title': '8.2 Acceptable Use',
+        'terms-section8-2-desc': 'You may not use our website or online services for any unlawful purpose or in any way that could damage, disable, overburden, or impair our systems. You may not attempt to gain unauthorized access to any portion of our systems or services.',
+
+        'terms-section8-3-title': '8.3 Accuracy of Information',
+        'terms-section8-3-desc': 'While we strive to provide accurate information on our website, we do not warrant that all content is current, complete, or error-free. Information on our website is for general informational purposes and should not replace professional dental advice.',
+
+        'terms-section9-title': '9. Limitation of Liability',
+        'terms-section9-p1': 'To the fullest extent permitted by law, First Ave Dental & Orthodontics shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of our services or website.',
+        'terms-section9-p2': 'Our liability is limited to the amount paid by you for the specific service giving rise to the claim. This limitation applies regardless of the legal theory upon which the claim is based.',
+
+        'terms-section10-title': '10. Professional Standards',
+        'terms-section10-p1': 'All dental care is provided by licensed professionals who adhere to the ethical standards established by the American Dental Association (ADA) and the California Dental Association (CDA). Our dentists maintain active licenses with the California Dental Board.',
+        'terms-section10-p2': 'We maintain a professional environment and expect mutual respect between staff and patients. We reserve the right to refuse service or dismiss patients who engage in abusive, threatening, or inappropriate behavior.',
+
+        'terms-section11-title': '11. Changes to Terms of Service',
+        'terms-section11-p1': 'We reserve the right to modify these Terms of Service at any time. Changes will be effective immediately upon posting to our website. Your continued use of our services after changes are posted constitutes acceptance of the modified terms.',
+        'terms-section11-p2': 'We will notify patients of significant changes via email or notices posted in our offices. We encourage you to review these Terms periodically.',
+
+        'terms-section12-title': '12. Governing Law and Dispute Resolution',
+        'terms-section12-p1': 'These Terms are governed by the laws of the State of California, without regard to its conflict of law provisions. Any disputes arising from these Terms or your relationship with our practice shall be resolved in the state or federal courts located in Los Angeles County, California.',
+        'terms-section12-p2': 'In the event of a dispute, we encourage patients to first contact our practice manager to attempt an informal resolution before pursuing legal action.',
+
+        'terms-section13-title': '13. Severability',
+        'terms-section13-desc': 'If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that the remaining provisions remain in full force and effect.',
+
+        'terms-section14-title': '14. Contact Information',
+        'terms-section14-intro': 'If you have questions about these Terms of Service, please contact us:',
+
+        'terms-acknowledgment-p1': 'By scheduling an appointment or using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.',
+        'terms-acknowledgment-p2': 'Last Updated: January 1, 2025'
     },
 
     zh: {
@@ -1741,283 +2017,7 @@ export const translations = {
         'terms-section14-intro': '如果您对这些服务条款有疑问，请联系我们：',
 
         'terms-acknowledgment-p1': '通过预约或使用我们的服务，您承认您已阅读、理解并同意受这些服务条款的约束。',
-        'terms-acknowledgment-p2': '最后更新：2025年1月1日',
-
-        // Privacy Policy Page
-        'privacy-title': 'Privacy Policy',
-        'privacy-subtitle': 'Notice of Privacy Practices',
-        'privacy-effective': 'Effective Date: January 1, 2025',
-        'privacy-intro-p1': 'This Notice of Privacy Practices describes how First Ave Dental & Orthodontics may use and disclose your protected health information (PHI) to carry out treatment, payment, or health care operations, and for other purposes permitted or required by law. It also describes your rights regarding your health information.',
-        'privacy-intro-p2': 'We are required by law to maintain the privacy and security of your protected health information, to notify you of our legal duties and privacy practices with respect to your health information, and to follow the terms of our current Notice of Privacy Practices.',
-        'privacy-hipaa-title': 'HIPAA and California Law Compliance',
-        'privacy-hipaa-desc': 'First Ave Dental & Orthodontics complies with the Health Insurance Portability and Accountability Act (HIPAA) Privacy Rule and the California Confidentiality of Medical Information Act (CMIA). This notice outlines our obligations and your rights under these laws.',
-
-        'privacy-section1-title': '1. Information We Collect',
-        'privacy-section1-1-title': '1.1 Protected Health Information (PHI)',
-        'privacy-section1-1-intro': 'We collect and maintain health information necessary to provide quality dental care, including:',
-        'privacy-section1-1-item1': '• Personal identification (name, date of birth, address, phone number, email)',
-        'privacy-section1-1-item2': '• Social Security number and insurance information',
-        'privacy-section1-1-item3': '• Medical and dental history',
-        'privacy-section1-1-item4': '• Current medications and allergies',
-        'privacy-section1-1-item5': '• Treatment records, diagnosis, and clinical notes',
-        'privacy-section1-1-item6': '• X-rays, photographs, and other diagnostic images',
-        'privacy-section1-1-item7': '• Payment and billing information',
-        'privacy-section1-1-item8': '• Emergency contact information',
-
-        'privacy-section1-2-title': '1.2 Website and Online Information',
-        'privacy-section1-2-intro': 'When you use our website or online services, we may collect:',
-        'privacy-section1-2-item1': '• Login credentials and account information',
-        'privacy-section1-2-item2': '• Appointment scheduling information',
-        'privacy-section1-2-item3': '• Communication preferences',
-        'privacy-section1-2-item4': '• Device information and IP address',
-        'privacy-section1-2-item5': '• Browser type and usage patterns',
-        'privacy-section1-2-item6': '• Cookies and similar tracking technologies',
-
-        'privacy-section2-title': '2. How We Use and Disclose Your Health Information',
-        'privacy-section2-1-title': '2.1 Treatment',
-        'privacy-section2-1-intro': 'We use your health information to provide dental treatment and services. This includes:',
-        'privacy-section2-1-item1': '• Diagnosing and treating dental conditions',
-        'privacy-section2-1-item2': '• Coordinating care with other healthcare providers',
-        'privacy-section2-1-item3': '• Consulting with specialists about your care',
-        'privacy-section2-1-item4': '• Obtaining pre-authorization for procedures',
-        'privacy-section2-1-item5': '• Prescribing medications',
-        'privacy-section2-1-example': 'Example: We may share your X-rays with an oral surgeon if you need a tooth extraction, or send treatment records to your general physician if requested.',
-
-        'privacy-section2-2-title': '2.2 Payment',
-        'privacy-section2-2-intro': 'We use your information to obtain payment for services rendered, including:',
-        'privacy-section2-2-item1': '• Billing you or your insurance company',
-        'privacy-section2-2-item2': '• Submitting claims to your dental insurance',
-        'privacy-section2-2-item3': '• Determining insurance eligibility and coverage',
-        'privacy-section2-2-item4': '• Collecting outstanding balances',
-        'privacy-section2-2-item5': '• Processing payment arrangements',
-        'privacy-section2-2-example': 'Example: We send your treatment information to your insurance company to process claims and determine coverage.',
-
-        'privacy-section2-3-title': '2.3 Health Care Operations',
-        'privacy-section2-3-intro': 'We may use your information to support our business operations, such as:',
-        'privacy-section2-3-item1': '• Quality assessment and improvement activities',
-        'privacy-section2-3-item2': '• Staff training and credentialing',
-        'privacy-section2-3-item3': '• Auditing and compliance programs',
-        'privacy-section2-3-item4': '• Business planning and management',
-        'privacy-section2-3-item5': '• Patient satisfaction surveys',
-        'privacy-section2-3-example': 'Example: We may review patient records to evaluate the quality of care provided by our dentists.',
-
-        'privacy-section2-4-title': '2.4 Appointment Reminders and Communications',
-        'privacy-section2-4-desc': 'We may contact you to provide appointment reminders, treatment follow-ups, and information about services that may benefit you. We may contact you via phone, email, text message, or mail unless you opt out.',
-
-        'privacy-section2-5-title': '2.5 Other Uses Requiring Authorization',
-        'privacy-section2-5-desc': 'Other uses and disclosures not described in this notice will be made only with your written authorization. You may revoke such authorization in writing at any time, except to the extent we have already taken action in reliance on it.',
-
-        'privacy-section3-title': '3. Disclosures Without Your Authorization',
-        'privacy-section3-intro': 'In certain situations, we may disclose your health information without your authorization as required or permitted by law:',
-        'privacy-section3-item1': '• Public Health Activities: Reporting communicable diseases, adverse reactions to medications, or suspected abuse/neglect to appropriate authorities.',
-        'privacy-section3-item2': '• Health Oversight: Providing information to government agencies authorized to oversee the healthcare system, such as licensing boards or fraud investigators.',
-        'privacy-section3-item3': '• Legal Proceedings: Responding to court orders, subpoenas, or other lawful requests in legal proceedings.',
-        'privacy-section3-item4': '• Law Enforcement: Complying with law enforcement requests in specific circumstances, such as identifying suspects or reporting gunshot wounds.',
-        'privacy-section3-item5': "• Worker's Compensation: Disclosing information necessary to process worker's compensation claims.",
-        'privacy-section3-item6': '• Emergencies: Using or disclosing information to prevent serious threats to health or safety.',
-        'privacy-section3-item7': '• Coroners and Funeral Directors: Providing information to coroners, medical examiners, or funeral directors as necessary.',
-
-        'privacy-section4-title': '4. Your Rights Regarding Your Health Information',
-        'privacy-section4-1-title': '4.1 Right to Inspect and Copy',
-        'privacy-section4-1-desc': 'You have the right to inspect and obtain a copy of your health information, including dental records and billing records. To request copies, submit a written request to our Privacy Officer. We may charge a reasonable fee for copying and mailing records as permitted by California law.',
-
-        'privacy-section4-2-title': '4.2 Right to Amend',
-        'privacy-section4-2-desc': 'If you believe information in your records is incorrect or incomplete, you may request that we amend it. Your request must be in writing and include the reason for the amendment. We may deny your request in certain circumstances, such as when the information is accurate and complete.',
-
-        'privacy-section4-3-title': '4.3 Right to an Accounting of Disclosures',
-        'privacy-section4-3-desc': 'You have the right to request an accounting of certain disclosures of your health information made by our practice. This does not include disclosures for treatment, payment, or healthcare operations. Submit your request in writing to our Privacy Officer.',
-
-        'privacy-section4-4-title': '4.4 Right to Request Restrictions',
-        'privacy-section4-4-desc': 'You have the right to request restrictions on how we use or disclose your health information. We are not required to agree to your request except in cases where you pay out-of-pocket in full and request that we not disclose information to your health plan for payment purposes.',
-
-        'privacy-section4-5-title': '4.5 Right to Confidential Communications',
-        'privacy-section4-5-desc': 'You may request that we communicate with you about your health information by alternative means or at alternative locations. For example, you may request that we contact you only at work or via a specific email address. We will accommodate reasonable requests.',
-
-        'privacy-section4-6-title': '4.6 Right to a Paper Copy',
-        'privacy-section4-6-desc': 'You have the right to obtain a paper copy of this Notice of Privacy Practices at any time, even if you have agreed to receive it electronically. You may request a copy from any of our office locations.',
-
-        'privacy-section4-7-title': '4.7 Right to Notification of Breach',
-        'privacy-section4-7-desc': 'You have the right to be notified if there is a breach of your unsecured protected health information. We will notify you in writing within 60 days of discovering such a breach.',
-
-        'privacy-section5-title': '5. How We Protect Your Information',
-        'privacy-section5-1-title': '5.1 Physical Safeguards',
-        'privacy-section5-1-item1': '• Secure storage of paper records in locked filing cabinets',
-        'privacy-section5-1-item2': '• Restricted access to areas containing patient records',
-        'privacy-section5-1-item3': '• Proper disposal of records through shredding',
-        'privacy-section5-1-item4': '• Secure facilities with controlled access',
-
-        'privacy-section5-2-title': '5.2 Technical Safeguards',
-        'privacy-section5-2-item1': '• Encrypted electronic health records systems',
-        'privacy-section5-2-item2': '• Secure, password-protected computer systems',
-        'privacy-section5-2-item3': '• Firewalls and anti-virus protection',
-        'privacy-section5-2-item4': '• Regular security assessments and updates',
-        'privacy-section5-2-item5': '• Automatic logoff of inactive sessions',
-        'privacy-section5-2-item6': '• Secure data backup and recovery systems',
-
-        'privacy-section5-3-title': '5.3 Administrative Safeguards',
-        'privacy-section5-3-item1': '• Staff training on HIPAA and privacy practices',
-        'privacy-section5-3-item2': '• Written policies and procedures',
-        'privacy-section5-3-item3': '• Business Associate Agreements with vendors',
-        'privacy-section5-3-item4': '• Designated Privacy Officer and Security Officer',
-        'privacy-section5-3-item5': '• Regular compliance audits',
-
-        'privacy-section6-title': '6. Website Privacy and Cookies',
-        'privacy-section6-1-title': '6.1 Cookies and Tracking',
-        'privacy-section6-1-desc': 'Our website uses cookies and similar technologies to enhance your browsing experience, remember your preferences, and analyze site traffic. You can control cookie settings through your browser preferences.',
-
-        'privacy-section6-2-title': '6.2 Third-Party Services',
-        'privacy-section6-2-desc': 'We may use third-party services such as Google Analytics to analyze website usage. These services may collect information about your use of our website. We ensure all third-party vendors sign Business Associate Agreements and comply with HIPAA requirements.',
-
-        'privacy-section6-3-title': '6.3 Secure Communications',
-        'privacy-section6-3-desc': 'Our website uses SSL/TLS encryption to protect information transmitted between your browser and our servers. However, email is not a secure method of transmitting health information. Please use our secure patient portal for confidential communications.',
-
-        'privacy-section7-title': '7. Data Retention',
-        'privacy-section7-p1': 'We retain patient records in accordance with California law and dental practice standards. Adult patient records are typically maintained for a minimum of 7 years from the date of last treatment. Records for minors are retained until the patient reaches age 19 or for 7 years from the date of last treatment, whichever is longer.',
-        'privacy-section7-p2': 'When records are no longer needed, they are destroyed in a manner that protects confidentiality, such as shredding paper records and securely wiping electronic media.',
-
-        'privacy-section8-title': '8. Minors and Parental Access',
-        'privacy-section8-desc': 'For patients under 18 years of age, parents or legal guardians generally have the right to access their child\'s health information. However, California law provides certain privacy rights to minors regarding sensitive services. We comply with all applicable state and federal laws regarding minors\' privacy rights.',
-
-        'privacy-section9-title': '9. California Privacy Rights (CCPA/CPRA)',
-        'privacy-section9-intro': 'California residents have additional rights under the California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA), including:',
-        'privacy-section9-item1': '• Right to know what personal information is collected',
-        'privacy-section9-item2': '• Right to know if personal information is sold or shared',
-        'privacy-section9-item3': '• Right to opt-out of the sale or sharing of personal information',
-        'privacy-section9-item4': '• Right to request deletion of personal information',
-        'privacy-section9-item5': '• Right to correct inaccurate personal information',
-        'privacy-section9-item6': '• Right to limit use of sensitive personal information',
-        'privacy-section9-item7': '• Right to non-discrimination for exercising privacy rights',
-        'privacy-section9-note': 'Note: We do not sell patient health information. Health information regulated by HIPAA is generally exempt from CCPA/CPRA, but we respect all California privacy rights.',
-
-        'privacy-section10-title': '10. Changes to This Privacy Policy',
-        'privacy-section10-p1': 'We reserve the right to change our privacy practices and this Notice of Privacy Practices. Any changes will apply to health information we already have as well as information we receive in the future. We will post the current notice in our offices and on our website. The effective date is noted at the top of the notice.',
-        'privacy-section10-p2': 'If we make significant changes to our privacy practices, we will notify patients by mail or email and provide a revised notice at your next visit.',
-
-        'privacy-section11-title': '11. Complaints and Questions',
-        'privacy-section11-subtitle': 'Filing a Complaint',
-        'privacy-section11-intro': 'If you believe your privacy rights have been violated, you may file a complaint with our practice or with the U.S. Department of Health and Human Services. You will not be retaliated against for filing a complaint.',
-        'privacy-section11-contact-title': 'Contact Our Privacy Officer:',
-        'privacy-section11-practice-name': 'First Ave Dental & Orthodontics',
-        'privacy-section11-privacy-officer': 'Privacy Officer',
-        'privacy-section11-email': 'Email: privacy@firstavedentalortho.com',
-        'privacy-section11-phone': 'Phone: Available at any of our five locations',
-        'privacy-section11-federal-title': 'Or File with the Federal Government:',
-        'privacy-section11-hhs': 'U.S. Department of Health and Human Services',
-        'privacy-section11-ocr': 'Office for Civil Rights',
-        'privacy-section11-website': 'Website: www.hhs.gov/ocr/privacy/hipaa/complaints',
-        'privacy-section11-hhs-phone': 'Phone: 1-877-696-6775',
-
-        'privacy-section12-title': '12. Contact Information',
-        'privacy-section12-intro': 'For questions about this Privacy Policy or to exercise your rights:',
-        'privacy-section12-general-email': 'General Email: info@firstavedentalortho.com',
-        'privacy-section12-locations': 'Locations: Arcadia, Rowland Heights, Irvine, South Pasadena, Eastvale',
-
-        'privacy-acknowledgment-title': 'Acknowledgment of Receipt',
-        'privacy-acknowledgment-p1': 'You will be asked to acknowledge receipt of this Notice of Privacy Practices at your first visit or when significant changes are made. Your signature acknowledges that you have been provided with a copy of this notice.',
-        'privacy-acknowledgment-p2': 'This Notice of Privacy Practices is effective as of January 1, 2025, and complies with the Health Insurance Portability and Accountability Act (HIPAA) Privacy Rule (45 CFR Part 160 and Part 164, Subparts A and E) and the California Confidentiality of Medical Information Act (CMIA).',
-
-        // Terms of Service Page
-        'terms-title': 'Terms of Service',
-        'terms-effective': 'Effective Date: January 1, 2025',
-        'terms-intro': 'Welcome to First Ave Dental & Orthodontics. These Terms of Service ("Terms") govern your relationship with our dental practice and use of our services, including our website and online appointment scheduling system. By scheduling an appointment or using our services, you agree to comply with and be bound by these Terms.',
-
-        'terms-section1-title': '1. Services Provided',
-        'terms-section1-intro': 'First Ave Dental & Orthodontics offers comprehensive dental care services, including but not limited to:',
-        'terms-section1-item1': '• General and preventive dental care (cleanings, examinations, fillings)',
-        'terms-section1-item2': '• Cosmetic dentistry (teeth whitening, veneers, bonding)',
-        'terms-section1-item3': '• Orthodontic treatment (traditional braces, clear aligners)',
-        'terms-section1-item4': '• Restorative procedures (crowns, bridges, implants)',
-        'terms-section1-item5': '• Root canal therapy and endodontic treatment',
-        'terms-section1-item6': '• Periodontal care and gum disease treatment',
-        'terms-section1-item7': '• Oral surgery and tooth extractions',
-        'terms-section1-item8': '• Emergency dental services',
-        'terms-section1-note': 'All services are performed by licensed dental professionals in accordance with California state regulations and industry standards.',
-
-        'terms-section2-title': '2. Appointment Scheduling and Cancellation',
-        'terms-section2-1-title': '2.1 Scheduling',
-        'terms-section2-1-desc': 'Appointments may be scheduled through our online booking system, by telephone, or in person at any of our five locations. When booking online, you will receive a confirmation email. Please verify all appointment details for accuracy.',
-
-        'terms-section2-2-title': '2.2 Cancellation Policy',
-        'terms-section2-2-desc': 'We understand that schedules change. If you need to cancel or reschedule an appointment, please provide at least 24 hours advance notice. Cancellations made with less than 24 hours notice may be subject to a cancellation fee of up to $75, depending on the type of appointment.',
-
-        'terms-section2-3-title': '2.3 No-Show Policy',
-        'terms-section2-3-desc': 'Patients who fail to attend a scheduled appointment without prior notice ("no-show") may be charged a no-show fee. Repeated no-shows may result in dismissal from our practice and difficulty scheduling future appointments.',
-
-        'terms-section2-4-title': '2.4 Late Arrivals',
-        'terms-section2-4-desc': 'Please arrive 10-15 minutes before your scheduled appointment time for check-in. Patients arriving more than 15 minutes late may need to reschedule to ensure adequate time for treatment and consideration of other patients\' appointments.',
-
-        'terms-section3-title': '3. Payment Terms and Insurance',
-        'terms-section3-1-title': '3.1 Payment Responsibility',
-        'terms-section3-1-desc': 'Payment for services is due at the time treatment is provided unless prior financial arrangements have been made. We accept cash, credit cards (Visa, Mastercard, American Express, Discover), debit cards, and electronic payment methods.',
-
-        'terms-section3-2-title': '3.2 Insurance',
-        'terms-section3-2-desc': 'We accept most major dental insurance plans. As a courtesy, we will submit claims to your insurance provider on your behalf. However, you are ultimately responsible for all charges, regardless of insurance coverage. Any portion not covered by insurance is your responsibility and is due at the time of service.',
-
-        'terms-section3-3-title': '3.3 Treatment Estimates',
-        'terms-section3-3-desc': 'We provide treatment cost estimates based on available information. These are estimates only and not guarantees of final cost. Actual costs may vary based on treatment complexity, additional procedures required, or insurance coverage determinations.',
-
-        'terms-section3-4-title': '3.4 Outstanding Balances',
-        'terms-section3-4-desc': 'Accounts with outstanding balances for more than 90 days may be referred to a collection agency. You will be responsible for all collection costs, including attorney fees and court costs.',
-
-        'terms-section4-title': '4. Patient Responsibilities',
-        'terms-section4-1-title': '4.1 Accurate Information',
-        'terms-section4-1-desc': 'You agree to provide complete and accurate personal, medical, and insurance information. You must notify us promptly of any changes to this information, including address, phone number, insurance coverage, or medical conditions.',
-
-        'terms-section4-2-title': '4.2 Medical History',
-        'terms-section4-2-desc': 'You must disclose your complete medical history, including all medications, allergies, previous dental work, and existing health conditions. Failure to provide accurate medical information may compromise treatment safety and effectiveness.',
-
-        'terms-section4-3-title': '4.3 Treatment Compliance',
-        'terms-section4-3-desc': 'You are responsible for following post-treatment instructions, taking prescribed medications as directed, and attending follow-up appointments. Failure to comply with treatment recommendations may affect outcomes and void warranties on dental work.',
-
-        'terms-section4-4-title': '4.4 Minors',
-        'terms-section4-4-desc': 'For patients under 18 years of age, a parent or legal guardian must accompany the minor to appointments and sign all necessary consent forms. The accompanying adult is responsible for payment of all charges.',
-
-        'terms-section5-title': '5. Informed Consent and Treatment Authorization',
-        'terms-section5-p1': 'Before receiving treatment, you will be informed of the nature of the procedure, expected benefits, potential risks, alternative treatments, and consequences of no treatment. You have the right to ask questions and receive clear answers before consenting to any procedure.',
-        'terms-section5-p2': 'By proceeding with treatment, you acknowledge that you have been fully informed and consent to the proposed dental care. You understand that dentistry is not an exact science and acknowledge that no guarantees have been made regarding treatment outcomes.',
-
-        'terms-section6-title': '6. Emergency Dental Care',
-        'terms-section6-p1': 'We provide emergency dental services during regular business hours. For after-hours emergencies, please call our office phone number for instructions. In case of a life-threatening emergency, call 911 or proceed to the nearest emergency room immediately.',
-        'terms-section6-p2': 'Emergency appointments may require different payment terms and may not be eligible for online scheduling. Emergency treatment may be limited to pain relief and stabilization, with comprehensive treatment scheduled for a later date.',
-
-        'terms-section7-title': '7. Medical Records and Privacy',
-        'terms-section7-p1': 'Your dental and medical records are maintained in accordance with HIPAA (Health Insurance Portability and Accountability Act) regulations and California state law. For detailed information about how we collect, use, and protect your personal health information, please review our Privacy Policy.',
-        'terms-section7-p2': 'You have the right to access your dental records. Requests for copies of records must be submitted in writing and may be subject to reasonable copying fees as permitted by law.',
-
-        'terms-section8-title': '8. Online Services and Website Use',
-        'terms-section8-1-title': '8.1 Account Security',
-        'terms-section8-1-desc': 'If you create an account on our website, you are responsible for maintaining the confidentiality of your login credentials. You agree to notify us immediately of any unauthorized access to your account.',
-
-        'terms-section8-2-title': '8.2 Acceptable Use',
-        'terms-section8-2-desc': 'You may not use our website or online services for any unlawful purpose or in any way that could damage, disable, overburden, or impair our systems. You may not attempt to gain unauthorized access to any portion of our systems or services.',
-
-        'terms-section8-3-title': '8.3 Accuracy of Information',
-        'terms-section8-3-desc': 'While we strive to provide accurate information on our website, we do not warrant that all content is current, complete, or error-free. Information on our website is for general informational purposes and should not replace professional dental advice.',
-
-        'terms-section9-title': '9. Limitation of Liability',
-        'terms-section9-p1': 'To the fullest extent permitted by law, First Ave Dental & Orthodontics shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of our services or website.',
-        'terms-section9-p2': 'Our liability is limited to the amount paid by you for the specific service giving rise to the claim. This limitation applies regardless of the legal theory upon which the claim is based.',
-
-        'terms-section10-title': '10. Professional Standards',
-        'terms-section10-p1': 'All dental care is provided by licensed professionals who adhere to the ethical standards established by the American Dental Association (ADA) and the California Dental Association (CDA). Our dentists maintain active licenses with the California Dental Board.',
-        'terms-section10-p2': 'We maintain a professional environment and expect mutual respect between staff and patients. We reserve the right to refuse service or dismiss patients who engage in abusive, threatening, or inappropriate behavior.',
-
-        'terms-section11-title': '11. Changes to Terms of Service',
-        'terms-section11-p1': 'We reserve the right to modify these Terms of Service at any time. Changes will be effective immediately upon posting to our website. Your continued use of our services after changes are posted constitutes acceptance of the modified terms.',
-        'terms-section11-p2': 'We will notify patients of significant changes via email or notices posted in our offices. We encourage you to review these Terms periodically.',
-
-        'terms-section12-title': '12. Governing Law and Dispute Resolution',
-        'terms-section12-p1': 'These Terms are governed by the laws of the State of California, without regard to its conflict of law provisions. Any disputes arising from these Terms or your relationship with our practice shall be resolved in the state or federal courts located in Los Angeles County, California.',
-        'terms-section12-p2': 'In the event of a dispute, we encourage patients to first contact our practice manager to attempt an informal resolution before pursuing legal action.',
-
-        'terms-section13-title': '13. Severability',
-        'terms-section13-desc': 'If any provision of these Terms is found to be unenforceable or invalid, that provision will be limited or eliminated to the minimum extent necessary so that the remaining provisions remain in full force and effect.',
-
-        'terms-section14-title': '14. Contact Information',
-        'terms-section14-intro': 'If you have questions about these Terms of Service, please contact us:',
-
-        'terms-acknowledgment-p1': 'By scheduling an appointment or using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.',
-        'terms-acknowledgment-p2': 'Last Updated: January 1, 2025'
+        'terms-acknowledgment-p2': '最后更新：2025年1月1日'
     }
 } as const;
 
