@@ -25,18 +25,66 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- 服务详情页 1 -->
+  <!-- 服务详情页 - General & Family Dentistry -->
   <url>
-    <loc>https://firstavedentalortho.com/services-detail-1</loc>
-    <lastmod>2025-01-16</lastmod>
+    <loc>https://firstavedentalortho.com/services/general-family</loc>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- 服务详情页 2 -->
+  <!-- 服务详情页 - Cosmetic Dentistry -->
   <url>
-    <loc>https://firstavedentalortho.com/services-detail-2</loc>
-    <lastmod>2025-01-16</lastmod>
+    <loc>https://firstavedentalortho.com/services/cosmetic</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 服务详情页 - Orthodontics -->
+  <url>
+    <loc>https://firstavedentalortho.com/services/orthodontics</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 服务详情页 - Root Canal Therapy -->
+  <url>
+    <loc>https://firstavedentalortho.com/services/root-canals</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 服务详情页 - Periodontics -->
+  <url>
+    <loc>https://firstavedentalortho.com/services/periodontics</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 服务详情页 - Dental Restorations -->
+  <url>
+    <loc>https://firstavedentalortho.com/services/restorations</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 服务详情页 - Preventive Care -->
+  <url>
+    <loc>https://firstavedentalortho.com/services/preventive</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 服务详情页 - Oral Surgery -->
+  <url>
+    <loc>https://firstavedentalortho.com/services/oral-surgery</loc>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
