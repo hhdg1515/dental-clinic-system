@@ -39,7 +39,19 @@ export const ServiceDetail = () => {
       <div className="flex min-h-screen flex-col">
         <div className="flex-1">
           {/* Hero Section */}
-          <section className="hero-section">
+          <section
+            className="hero-section"
+            style={
+              service.heroImage
+                ? {
+                    backgroundImage: `url(${service.heroImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundAttachment: 'fixed'
+                  }
+                : undefined
+            }
+          >
             <Navigation />
 
             <div className="hero-content">

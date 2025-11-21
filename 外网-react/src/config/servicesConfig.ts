@@ -23,6 +23,9 @@ export interface ServiceConfig {
   seoDescription: string;
   seoKeywords: string;
 
+  // Hero Section
+  heroImage?: string;
+
   // Overview Section
   overviewTitleKey: TranslationKey;
   overviewParagraphs: TranslationKey[];
@@ -321,10 +324,12 @@ export const servicesConfig: Record<string, ServiceConfig> = {
     seoDescription: '根管治疗：专业、无痛的根管治疗服务，保存您的天然牙齿。',
     seoKeywords: '根管治疗, 牙髓治疗, 牙齿保存, 牙痛治疗',
 
+    heroImage: '/images/root-canal-hero.jpg',
+
     overviewTitleKey: 'rootcanal-overview-title',
     overviewParagraphs: ['rootcanal-overview-p1', 'rootcanal-overview-p2', 'rootcanal-overview-p3'],
     overviewHighlightKey: 'rootcanal-overview-highlight',
-    overviewImage: '/images/ro.jpg',
+    overviewImage: '/images/root-canal-overview.jpg',
     overviewImageAltKey: 'rootcanal-card-title',
 
     processTitleKey: 'rootcanal-process-title',
@@ -334,25 +339,25 @@ export const servicesConfig: Record<string, ServiceConfig> = {
         numberKey: 'rootcanal-process-step1-num',
         titleKey: 'rootcanal-process-step1-title',
         descriptionKey: 'rootcanal-process-step1-desc',
-        imageUrl: '/images/ro.jpg'
+        imageUrl: '/images/root-canal-carousel-1.jpg'
       },
       {
         numberKey: 'rootcanal-process-step2-num',
         titleKey: 'rootcanal-process-step2-title',
         descriptionKey: 'rootcanal-process-step2-desc',
-        imageUrl: '/images/family.jpg'
+        imageUrl: '/images/root-canal-carousel-2.jpg'
       },
       {
         numberKey: 'rootcanal-process-step3-num',
         titleKey: 'rootcanal-process-step3-title',
         descriptionKey: 'rootcanal-process-step3-desc',
-        imageUrl: '/images/cosmetic.jpg'
+        imageUrl: '/images/root-canal-carousel-3.jpg'
       },
       {
         numberKey: 'rootcanal-process-step4-num',
         titleKey: 'rootcanal-process-step4-title',
         descriptionKey: 'rootcanal-process-step4-desc',
-        imageUrl: '/images/or.jpg'
+        imageUrl: '/images/root-canal-carousel-4.jpg'
       }
     ],
 
