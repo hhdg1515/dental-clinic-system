@@ -153,10 +153,13 @@ export const servicesConfig: Record<string, ServiceConfig> = {
     seoDescription: '美容牙科服务：牙齿美白、贴面、美学修复。让您拥有自信迷人的笑容。',
     seoKeywords: '美容牙科, 牙齿美白, 牙贴面, 美学修复, 笑容设计',
 
+    // Hero Section with Cosmetic Hero Image
+    heroImage: '/images/cosmetic-hero.jpg',
+
     overviewTitleKey: 'cosmetic-overview-title',
     overviewParagraphs: ['cosmetic-overview-p1', 'cosmetic-overview-p2', 'cosmetic-overview-p3'],
     overviewHighlightKey: 'cosmetic-overview-highlight',
-    overviewImage: '/images/cosmetic.jpg',
+    overviewImage: '/images/cosmetic-overview.jpg',
     overviewImageAltKey: 'cosmetic-card-title',
 
     processTitleKey: 'cosmetic-process-title',
@@ -166,25 +169,25 @@ export const servicesConfig: Record<string, ServiceConfig> = {
         numberKey: 'cosmetic-process-step1-num',
         titleKey: 'cosmetic-process-step1-title',
         descriptionKey: 'cosmetic-process-step1-desc',
-        imageUrl: '/images/cosmetic.jpg'
+        imageUrl: '/images/cosmetic-carousel-1.jpg'
       },
       {
         numberKey: 'cosmetic-process-step2-num',
         titleKey: 'cosmetic-process-step2-title',
         descriptionKey: 'cosmetic-process-step2-desc',
-        imageUrl: '/images/family.jpg'
+        imageUrl: '/images/cosmetic-carousel-2.jpg'
       },
       {
         numberKey: 'cosmetic-process-step3-num',
         titleKey: 'cosmetic-process-step3-title',
         descriptionKey: 'cosmetic-process-step3-desc',
-        imageUrl: '/images/or.jpg'
+        imageUrl: '/images/cosmetic-carousel-3.jpg'
       },
       {
         numberKey: 'cosmetic-process-step4-num',
         titleKey: 'cosmetic-process-step4-title',
         descriptionKey: 'cosmetic-process-step4-desc',
-        imageUrl: '/images/ro.jpg'
+        imageUrl: '/images/cosmetic-carousel-4.jpg'
       }
     ],
 
