@@ -2553,10 +2553,6 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
 
     // Allow clicking on all dates
     if (dateObj) {
-        // Use a click timer to distinguish single click from double click
-        let clickTimer = null;
-        let clickCount = 0;
-
         dateElement.addEventListener('click', (e) => {
             // Check if clicked on add appointment icon
             if (!isOtherMonth && e.target.closest('.add-appointment-icon')) {
@@ -2565,29 +2561,19 @@ function createMonthDateElementOptimized(date, isOtherMonth = false, isToday = f
                 return;
             }
 
-            clickCount++;
+            // Highlight selected day in month view
+            document.querySelectorAll('.month-date.selected').forEach(el => el.classList.remove('selected'));
+            dateElement.classList.add('selected');
 
-            // Clear existing timer
-            if (clickTimer) {
-                clearTimeout(clickTimer);
+            // Update sidebar with this day's appointments
+            updateMonthSidebar(dateObj, appointments);
+        });
+
+        dateElement.addEventListener('dblclick', (e) => {
+            if (!isOtherMonth && e.target.closest('.add-appointment-icon')) {
+                return;
             }
-
-            // Wait to see if it's a double click
-            clickTimer = setTimeout(() => {
-                if (clickCount === 1) {
-                    // Single click action
-                    // Highlight selected day in month view
-                    document.querySelectorAll('.month-date.selected').forEach(el => el.classList.remove('selected'));
-                    dateElement.classList.add('selected');
-
-                    // Update sidebar with this day's appointments
-                    updateMonthSidebar(dateObj, appointments);
-                } else if (clickCount >= 2) {
-                    // Double click action - switch to day view
-                    switchToDayView(dateObj);
-                }
-                clickCount = 0;
-            }, 300); // 300ms delay to detect double click
+            switchToDayView(dateObj);
         });
     }
 
@@ -2709,42 +2695,35 @@ async function createMonthDateElement(date, isOtherMonth = false, isToday = fals
 
 function switchToDayView(selectedDate) {
     if (!(selectedDate instanceof Date) || isNaN(selectedDate.getTime())) {
-        console.error('Invalid date passed to switchToDayView:', selectedDate);
         return;
     }
-
+    
     // Create a clean date object
     const cleanDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 12, 0, 0);
-
+    
     // Update current date
     currentDate = cleanDate;
-
-    // Update day view with selected date (if element exists)
+    
+    // Update day view with selected date
     const dayDateElement = document.getElementById('dayDate');
     if (dayDateElement) {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = cleanDate.toLocaleDateString('en-US', options);
         dayDateElement.textContent = formattedDate;
     }
-
+    
     // Switch to day view
     document.querySelectorAll('.view-content').forEach(content => content.classList.remove('active'));
-    const dayViewElement = document.getElementById('day-view');
-    if (dayViewElement) {
-        dayViewElement.classList.add('active');
-    }
-
+    document.getElementById('day-view').classList.add('active');
+    
     document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-    const dayViewBtn = document.querySelector('[data-view="day"]');
-    if (dayViewBtn) {
-        dayViewBtn.classList.add('active');
-    }
-
+    document.querySelector('[data-view="day"]').classList.add('active');
+    
     currentView = 'day';
-
+    
     // Render day view with unified data
     renderDayView();
-
+    
     // Update live time indicator
     updateLiveTimeIndicator();
 }
@@ -3083,6 +3062,9 @@ let currentAccountPatient = null;
 
 async function showPatientAccountModal(patientData) {
     currentAccountPatient = patientData;
+
+    // Make patient data globally accessible for PDF export
+    window._currentAccountPatient = patientData;
 
     // DEBUG: Log the patient data structure
     console.log('🔍 showPatientAccountModal - patientData:', patientData);
@@ -4111,6 +4093,9 @@ function showToothDetails(userId, toothNum, toothData) {
         treatmentsList.innerHTML = '<p class="treatment-placeholder">No treatment records yet</p>';
     }
 
+    // Load periodontal data
+    loadPeriodontalData(userId, toothNum, toothData);
+
     // Store current values for update
     window.currentToothData = {
         userId: userId,
@@ -4257,3 +4242,214 @@ async function deleteToothTreatment(userId, toothNum, treatmentId) {
         showNotification('❌ Failed to delete treatment record');
     }
 }
+
+/**
+ * ==================== PERIODONTAL DATA FUNCTIONS ====================
+ */
+
+/**
+ * Get selected bleeding points from checkboxes
+ */
+function getSelectedBleedingPoints() {
+    const checkboxes = document.querySelectorAll('.bleeding-checkbox:checked');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+/**
+ * Set bleeding points checkboxes
+ */
+function setBleedingPoints(bleedingPoints = []) {
+    const checkboxes = document.querySelectorAll('.bleeding-checkbox');
+    checkboxes.forEach(cb => {
+        cb.checked = bleedingPoints.includes(cb.value);
+    });
+}
+
+/**
+ * Validate periodontal depth input (0-15mm) and apply visual warnings
+ */
+function validatePeriodontalInput(input) {
+    const value = parseInt(input.value);
+
+    // Remove previous warnings
+    input.classList.remove('perio-warning', 'perio-danger');
+
+    if (isNaN(value) || value < 0) {
+        input.value = 0;
+    } else if (value > 15) {
+        input.value = 15;
+    }
+
+    const depth = parseInt(input.value);
+
+    // Apply visual warnings based on depth
+    if (depth >= 7) {
+        input.classList.add('perio-danger'); // Red warning for severe
+    } else if (depth >= 4) {
+        input.classList.add('perio-warning'); // Yellow warning for moderate
+    }
+}
+
+/**
+ * Load periodontal data for selected tooth
+ */
+async function loadPeriodontalData(userId, toothNum, toothData) {
+    const periodontalData = toothData.periodontal;
+
+    if (periodontalData) {
+        // Load buccal measurements
+        document.getElementById('b-mesial').value = periodontalData.buccal.mesial;
+        document.getElementById('b-mid').value = periodontalData.buccal.mid;
+        document.getElementById('b-distal').value = periodontalData.buccal.distal;
+
+        // Load lingual measurements
+        document.getElementById('l-mesial').value = periodontalData.lingual.mesial;
+        document.getElementById('l-mid').value = periodontalData.lingual.mid;
+        document.getElementById('l-distal').value = periodontalData.lingual.distal;
+
+        // Load bleeding points
+        setBleedingPoints(periodontalData.bleedingPoints || []);
+
+        // Update last measured date
+        const lastMeasuredEl = document.getElementById('lastMeasured');
+        if (periodontalData.measuredAt) {
+            const measuredDate = new Date(periodontalData.measuredAt).toLocaleDateString();
+            lastMeasuredEl.textContent = `Last measured: ${measuredDate}`;
+        } else {
+            lastMeasuredEl.textContent = 'No measurements yet';
+        }
+
+        // Apply visual warnings to all inputs
+        document.querySelectorAll('.perio-input').forEach(input => {
+            validatePeriodontalInput(input);
+        });
+    } else {
+        // Reset to default values
+        document.querySelectorAll('.perio-input').forEach(input => {
+            input.value = 2;
+            input.classList.remove('perio-warning', 'perio-danger');
+        });
+        setBleedingPoints([]);
+        document.getElementById('lastMeasured').textContent = 'No measurements yet';
+    }
+}
+
+/**
+ * Save periodontal data for selected tooth
+ */
+async function savePeriodontalData() {
+    if (!window.currentToothData) {
+        showNotification('⚠️ Please select a tooth first');
+        return;
+    }
+
+    const { userId, toothNum } = window.currentToothData;
+
+    try {
+        // Gather periodontal measurements
+        const periodontalData = {
+            buccal: {
+                mesial: parseInt(document.getElementById('b-mesial').value),
+                mid: parseInt(document.getElementById('b-mid').value),
+                distal: parseInt(document.getElementById('b-distal').value)
+            },
+            lingual: {
+                mesial: parseInt(document.getElementById('l-mesial').value),
+                mid: parseInt(document.getElementById('l-mid').value),
+                distal: parseInt(document.getElementById('l-distal').value)
+            },
+            bleedingPoints: getSelectedBleedingPoints()
+        };
+
+        // Validate all values are within range
+        const allValues = [
+            periodontalData.buccal.mesial,
+            periodontalData.buccal.mid,
+            periodontalData.buccal.distal,
+            periodontalData.lingual.mesial,
+            periodontalData.lingual.mid,
+            periodontalData.lingual.distal
+        ];
+
+        const invalidValues = allValues.filter(v => isNaN(v) || v < 0 || v > 15);
+        if (invalidValues.length > 0) {
+            showNotification('⚠️ Please enter valid depths (0-15mm)');
+            return;
+        }
+
+        // Save to Firebase
+        await window.firebaseDataService.updatePeriodontalData(userId, toothNum, periodontalData);
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        // Update last measured display
+        const lastMeasuredEl = document.getElementById('lastMeasured');
+        lastMeasuredEl.textContent = `Last measured: ${new Date().toLocaleDateString()}`;
+
+        showNotification('✅ Periodontal data updated successfully');
+
+        console.log('📊 Periodontal data saved:', periodontalData);
+    } catch (error) {
+        console.error('❌ Error saving periodontal data:', error);
+        showNotification('❌ Failed to save periodontal data: ' + error.message);
+    }
+}
+
+// Attach input validation listeners when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    const perioInputs = document.querySelectorAll('.perio-input');
+    perioInputs.forEach(input => {
+        input.addEventListener('input', (e) => validatePeriodontalInput(e.target));
+        input.addEventListener('blur', (e) => validatePeriodontalInput(e.target));
+    });
+});
+
+// Simple notification function
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = 'notification-toast';
+    notification.textContent = message;
+
+    // Set style based on type
+    if (message.includes('✅') || message.includes('success')) {
+        notification.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    } else if (message.includes('❌') || message.includes('error') || message.includes('Failed')) {
+        notification.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+    } else if (message.includes('⚠️')) {
+        notification.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+    } else {
+        notification.style.background = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+    }
+
+    // Add styles
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        color: 'white',
+        padding: '12px 24px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: '10000',
+        fontSize: '14px',
+        fontWeight: '500',
+        maxWidth: '400px',
+        animation: 'slideInRight 0.3s ease-out'
+    });
+
+    document.body.appendChild(notification);
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Export functions to global scope for HTML onclick handlers
+window.showNotification = showNotification;
+window.savePeriodontalData = savePeriodontalData;
+window.deleteToothTreatment = deleteToothTreatment;
+window.closeToothDetails = closeToothDetails;

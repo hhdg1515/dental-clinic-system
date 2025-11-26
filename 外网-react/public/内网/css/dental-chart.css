@@ -463,3 +463,271 @@
         font-size: 10px;
     }
 }
+
+/* ==================== DENTAL CHART HEADER ==================== */
+
+.dental-chart-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.dental-chart-header .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.dental-chart-header .btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+}
+
+.dental-chart-header .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.dental-chart-header .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.dental-chart-header .btn-primary i {
+    font-size: 16px;
+}
+
+/* ==================== PERIODONTAL SECTION STYLES ==================== */
+
+.periodontal-section {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.periodontal-section h5 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.periodontal-grid {
+    display: grid;
+    grid-template-columns: auto repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+    background: rgba(248, 250, 252, 0.8);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.grid-header {
+    display: contents;
+}
+
+.grid-header span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-align: center;
+    padding: 4px;
+}
+
+.grid-row {
+    display: contents;
+}
+
+.row-label {
+    font-weight: 600;
+    color: #334155;
+    font-size: 13px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.perio-input {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.perio-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Warning states for periodontal depth */
+.perio-warning {
+    border-color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.05) !important;
+    color: #d97706;
+}
+
+.perio-danger {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.05) !important;
+    color: #dc2626;
+}
+
+.perio-input:hover {
+    border-color: #cbd5e1;
+}
+
+.bleeding-points {
+    margin-bottom: 12px;
+}
+
+.bleeding-points label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #64748b;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.checkbox-group label:hover {
+    background: rgba(241, 245, 249, 0.8);
+}
+
+.bleeding-checkbox {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    accent-color: #ef4444;
+}
+
+.perio-meta {
+    margin-bottom: 12px;
+}
+
+.last-measured {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Periodontal indicator on tooth button (optional future feature) */
+.tooth-btn.has-periodontal::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 6px;
+    height: 6px;
+    background: #3b82f6;
+    border-radius: 50%;
+    border: 1px solid white;
+}
+
+/* Responsive adjustments for periodontal section */
+@media (max-width: 768px) {
+    .periodontal-grid {
+        gap: 6px;
+        padding: 10px;
+    }
+
+    .perio-input {
+        padding: 6px;
+        font-size: 13px;
+    }
+
+    .checkbox-group {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .periodontal-section {
+        padding: 12px;
+    }
+
+    .periodontal-grid {
+        gap: 4px;
+        padding: 8px;
+    }
+
+    .perio-input {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    .checkbox-group {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .row-label {
+        font-size: 12px;
+        padding: 6px;
+    }
+}
+
+/* ==================== NOTIFICATION TOAST ANIMATIONS ==================== */
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}

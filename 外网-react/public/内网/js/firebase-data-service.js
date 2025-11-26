@@ -1523,6 +1523,190 @@ class FirebaseDataService {
 
         return true;
     }
+
+    // ==================== PERIODONTAL DATA METHODS ====================
+
+    // Validate periodontal depth (0-15mm)
+    validatePeriodontalDepth(depth) {
+        const num = parseInt(depth);
+        if (isNaN(num) || num < 0 || num > 15) {
+            throw new Error(`Invalid periodontal depth: ${depth}. Must be 0-15mm.`);
+        }
+        return num;
+    }
+
+    // Validate periodontal data structure
+    validatePeriodontalData(data) {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid periodontal data: must be an object');
+        }
+
+        // Validate buccal measurements
+        if (!data.buccal || typeof data.buccal !== 'object') {
+            throw new Error('Invalid periodontal data: buccal measurements required');
+        }
+        this.validatePeriodontalDepth(data.buccal.mesial);
+        this.validatePeriodontalDepth(data.buccal.mid);
+        this.validatePeriodontalDepth(data.buccal.distal);
+
+        // Validate lingual measurements
+        if (!data.lingual || typeof data.lingual !== 'object') {
+            throw new Error('Invalid periodontal data: lingual measurements required');
+        }
+        this.validatePeriodontalDepth(data.lingual.mesial);
+        this.validatePeriodontalDepth(data.lingual.mid);
+        this.validatePeriodontalDepth(data.lingual.distal);
+
+        // Validate bleeding points (optional)
+        if (data.bleedingPoints && !Array.isArray(data.bleedingPoints)) {
+            throw new Error('Invalid periodontal data: bleedingPoints must be an array');
+        }
+
+        return true;
+    }
+
+    // Update periodontal data for a specific tooth
+    async updatePeriodontalData(userId, toothNum, periodontalData) {
+        await this.ensureReady();
+
+        // Validate inputs
+        const validToothNum = this.validateToothNumber(toothNum);
+        this.validatePeriodontalData(periodontalData);
+
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        const periodontalRecord = {
+            buccal: {
+                mesial: parseInt(periodontalData.buccal.mesial),
+                mid: parseInt(periodontalData.buccal.mid),
+                distal: parseInt(periodontalData.buccal.distal)
+            },
+            lingual: {
+                mesial: parseInt(periodontalData.lingual.mesial),
+                mid: parseInt(periodontalData.lingual.mid),
+                distal: parseInt(periodontalData.lingual.distal)
+            },
+            bleedingPoints: periodontalData.bleedingPoints || [],
+            measuredAt: new Date().toISOString()
+        };
+
+        await updateDoc(chartRef, {
+            [`teeth.${validToothNum}.periodontal`]: periodontalRecord,
+            [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+
+        return periodontalRecord;
+    }
+
+    // Get periodontal data for a specific tooth
+    async getPeriodontalData(userId, toothNum) {
+        await this.ensureReady();
+
+        // Validate tooth number
+        const validToothNum = this.validateToothNumber(toothNum);
+
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+        const chartSnap = await getDoc(chartRef);
+
+        if (chartSnap.exists()) {
+            const chartData = chartSnap.data();
+            const tooth = chartData.teeth?.[validToothNum];
+            return tooth?.periodontal || null;
+        }
+
+        return null;
+    }
+
+    // Delete periodontal data for a specific tooth
+    async deletePeriodontalData(userId, toothNum) {
+        await this.ensureReady();
+
+        // Validate tooth number
+        const validToothNum = this.validateToothNumber(toothNum);
+
+        const { doc, updateDoc, deleteField } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        await updateDoc(chartRef, {
+            [`teeth.${validToothNum}.periodontal`]: deleteField(),
+            [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+
+        return true;
+    }
+
+    // Get periodontal summary for entire dental chart
+    async getPeriodontalSummary(userId) {
+        await this.ensureReady();
+
+        const chartData = await this.getDentalChart(userId);
+        if (!chartData || !chartData.teeth) {
+            return null;
+        }
+
+        const summary = {
+            teethWithData: 0,
+            averageDepth: 0,
+            maxDepth: 0,
+            teethWithBleeding: 0,
+            problemAreas: [] // teeth with depth > 4mm
+        };
+
+        let totalMeasurements = 0;
+        let sumDepth = 0;
+
+        for (let i = 1; i <= 32; i++) {
+            const tooth = chartData.teeth[i.toString()];
+            if (tooth?.periodontal) {
+                summary.teethWithData++;
+
+                const { buccal, lingual, bleedingPoints } = tooth.periodontal;
+                const depths = [
+                    buccal.mesial, buccal.mid, buccal.distal,
+                    lingual.mesial, lingual.mid, lingual.distal
+                ];
+
+                depths.forEach(depth => {
+                    sumDepth += depth;
+                    totalMeasurements++;
+                    if (depth > summary.maxDepth) {
+                        summary.maxDepth = depth;
+                    }
+                });
+
+                // Check for problem areas (depth > 4mm)
+                const maxToothDepth = Math.max(...depths);
+                if (maxToothDepth > 4) {
+                    summary.problemAreas.push({
+                        toothNum: i,
+                        maxDepth: maxToothDepth,
+                        status: tooth.status
+                    });
+                }
+
+                // Check for bleeding
+                if (bleedingPoints && bleedingPoints.length > 0) {
+                    summary.teethWithBleeding++;
+                }
+            }
+        }
+
+        if (totalMeasurements > 0) {
+            summary.averageDepth = (sumDepth / totalMeasurements).toFixed(1);
+        }
+
+        return summary;
+    }
 }
 
 // Create global instance

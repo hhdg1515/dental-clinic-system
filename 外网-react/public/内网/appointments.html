@@ -722,6 +722,11 @@
 
             <!-- Dental Chart Tab -->
             <div class="account-tab-content" id="dental-chart">
+                <div class="dental-chart-header">
+                    <button class="btn-primary" onclick="exportDentalChartPDF()" id="exportPdfBtn">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
                 <div class="dental-chart-section">
                     <div class="dental-chart-container" id="dentalChartContainer">
                         <!-- Dental chart will be rendered here -->
@@ -746,6 +751,47 @@
                                     <option value="urgent">Urgent</option>
                                 </select>
                             </div>
+
+                            <!-- Periodontal Probing Section -->
+                            <div class="periodontal-section" id="periodontalSection">
+                                <h5>Periodontal Probing (6-Point)</h5>
+                                <div class="periodontal-grid">
+                                    <div class="grid-header">
+                                        <span></span>
+                                        <span>Mesial</span>
+                                        <span>Mid</span>
+                                        <span>Distal</span>
+                                    </div>
+                                    <div class="grid-row">
+                                        <span class="row-label">B:</span>
+                                        <input type="number" min="0" max="15" value="2" id="b-mesial" class="perio-input">
+                                        <input type="number" min="0" max="15" value="2" id="b-mid" class="perio-input">
+                                        <input type="number" min="0" max="15" value="2" id="b-distal" class="perio-input">
+                                    </div>
+                                    <div class="grid-row">
+                                        <span class="row-label">L:</span>
+                                        <input type="number" min="0" max="15" value="2" id="l-mesial" class="perio-input">
+                                        <input type="number" min="0" max="15" value="2" id="l-mid" class="perio-input">
+                                        <input type="number" min="0" max="15" value="2" id="l-distal" class="perio-input">
+                                    </div>
+                                </div>
+                                <div class="bleeding-points">
+                                    <label>Bleeding on Probing:</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" value="b-mesial" class="bleeding-checkbox"> B-Mesial</label>
+                                        <label><input type="checkbox" value="b-mid" class="bleeding-checkbox"> B-Mid</label>
+                                        <label><input type="checkbox" value="b-distal" class="bleeding-checkbox"> B-Distal</label>
+                                        <label><input type="checkbox" value="l-mesial" class="bleeding-checkbox"> L-Mesial</label>
+                                        <label><input type="checkbox" value="l-mid" class="bleeding-checkbox"> L-Mid</label>
+                                        <label><input type="checkbox" value="l-distal" class="bleeding-checkbox"> L-Distal</label>
+                                    </div>
+                                </div>
+                                <div class="perio-meta">
+                                    <span class="last-measured" id="lastMeasured">No measurements yet</span>
+                                </div>
+                                <button class="btn-small btn-primary" onclick="savePeriodontalData()">Update Periodontal Data</button>
+                            </div>
+
                             <div class="treatment-history" id="treatmentHistory">
                                 <h5>Treatment History</h5>
                                 <div id="treatmentsList" class="treatments-list">
@@ -774,14 +820,19 @@
     <!-- LocalForage for IndexedDB persistence -->
     <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
 
-    <script src="js/service-mapping.min.js?v=5"></script>
-    <script src="js/cache-manager.min.js?v=5"></script>
-    <script src="js/persistent-cache-manager.min.js?v=5"></script>
-    <script src="js/data-manager.min.js?v=5"></script>
-    <script src="js/shared.min.js?v=5"></script>
-    <script type="module" src="firebase-config.js?v=5"></script>
-    <script src="js/firebase-data-service.min.js?v=5"></script>
-    <script src="js/dental-chart.min.js?v=5"></script>
-    <script type="module" src="js/appointments.min.js?v=5"></script>
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="js/service-mapping.min.js"></script>
+    <script src="js/cache-manager.min.js"></script>
+    <script src="js/persistent-cache-manager.min.js"></script>
+    <script src="js/data-manager.min.js"></script>
+    <script src="js/shared.min.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script src="js/firebase-data-service.js"></script>
+    <script src="js/dental-chart.min.js"></script>
+    <script src="js/dental-chart-pdf.js"></script>
+    <script type="module" src="js/appointments.js"></script>
 </body>
 </html>
