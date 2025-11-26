@@ -218,6 +218,32 @@ function addDetailedFindings(doc, chartData, startY, pageWidth, pageHeight) {
 
             startY += 5;
 
+            // Add detailed classification if available
+            if (tooth.detailedStatus) {
+                const ds = tooth.detailedStatus;
+                const severity = ds.severity.charAt(0).toUpperCase() + ds.severity.slice(1);
+                const surfaces = ds.affectedSurfaces && ds.affectedSurfaces.length > 0
+                    ? ds.affectedSurfaces.join(', ')
+                    : 'N/A';
+
+                doc.setFontSize(8);
+                doc.text(`  Severity: ${severity}`, 22, startY);
+                startY += 3;
+                doc.text(`  Surfaces: ${surfaces}`, 22, startY);
+                startY += 3;
+
+                if (ds.clinicalNotes) {
+                    const notes = ds.clinicalNotes.substring(0, 60) + (ds.clinicalNotes.length > 60 ? '...' : '');
+                    doc.setTextColor(100, 116, 139);
+                    doc.text(`  Notes: ${notes}`, 22, startY);
+                    doc.setTextColor(0, 0, 0);
+                    startY += 4;
+                }
+
+                doc.setFontSize(9);
+                startY += 1;
+            }
+
             // Add periodontal info if available
             if (tooth.periodontal) {
                 const perio = tooth.periodontal;

@@ -1524,6 +1524,75 @@ class FirebaseDataService {
         return true;
     }
 
+    // ==================== DETAILED STATUS CLASSIFICATION METHODS ====================
+
+    validateDetailedStatus(statusData) {
+        // statusData should have: condition, severity, affectedSurfaces, clinicalNotes
+        const validConditions = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op'];
+        const validSeverities = ['none', 'mild', 'moderate', 'severe', 'urgent'];
+        const validSurfaces = ['occlusal', 'buccal', 'lingual', 'mesial', 'distal'];
+
+        if (!statusData.condition || !validConditions.includes(statusData.condition)) {
+            throw new Error(`Invalid condition. Must be one of: ${validConditions.join(', ')}`);
+        }
+
+        if (!statusData.severity || !validSeverities.includes(statusData.severity)) {
+            throw new Error(`Invalid severity. Must be one of: ${validSeverities.join(', ')}`);
+        }
+
+        if (!Array.isArray(statusData.affectedSurfaces)) {
+            throw new Error('affectedSurfaces must be an array');
+        }
+
+        for (const surface of statusData.affectedSurfaces) {
+            if (!validSurfaces.includes(surface)) {
+                throw new Error(`Invalid surface. Must be one of: ${validSurfaces.join(', ')}`);
+            }
+        }
+
+        return true;
+    }
+
+    // Update detailed tooth status
+    async updateDetailedToothStatus(userId, toothNum, statusData) {
+        await this.ensureReady();
+        const { doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const validToothNum = this.validateToothNumber(toothNum);
+        this.validateDetailedStatus(statusData);
+
+        const db = this.validateDatabase();
+        const chartRef = doc(db, 'dentalCharts', userId);
+
+        const detailedStatus = {
+            condition: statusData.condition,
+            severity: statusData.severity,
+            affectedSurfaces: statusData.affectedSurfaces || [],
+            clinicalNotes: statusData.clinicalNotes || '',
+            updatedAt: new Date().toISOString()
+        };
+
+        await updateDoc(chartRef, {
+            [`teeth.${validToothNum}.detailedStatus`]: detailedStatus,
+            [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
+            lastUpdated: new Date().toISOString()
+        });
+
+        return detailedStatus;
+    }
+
+    // Get detailed tooth status
+    async getDetailedToothStatus(userId, toothNum) {
+        await this.ensureReady();
+        const validToothNum = this.validateToothNumber(toothNum);
+
+        const chartData = await this.getDentalChart(userId);
+        if (!chartData || !chartData.teeth) return null;
+
+        const tooth = chartData.teeth[validToothNum.toString()];
+        return tooth ? tooth.detailedStatus : null;
+    }
+
     // ==================== PERIODONTAL DATA METHODS ====================
 
     // Validate periodontal depth (0-15mm)

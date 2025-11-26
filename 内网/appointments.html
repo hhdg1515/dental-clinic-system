@@ -748,8 +748,65 @@
                                     <option value="implant">Implant</option>
                                     <option value="root-canal">Root Canal</option>
                                     <option value="post-op">Post-op</option>
-                                    <option value="urgent">Urgent</option>
                                 </select>
+                            </div>
+
+                            <!-- Detailed Status Classification -->
+                            <div class="detailed-status-section" id="detailedStatusSection">
+                                <h5>Detailed Classification</h5>
+
+                                <div class="status-row">
+                                    <label>Condition:</label>
+                                    <select id="conditionSelect" class="status-select">
+                                        <option value="healthy">Healthy</option>
+                                        <option value="monitor">Monitor</option>
+                                        <option value="cavity">Cavity</option>
+                                        <option value="filled">Filled</option>
+                                        <option value="missing">Missing</option>
+                                        <option value="implant">Implant</option>
+                                        <option value="root-canal">Root Canal</option>
+                                        <option value="post-op">Post-op</option>
+                                    </select>
+                                </div>
+
+                                <div class="status-row">
+                                    <label>Severity:</label>
+                                    <select id="severitySelect" class="status-select">
+                                        <option value="none">None (Healthy)</option>
+                                        <option value="mild">Mild</option>
+                                        <option value="moderate">Moderate</option>
+                                        <option value="severe">Severe</option>
+                                        <option value="urgent">Urgent</option>
+                                    </select>
+                                </div>
+
+                                <div class="status-row">
+                                    <label>Affected Surfaces:</label>
+                                    <div class="surface-checkboxes">
+                                        <label class="surface-label">
+                                            <input type="checkbox" value="occlusal" class="surface-checkbox"> Occlusal
+                                        </label>
+                                        <label class="surface-label">
+                                            <input type="checkbox" value="buccal" class="surface-checkbox"> Buccal
+                                        </label>
+                                        <label class="surface-label">
+                                            <input type="checkbox" value="lingual" class="surface-checkbox"> Lingual
+                                        </label>
+                                        <label class="surface-label">
+                                            <input type="checkbox" value="mesial" class="surface-checkbox"> Mesial
+                                        </label>
+                                        <label class="surface-label">
+                                            <input type="checkbox" value="distal" class="surface-checkbox"> Distal
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="status-row">
+                                    <label>Clinical Notes:</label>
+                                    <textarea id="clinicalNotes" class="clinical-notes" placeholder="Add clinical observations..."></textarea>
+                                </div>
+
+                                <button class="btn-small btn-primary" onclick="saveDetailedStatus()">Save Classification</button>
                             </div>
 
                             <!-- Periodontal Probing Section -->

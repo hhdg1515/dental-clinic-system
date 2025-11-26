@@ -4096,6 +4096,9 @@ function showToothDetails(userId, toothNum, toothData) {
     // Load periodontal data
     loadPeriodontalData(userId, toothNum, toothData);
 
+    // Load detailed status data
+    loadDetailedStatus(toothData);
+
     // Store current values for update
     window.currentToothData = {
         userId: userId,
@@ -4448,8 +4451,84 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
+/**
+ * Load detailed status data for selected tooth
+ */
+function loadDetailedStatus(toothData) {
+    const detailedStatus = toothData.detailedStatus || {};
+
+    // Set condition
+    const conditionSelect = document.getElementById('conditionSelect');
+    if (conditionSelect) {
+        conditionSelect.value = detailedStatus.condition || 'healthy';
+    }
+
+    // Set severity
+    const severitySelect = document.getElementById('severitySelect');
+    if (severitySelect) {
+        severitySelect.value = detailedStatus.severity || 'none';
+    }
+
+    // Set affected surfaces
+    const surfaceCheckboxes = document.querySelectorAll('.surface-checkbox');
+    surfaceCheckboxes.forEach(checkbox => {
+        checkbox.checked = detailedStatus.affectedSurfaces &&
+                          detailedStatus.affectedSurfaces.includes(checkbox.value);
+    });
+
+    // Set clinical notes
+    const clinicalNotes = document.getElementById('clinicalNotes');
+    if (clinicalNotes) {
+        clinicalNotes.value = detailedStatus.clinicalNotes || '';
+    }
+}
+
+/**
+ * Save detailed tooth status
+ */
+async function saveDetailedStatus() {
+    if (!window.currentToothData) {
+        showNotification('⚠️ Please select a tooth first');
+        return;
+    }
+
+    const { userId, toothNum } = window.currentToothData;
+
+    try {
+        // Get selected values
+        const condition = document.getElementById('conditionSelect').value;
+        const severity = document.getElementById('severitySelect').value;
+        const clinicalNotes = document.getElementById('clinicalNotes').value.trim();
+
+        // Get selected surfaces
+        const affectedSurfaces = [];
+        document.querySelectorAll('.surface-checkbox:checked').forEach(checkbox => {
+            affectedSurfaces.push(checkbox.value);
+        });
+
+        const statusData = {
+            condition: condition,
+            severity: severity,
+            affectedSurfaces: affectedSurfaces,
+            clinicalNotes: clinicalNotes
+        };
+
+        // Save to Firebase
+        await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
+
+        // Update cache
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        showNotification('✅ Tooth classification saved successfully');
+    } catch (error) {
+        console.error('❌ Error saving detailed status:', error);
+        showNotification('❌ Failed to save classification: ' + error.message);
+    }
+}
+
 // Export functions to global scope for HTML onclick handlers
 window.showNotification = showNotification;
 window.savePeriodontalData = savePeriodontalData;
 window.deleteToothTreatment = deleteToothTreatment;
 window.closeToothDetails = closeToothDetails;
+window.saveDetailedStatus = saveDetailedStatus;
