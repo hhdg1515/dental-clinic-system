@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Appointments userId - Data Migration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #dc2626;
+            margin-bottom: 20px;
+        }
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        .danger {
+            background: #dc2626;
+        }
+        .danger:hover {
+            background: #b91c1c;
+        }
+        #log {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 0;
+        }
+        .log-error {
+            color: #fca5a5;
+        }
+        .log-success {
+            color: #86efac;
+        }
+        .log-info {
+            color: #93c5fd;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Fix Appointments userId - Data Migration</h1>
+
+        <div class="warning">
+            <strong>⚠️ WARNING:</strong> This script will update ALL appointments in the database to use patient-based userId instead of admin Firebase UID.
+            <br><br>
+            <strong>What it does:</strong>
+            <ul>
+                <li>Scans all appointments in Firebase</li>
+                <li>Identifies appointments with incorrect userId (admin UID format)</li>
+                <li>Regenerates userId based on patientName: <code>patient_[lowercase_name]</code></li>
+                <li>Updates the appointment document in Firebase</li>
+            </ul>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalCount">-</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="fixedCount">0</div>
+                <div class="stat-label">Fixed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="errorCount">0</div>
+                <div class="stat-label">Errors</div>
+            </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <button id="analyzeBtn" onclick="analyzeAppointments()" disabled>1️⃣ Analyze Data (Safe)</button>
+            <button id="fixBtn" onclick="fixAppointments()" disabled class="danger">2️⃣ Fix All Appointments</button>
+        </div>
+
+        <div id="log"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';
+        import { getFirestore, collection, getDocs, doc, updateDoc, query, where } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOofM6QFJb3cp5TKvHnc0KAaS8f_5VJgI",
+            authDomain: "dental-clinic-system-36d83.firebaseapp.com",
+            projectId: "dental-clinic-system-36d83",
+            storageBucket: "dental-clinic-system-36d83.firebasestorage.app",
+            messagingSenderId: "367168721270",
+            appId: "1:367168721270:web:b4f6e3a3c5a9ec2f5c0d3e"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let appointmentsToFix = [];
+        let isAuthenticated = false;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function generatePatientUserId(patientName) {
+            return `patient_${patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        }
+
+        function isAdminUserId(userId) {
+            // Admin UIDs are typically 28 characters and alphanumeric
+            // Patient UIDs start with "patient_"
+            return userId && !userId.startsWith('patient_') && userId.length > 20;
+        }
+
+        window.analyzeAppointments = async function() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const fixBtn = document.getElementById('fixBtn');
+
+            analyzeBtn.disabled = true;
+            log('🔍 Starting analysis...', 'info');
+
+            // Check authentication
+            if (!isAuthenticated) {
+                log('❌ Not authenticated. Please log in to the intranet first.', 'error');
+                log('💡 Open appointments.html or accounts.html and log in, then come back here.', 'info');
+                analyzeBtn.disabled = false;
+                return;
+            }
+
+            try {
+                // Get all appointments
+                const appointmentsRef = collection(db, 'appointments');
+                const snapshot = await getDocs(appointmentsRef);
+
+                log(`📊 Found ${snapshot.size} total appointments`, 'info');
+                document.getElementById('totalCount').textContent = snapshot.size;
+
+                appointmentsToFix = [];
+                let correctCount = 0;
+
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const currentUserId = data.userId;
+                    const patientName = data.patientName;
+
+                    if (!patientName) {
+                        log(`⚠️ Appointment ${docSnap.id} has no patientName`, 'error');
+                        return;
+                    }
+
+                    const correctUserId = generatePatientUserId(patientName);
+
+                    if (isAdminUserId(currentUserId) || currentUserId !== correctUserId) {
+                        appointmentsToFix.push({
+                            id: docSnap.id,
+                            patientName: patientName,
+                            currentUserId: currentUserId,
+                            correctUserId: correctUserId,
+                            date: data.dateKey || 'unknown'
+                        });
+                        log(`❌ NEEDS FIX: ${patientName} (${data.dateKey}) - userId: "${currentUserId}" → "${correctUserId}"`, 'error');
+                    } else {
+                        correctCount++;
+                    }
+                });
+
+                log(`✅ ${correctCount} appointments already have correct userId`, 'success');
+                log(`⚠️ ${appointmentsToFix.length} appointments need fixing`, appointmentsToFix.length > 0 ? 'error' : 'success');
+
+                if (appointmentsToFix.length > 0) {
+                    fixBtn.disabled = false;
+                    log('👆 Click "Fix All Appointments" button to proceed with migration', 'info');
+                } else {
+                    log('✨ All appointments are already correct!', 'success');
+                }
+
+            } catch (error) {
+                log(`💥 Error during analysis: ${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                analyzeBtn.disabled = false;
+            }
+        };
+
+        window.fixAppointments = async function() {
+            if (appointmentsToFix.length === 0) {
+                log('⚠️ No appointments to fix. Run analysis first.', 'error');
+                return;
+            }
+
+            const confirmed = confirm(
+                `⚠️ WARNING: This will update ${appointmentsToFix.length} appointments in the database.\n\n` +
+                `Are you sure you want to proceed?`
+            );
+
+            if (!confirmed) {
+                log('❌ Operation cancelled by user', 'info');
+                return;
+            }
+
+            const fixBtn = document.getElementById('fixBtn');
+            fixBtn.disabled = true;
+
+            log('🚀 Starting migration...', 'info');
+
+            let fixed = 0;
+            let errors = 0;
+
+            for (const apt of appointmentsToFix) {
+                try {
+                    const docRef = doc(db, 'appointments', apt.id);
+                    await updateDoc(docRef, {
+                        userId: apt.correctUserId
+                    });
+
+                    fixed++;
+                    document.getElementById('fixedCount').textContent = fixed;
+                    log(`✅ Fixed: ${apt.patientName} (${apt.date})`, 'success');
+
+                } catch (error) {
+                    errors++;
+                    document.getElementById('errorCount').textContent = errors;
+                    log(`💥 Error fixing ${apt.patientName}: ${error.message}`, 'error');
+                }
+            }
+
+            log(`\n🎉 Migration complete!`, 'success');
+            log(`✅ Successfully fixed: ${fixed}`, 'success');
+            if (errors > 0) {
+                log(`❌ Errors: ${errors}`, 'error');
+            }
+            log(`\n💡 Please refresh the Accounts page to see updated data.`, 'info');
+        };
+
+        // Check authentication status
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                isAuthenticated = true;
+                log('🔌 Connected to Firebase', 'success');
+                log('✅ Authenticated as: ' + (user.email || user.uid), 'success');
+                log('📝 Ready to analyze appointments', 'info');
+
+                // Enable analyze button
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                if (analyzeBtn) analyzeBtn.disabled = false;
+            } else {
+                isAuthenticated = false;
+                log('⚠️ Not authenticated', 'error');
+                log('💡 Please open appointments.html or accounts.html first, log in, then return here.', 'info');
+                log('💡 Firebase authentication is shared across all pages in the same browser.', 'info');
+
+                // Disable buttons
+                const analyzeBtn = document.getElementById('analyzeBtn');
+                const fixBtn = document.getElementById('fixBtn');
+                if (analyzeBtn) analyzeBtn.disabled = true;
+                if (fixBtn) fixBtn.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

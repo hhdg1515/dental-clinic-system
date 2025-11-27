@@ -415,8 +415,30 @@ async function renderConfirmedAppointments(forceReload = false) {
                 app.status !== 'declined'
             );
 
-            // Sort by date (newest first) - use timezone-safe comparison
-            confirmedAppointments.sort((a, b) => {
+            // Group appointments by userId to get unique patients
+            // For each patient, keep only their EARLIEST (first) appointment
+            const patientMap = {};
+            confirmedAppointments.forEach(apt => {
+                const userId = apt.userId || apt.patientName; // Fallback to name if no userId
+
+                if (!patientMap[userId]) {
+                    // First appointment for this patient
+                    patientMap[userId] = apt;
+                } else {
+                    // Compare dates to keep the earliest appointment
+                    const existingDate = patientMap[userId].dateKey || '';
+                    const currentDate = apt.dateKey || '';
+
+                    if (currentDate < existingDate) {
+                        // This appointment is earlier, replace it
+                        patientMap[userId] = apt;
+                    }
+                }
+            });
+
+            // Convert back to array and sort by date (newest first)
+            const uniquePatients = Object.values(patientMap);
+            uniquePatients.sort((a, b) => {
                 // Compare dateKey strings first (YYYY-MM-DD format sorts correctly)
                 const dateComparison = b.dateKey.localeCompare(a.dateKey);
                 if (dateComparison !== 0) {
@@ -426,7 +448,7 @@ async function renderConfirmedAppointments(forceReload = false) {
                 return b.time.localeCompare(a.time);
             });
 
-            confirmedAllData = confirmedAppointments;
+            confirmedAllData = uniquePatients;
             applyConfirmedFilter(true); // Reset page on data reload
         } catch (error) {
             console.error('Error loading confirmed appointments:', error);
