@@ -1776,24 +1776,6 @@ class FirebaseDataService {
 
         return summary;
     }
-}
-
-// Create global instance
-let firebaseDataService = null;
-
-// Initialize when Firebase is ready
-if (typeof window !== 'undefined') {
-    // Wait for Firebase to be ready before creating instance
-    const initializeFirebaseDataService = () => {
-        if (window.firebase && window.firebase.db) {
-            firebaseDataService = new FirebaseDataService();
-            window.firebaseDataService = firebaseDataService;
-            console.log('✅ FirebaseDataService instance created');
-        } else {
-            // Retry after a short delay
-            setTimeout(initializeFirebaseDataService, 100);
-        }
-    };
 
     // ==================== DENTAL CHART HISTORY & SNAPSHOTS ====================
 
@@ -2033,6 +2015,24 @@ if (typeof window !== 'undefined') {
 
         return depths.reduce((sum, d) => sum + d, 0) / 6;
     }
+}
+
+// Create global instance
+let firebaseDataService = null;
+
+// Initialize when Firebase is ready
+if (typeof window !== 'undefined') {
+    // Wait for Firebase to be ready before creating instance
+    const initializeFirebaseDataService = () => {
+        if (window.firebase && window.firebase.db) {
+            firebaseDataService = new FirebaseDataService();
+            window.firebaseDataService = firebaseDataService;
+            console.log('✅ FirebaseDataService instance created');
+        } else {
+            // Retry after a short delay
+            setTimeout(initializeFirebaseDataService, 100);
+        }
+    };
 
     // Start initialization
     initializeFirebaseDataService();
