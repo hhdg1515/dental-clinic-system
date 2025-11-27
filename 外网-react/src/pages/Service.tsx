@@ -19,7 +19,11 @@ export const Service = () => {
   const renderServiceCard = (service: ServiceCard) => {
     return (
       <li key={service.id} className="w-full text-left">
-        <a href={service.detailLink} aria-label={`${t(service.titleKey)} services`} className="block overflow-hidden rounded-[10px]">
+        <a
+          href={service.detailLink}
+          aria-label={`${t(service.titleKey)} services`}
+          className="block overflow-hidden rounded-[10px] hover:opacity-100 focus-visible:opacity-100"
+        >
           <OptimizedImage
             src={service.image}
             alt={t(service.titleKey)}

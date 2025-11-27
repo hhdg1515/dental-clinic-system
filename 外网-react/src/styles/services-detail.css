@@ -973,33 +973,11 @@ html {
 }
 
 .candidate-item {
-    padding: 12px 0 12px 35px;
-    position: relative;
+    padding: 12px 20px;
     font-size: 1.05rem;
     line-height: 1.5;
     color: #555;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.candidate-item:last-child {
-    border-bottom: none;
-}
-
-.checkmark,
-.crossmark {
-    position: absolute;
-    left: 0;
-    font-weight: bold;
-    font-size: 1.3rem;
-    top: 10px;
-}
-
-.candidate-item.suitable .checkmark {
-    color: #72A84A;
-}
-
-.candidate-item.not-suitable .crossmark {
-    color: #d66;
+    text-align: center;
 }
 
 /* Service FAQ */

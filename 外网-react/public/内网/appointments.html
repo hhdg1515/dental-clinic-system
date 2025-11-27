@@ -596,6 +596,7 @@
                 <div class="account-tab-item" data-tab="history">Appointment History</div>
                 <div class="account-tab-item" data-tab="records">Medical Records</div>
                 <div class="account-tab-item" data-tab="dental-chart">Dental Chart</div>
+                <div class="account-tab-item" data-tab="chart-history">Chart History</div>
                 <div class="account-tab-item" data-tab="treatment">Next Treatment</div>
             </div>
         </div>
@@ -844,6 +845,35 @@
                                     <textarea id="treatmentNotes" placeholder="Treatment notes..."></textarea>
                                     <button class="btn-small btn-primary" id="addTreatmentRecordBtn" onclick="saveToothUpdates()">Update Status</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart History Tab -->
+            <div class="account-tab-content" id="chart-history">
+                <div class="chart-history-container">
+                    <div class="history-header">
+                        <h3>Dental Chart History & Snapshots</h3>
+                        <button class="btn-primary" onclick="createNewSnapshot()">
+                            <i class="fas fa-camera"></i> Create Snapshot
+                        </button>
+                    </div>
+
+                    <div class="snapshots-list" id="snapshotsList">
+                        <p class="placeholder-text">No snapshots created yet. Click "Create Snapshot" to save the current chart state.</p>
+                    </div>
+
+                    <!-- Comparison Modal -->
+                    <div id="comparisonModal" class="comparison-modal" style="display: none;">
+                        <div class="comparison-modal-content">
+                            <div class="comparison-header">
+                                <h3>Chart Comparison</h3>
+                                <button class="close-btn" onclick="closeComparisonModal()">&times;</button>
+                            </div>
+                            <div class="comparison-body" id="comparisonBody">
+                                <!-- Comparison results will be displayed here -->
                             </div>
                         </div>
                     </div>

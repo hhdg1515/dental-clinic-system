@@ -28,7 +28,6 @@ export const IdealCandidates = ({
           <ul className="candidates-list">
             {candidateKeys.map((key) => (
               <li key={key} className="candidate-item suitable">
-                <span className="checkmark">✓</span>
                 {t(key)}
               </li>
             ))}
@@ -38,15 +37,14 @@ export const IdealCandidates = ({
         {notSuitableKeys && notSuitableKeys.length > 0 && (
           <div className="not-suitable-candidates">
             <h4 className="candidates-subtitle">{t('not-ideal-for-title' as TranslationKey)}</h4>
-            <ul className="candidates-list">
-              {notSuitableKeys.map((key) => (
-                <li key={key} className="candidate-item not-suitable">
-                  <span className="crossmark">×</span>
-                  {t(key)}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <ul className="candidates-list">
+            {notSuitableKeys.map((key) => (
+              <li key={key} className="candidate-item not-suitable">
+                {t(key)}
+              </li>
+            ))}
+          </ul>
+        </div>
         )}
       </div>
     </div>

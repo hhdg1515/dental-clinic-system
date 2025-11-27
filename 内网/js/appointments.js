@@ -3409,10 +3409,17 @@ document.addEventListener('DOMContentLoaded', function() {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.account-tab-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.account-tab-content').forEach(c => c.classList.remove('active'));
-            
+
             tab.classList.add('active');
             const tabId = tab.getAttribute('data-tab');
             document.getElementById(tabId).classList.add('active');
+
+            // Load snapshots when Chart History tab is opened
+            if (tabId === 'chart-history' && window._currentAccountPatient) {
+                const userId = window._currentAccountPatient.userId ||
+                               `patient_${window._currentAccountPatient.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+                loadChartSnapshots(userId);
+            }
         });
     });
     
@@ -4484,9 +4491,243 @@ async function saveDetailedStatus() {
     }
 }
 
+// ==================== DENTAL CHART HISTORY & SNAPSHOTS ====================
+
+/**
+ * Load snapshots for current patient
+ */
+async function loadChartSnapshots(userId) {
+    try {
+        const snapshots = await window.firebaseDataService.getDentalChartSnapshots(userId);
+        const snapshotsList = document.getElementById('snapshotsList');
+
+        if (!snapshotsList) return;
+
+        if (!snapshots || snapshots.length === 0) {
+            snapshotsList.innerHTML = '<p class="placeholder-text">No snapshots created yet. Click "Create Snapshot" to save the current chart state.</p>';
+            return;
+        }
+
+        snapshotsList.innerHTML = snapshots.map(snapshot => {
+            const date = new Date(snapshot.createdAt);
+            const formattedDate = date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            return `
+                <div class="snapshot-card" data-snapshot-id="${snapshot.id}">
+                    <div class="snapshot-header">
+                        <div class="snapshot-info">
+                            <h4>${snapshot.description || 'Chart Snapshot'}</h4>
+                            <div class="snapshot-date">${formattedDate}</div>
+                        </div>
+                        <div class="snapshot-actions">
+                            <button class="btn-small btn-compare" onclick="compareWithSnapshot('${snapshot.id}')">
+                                <i class="fas fa-exchange-alt"></i> Compare
+                            </button>
+                            <button class="btn-small btn-delete" onclick="deleteSnapshot('${snapshot.id}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    ${snapshot.description ? `<div class="snapshot-description">${snapshot.description}</div>` : ''}
+                </div>
+            `;
+        }).join('');
+
+    } catch (error) {
+        console.error('❌ Error loading snapshots:', error);
+        showNotification('❌ Failed to load snapshots');
+    }
+}
+
+/**
+ * Create a new snapshot
+ */
+async function createNewSnapshot() {
+    if (!window._currentAccountPatient) {
+        showNotification('⚠️ No patient selected');
+        return;
+    }
+
+    const userId = window._currentAccountPatient.userId ||
+                   `patient_${window._currentAccountPatient.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    // Prompt for description
+    const description = prompt('Enter a description for this snapshot (optional):');
+    if (description === null) return; // User cancelled
+
+    try {
+        showNotification('📸 Creating snapshot...');
+
+        await window.firebaseDataService.createDentalChartSnapshot(userId, description || 'Chart snapshot');
+
+        showNotification('✅ Snapshot created successfully');
+
+        // Reload snapshots list
+        await loadChartSnapshots(userId);
+
+    } catch (error) {
+        console.error('❌ Error creating snapshot:', error);
+        showNotification('❌ Failed to create snapshot: ' + error.message);
+    }
+}
+
+/**
+ * Delete a snapshot
+ */
+async function deleteSnapshot(snapshotId) {
+    if (!confirm('Are you sure you want to delete this snapshot? This cannot be undone.')) {
+        return;
+    }
+
+    try {
+        await window.firebaseDataService.deleteSnapshot(snapshotId);
+        showNotification('✅ Snapshot deleted successfully');
+
+        // Reload snapshots list
+        if (window._currentAccountPatient) {
+            const userId = window._currentAccountPatient.userId ||
+                           `patient_${window._currentAccountPatient.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+            await loadChartSnapshots(userId);
+        }
+
+    } catch (error) {
+        console.error('❌ Error deleting snapshot:', error);
+        showNotification('❌ Failed to delete snapshot');
+    }
+}
+
+/**
+ * Compare current chart with a snapshot
+ */
+async function compareWithSnapshot(snapshotId) {
+    if (!window._currentAccountPatient) {
+        showNotification('⚠️ No patient selected');
+        return;
+    }
+
+    const userId = window._currentAccountPatient.userId ||
+                   `patient_${window._currentAccountPatient.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    try {
+        showNotification('📊 Comparing charts...');
+
+        const comparison = await window.firebaseDataService.compareWithSnapshot(userId, snapshotId);
+
+        // Display comparison in modal
+        displayComparison(comparison);
+
+        showNotification('✅ Comparison complete');
+
+    } catch (error) {
+        console.error('❌ Error comparing charts:', error);
+        showNotification('❌ Failed to compare: ' + error.message);
+    }
+}
+
+/**
+ * Display comparison results in modal
+ */
+function displayComparison(comparison) {
+    const modal = document.getElementById('comparisonModal');
+    const body = document.getElementById('comparisonBody');
+
+    if (!modal || !body) return;
+
+    const snapshotDate = new Date(comparison.snapshotDate).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const currentDate = new Date(comparison.currentDate).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    if (comparison.totalChanges === 0) {
+        body.innerHTML = `
+            <div class="no-changes">
+                <i class="fas fa-check-circle"></i>
+                <div>No changes detected since snapshot</div>
+                <div style="font-size: 14px; color: #64748b; margin-top: 8px;">
+                    Snapshot: ${snapshotDate}
+                </div>
+            </div>
+        `;
+    } else {
+        const changesHTML = comparison.changes.map(toothChange => `
+            <div class="change-card">
+                <div class="change-card-header">
+                    <span class="tooth-number-badge">Tooth #${toothChange.toothNum}</span>
+                    <span class="change-count">${toothChange.changes.length} change${toothChange.changes.length > 1 ? 's' : ''}</span>
+                </div>
+                <div class="change-items">
+                    ${toothChange.changes.map(change => `
+                        <div class="change-item">
+                            <span class="change-field">${change.field}</span>
+                            <span class="change-old">${change.old}</span>
+                            <span class="change-arrow">→</span>
+                            <span class="change-new">${change.new}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        body.innerHTML = `
+            <div class="comparison-summary">
+                <h4>Comparison Summary</h4>
+                <div class="summary-row">
+                    <span class="summary-label">Snapshot Date:</span>
+                    <span class="summary-value">${snapshotDate}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Current Date:</span>
+                    <span class="summary-value">${currentDate}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Total Changes:</span>
+                    <span class="summary-value">${comparison.totalChanges} tooth/teeth</span>
+                </div>
+            </div>
+            <div class="changes-list">
+                ${changesHTML}
+            </div>
+        `;
+    }
+
+    modal.style.display = 'flex';
+}
+
+/**
+ * Close comparison modal
+ */
+function closeComparisonModal() {
+    const modal = document.getElementById('comparisonModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
 // Export functions to global scope for HTML onclick handlers
 window.showNotification = showNotification;
 window.savePeriodontalData = savePeriodontalData;
 window.deleteToothTreatment = deleteToothTreatment;
 window.closeToothDetails = closeToothDetails;
 window.saveDetailedStatus = saveDetailedStatus;
+window.createNewSnapshot = createNewSnapshot;
+window.deleteSnapshot = deleteSnapshot;
+window.compareWithSnapshot = compareWithSnapshot;
+window.closeComparisonModal = closeComparisonModal;
+window.loadChartSnapshots = loadChartSnapshots;

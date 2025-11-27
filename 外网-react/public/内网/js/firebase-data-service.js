@@ -1795,6 +1795,245 @@ if (typeof window !== 'undefined') {
         }
     };
 
+    // ==================== DENTAL CHART HISTORY & SNAPSHOTS ====================
+
+    /**
+     * Create a snapshot of the current dental chart state
+     */
+    async createDentalChartSnapshot(userId, description = '') {
+        await this.ensureReady();
+        const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+
+        // Get current chart data
+        const currentChart = await this.getDentalChart(userId);
+        if (!currentChart) {
+            throw new Error('No dental chart found for this user');
+        }
+
+        // Create snapshot document
+        const snapshotData = {
+            userId: userId,
+            patientName: currentChart.patientName,
+            description: description || 'Chart snapshot',
+            chartData: currentChart.teeth, // Store teeth data
+            createdAt: new Date().toISOString(),
+            timestamp: serverTimestamp()
+        };
+
+        const snapshotsRef = collection(db, 'dentalChartSnapshots');
+        const docRef = await addDoc(snapshotsRef, snapshotData);
+
+        console.log('✅ Snapshot created:', docRef.id);
+        return { id: docRef.id, ...snapshotData };
+    }
+
+    /**
+     * Get all snapshots for a user
+     */
+    async getDentalChartSnapshots(userId) {
+        await this.ensureReady();
+        const { collection, query, where, orderBy, getDocs } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const snapshotsRef = collection(db, 'dentalChartSnapshots');
+        const q = query(
+            snapshotsRef,
+            where('userId', '==', userId),
+            orderBy('createdAt', 'desc')
+        );
+
+        const querySnapshot = await getDocs(q);
+        const snapshots = [];
+
+        querySnapshot.forEach((doc) => {
+            snapshots.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        return snapshots;
+    }
+
+    /**
+     * Get a specific snapshot by ID
+     */
+    async getSnapshot(snapshotId) {
+        await this.ensureReady();
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const snapshotRef = doc(db, 'dentalChartSnapshots', snapshotId);
+        const snapshotDoc = await getDoc(snapshotRef);
+
+        if (!snapshotDoc.exists()) {
+            return null;
+        }
+
+        return {
+            id: snapshotDoc.id,
+            ...snapshotDoc.data()
+        };
+    }
+
+    /**
+     * Delete a snapshot
+     */
+    async deleteSnapshot(snapshotId) {
+        await this.ensureReady();
+        const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const snapshotRef = doc(db, 'dentalChartSnapshots', snapshotId);
+        await deleteDoc(snapshotRef);
+
+        console.log('✅ Snapshot deleted:', snapshotId);
+        return true;
+    }
+
+    /**
+     * Compare current chart with a snapshot
+     * Returns array of changes
+     */
+    async compareWithSnapshot(userId, snapshotId) {
+        await this.ensureReady();
+
+        // Get current chart
+        const currentChart = await this.getDentalChart(userId);
+        if (!currentChart) {
+            throw new Error('No current chart found');
+        }
+
+        // Get snapshot
+        const snapshot = await this.getSnapshot(snapshotId);
+        if (!snapshot) {
+            throw new Error('Snapshot not found');
+        }
+
+        const changes = [];
+
+        // Compare each tooth
+        for (let i = 1; i <= 32; i++) {
+            const toothNum = i.toString();
+            const currentTooth = currentChart.teeth[toothNum];
+            const snapshotTooth = snapshot.chartData[toothNum];
+
+            if (!currentTooth || !snapshotTooth) continue;
+
+            const toothChanges = {
+                toothNum: i,
+                changes: []
+            };
+
+            // Compare status
+            if (currentTooth.status !== snapshotTooth.status) {
+                toothChanges.changes.push({
+                    field: 'status',
+                    old: snapshotTooth.status,
+                    new: currentTooth.status
+                });
+            }
+
+            // Compare detailed status
+            if (currentTooth.detailedStatus || snapshotTooth.detailedStatus) {
+                const currentDS = currentTooth.detailedStatus || {};
+                const snapshotDS = snapshotTooth.detailedStatus || {};
+
+                if (currentDS.condition !== snapshotDS.condition) {
+                    toothChanges.changes.push({
+                        field: 'condition',
+                        old: snapshotDS.condition,
+                        new: currentDS.condition
+                    });
+                }
+
+                if (currentDS.severity !== snapshotDS.severity) {
+                    toothChanges.changes.push({
+                        field: 'severity',
+                        old: snapshotDS.severity,
+                        new: currentDS.severity
+                    });
+                }
+            }
+
+            // Compare periodontal data
+            if (currentTooth.periodontal || snapshotTooth.periodontal) {
+                const currentPerio = currentTooth.periodontal;
+                const snapshotPerio = snapshotTooth.periodontal;
+
+                if (currentPerio && snapshotPerio) {
+                    // Calculate average depths
+                    const currentAvg = this.calculateAvgDepth(currentPerio);
+                    const snapshotAvg = this.calculateAvgDepth(snapshotPerio);
+
+                    if (Math.abs(currentAvg - snapshotAvg) > 0.5) {
+                        toothChanges.changes.push({
+                            field: 'periodontal',
+                            old: `${snapshotAvg.toFixed(1)}mm`,
+                            new: `${currentAvg.toFixed(1)}mm`
+                        });
+                    }
+                } else if (currentPerio && !snapshotPerio) {
+                    toothChanges.changes.push({
+                        field: 'periodontal',
+                        old: 'No data',
+                        new: 'Data added'
+                    });
+                } else if (!currentPerio && snapshotPerio) {
+                    toothChanges.changes.push({
+                        field: 'periodontal',
+                        old: 'Data existed',
+                        new: 'Data removed'
+                    });
+                }
+            }
+
+            // Compare treatment count
+            const currentTreatments = currentTooth.treatments?.length || 0;
+            const snapshotTreatments = snapshotTooth.treatments?.length || 0;
+
+            if (currentTreatments > snapshotTreatments) {
+                toothChanges.changes.push({
+                    field: 'treatments',
+                    old: `${snapshotTreatments} records`,
+                    new: `${currentTreatments} records (+${currentTreatments - snapshotTreatments})`
+                });
+            }
+
+            if (toothChanges.changes.length > 0) {
+                changes.push(toothChanges);
+            }
+        }
+
+        return {
+            snapshotDate: snapshot.createdAt,
+            snapshotDescription: snapshot.description,
+            currentDate: new Date().toISOString(),
+            totalChanges: changes.length,
+            changes: changes
+        };
+    }
+
+    /**
+     * Helper: Calculate average periodontal depth
+     */
+    calculateAvgDepth(periodontalData) {
+        if (!periodontalData) return 0;
+
+        const depths = [
+            periodontalData.buccal.mesial,
+            periodontalData.buccal.mid,
+            periodontalData.buccal.distal,
+            periodontalData.lingual.mesial,
+            periodontalData.lingual.mid,
+            periodontalData.lingual.distal
+        ];
+
+        return depths.reduce((sum, d) => sum + d, 0) / 6;
+    }
+
     // Start initialization
     initializeFirebaseDataService();
 }
