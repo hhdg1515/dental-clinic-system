@@ -1826,17 +1826,27 @@ class FirebaseDataService {
             orderBy('createdAt', 'desc')
         );
 
-        const querySnapshot = await getDocs(q);
-        const snapshots = [];
+        try {
+            const querySnapshot = await getDocs(q);
+            const snapshots = [];
 
-        querySnapshot.forEach((doc) => {
-            snapshots.push({
-                id: doc.id,
-                ...doc.data()
+            querySnapshot.forEach((doc) => {
+                snapshots.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
             });
-        });
 
-        return snapshots;
+            return snapshots;
+        } catch (error) {
+            // If no snapshots exist or permission denied, return empty array
+            if (error.code === 'permission-denied' || error.code === 'not-found') {
+                console.log('📝 No snapshots found or access denied (this is normal if none exist yet)');
+                return [];
+            }
+            // Re-throw other errors
+            throw error;
+        }
     }
 
     /**
@@ -1848,16 +1858,26 @@ class FirebaseDataService {
 
         const db = this.validateDatabase();
         const snapshotRef = doc(db, 'dentalChartSnapshots', snapshotId);
-        const snapshotDoc = await getDoc(snapshotRef);
 
-        if (!snapshotDoc.exists()) {
-            return null;
+        try {
+            const snapshotDoc = await getDoc(snapshotRef);
+
+            if (!snapshotDoc.exists()) {
+                return null;
+            }
+
+            return {
+                id: snapshotDoc.id,
+                ...snapshotDoc.data()
+            };
+        } catch (error) {
+            // Handle permission errors gracefully
+            if (error.code === 'permission-denied') {
+                console.log('⚠️ Permission denied accessing snapshot');
+                return null;
+            }
+            throw error;
         }
-
-        return {
-            id: snapshotDoc.id,
-            ...snapshotDoc.data()
-        };
     }
 
     /**

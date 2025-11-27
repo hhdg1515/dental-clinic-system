@@ -4540,8 +4540,11 @@ async function loadChartSnapshots(userId) {
         }).join('');
 
     } catch (error) {
-        console.error('❌ Error loading snapshots:', error);
-        showNotification('❌ Failed to load snapshots');
+        console.error('Error loading snapshots:', error);
+        // Only show notification for real errors, not permission denied
+        if (error.code !== 'permission-denied') {
+            showNotification('❌ Failed to load snapshots');
+        }
     }
 }
 
