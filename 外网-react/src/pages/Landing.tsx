@@ -253,7 +253,7 @@ export const Landing = () => {
           />
         </div>
 
-        <div className="flex w-full justify-center text-left lg:w-[45%]">
+        <div className="relative flex w-full justify-center text-left lg:w-[45%]">
           <div className="w-full max-w-[400px]">
             {loginToolsVisible ? (
               currentUser ? (
@@ -267,15 +267,14 @@ export const Landing = () => {
               </div>
             )}
           </div>
+          <img
+            src="/images/fern.svg"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute top-8 left-full w-44 -translate-x-6 rotate-[12deg] opacity-25 md:top-12 md:w-52"
+          />
         </div>
       </div>
-
-      <img
-        src="/images/fern.svg"
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-12 right-8 w-40 rotate-[18deg] opacity-70 md:w-48"
-      />
     </section>
 
       {/* Community Showcase Section */}

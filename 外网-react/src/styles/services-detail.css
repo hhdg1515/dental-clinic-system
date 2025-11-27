@@ -1009,8 +1009,8 @@ html {
 }
 
 .faq-item.open {
-    border-color: #D4A574;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #f0f0f0;
+    box-shadow: none;
 }
 
 .faq-question {

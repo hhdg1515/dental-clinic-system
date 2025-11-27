@@ -116,34 +116,36 @@ export const Footer = () => {
       {/* Bottom Bar - Deep Green Section - Sticky to bottom */}
       <div className="relative z-[61] bg-[#213330] text-white">
         <div className="mx-auto w-[80%] max-w-[1200px] px-8 py-5">
-          <div className="flex flex-wrap items-center justify-center gap-4 text-[0.9rem] text-white/80">
-            <button
-              type="button"
-              onClick={scrollToTop}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 transition duration-300 hover:bg-white/20 hover:shadow-[0_5px_15px_rgba(0,0,0,0.3)] hover:-translate-y-[3px] active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-              aria-label="Back to top"
-            >
-              <i className="fas fa-chevron-up text-[16px]" aria-hidden="true" />
-            </button>
-            <p className="text-center tracking-[0.5px]">
-              Ac 2025 XXXXX – All rights reserved{' '}
-              <i className="fas fa-heart px-[4px] text-[#ff6b6b]" aria-hidden="true" /> to all our amazing patients
-            </p>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[0.85rem] text-white/60">
-            <Link
-              to="/privacy-policy"
-              className="transition duration-300 hover:text-white hover:underline"
-            >
-              Privacy Policy
-            </Link>
-            <span className="hidden sm:inline text-white/40">•</span>
-            <Link
-              to="/terms-of-service"
-              className="transition duration-300 hover:text-white hover:underline"
-            >
-              Terms of Service
-            </Link>
+          <div className="flex flex-wrap items-center justify-between gap-4 text-[0.9rem] text-white/80">
+            <div className="flex flex-wrap items-center gap-4">
+              <button
+                type="button"
+                onClick={scrollToTop}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 transition duration-300 hover:bg-white/20 hover:shadow-[0_5px_15px_rgba(0,0,0,0.3)] hover:-translate-y-[3px] active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                aria-label="Back to top"
+              >
+                <i className="fas fa-chevron-up text-[16px]" aria-hidden="true" />
+              </button>
+              <p className="text-center tracking-[0.5px]">
+                Ac 2025 XXXXX – All rights reserved{' '}
+                <i className="fas fa-heart px-[4px] text-[#ff6b6b]" aria-hidden="true" /> to all our amazing patients
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[0.85rem] text-white/60">
+              <Link
+                to="/privacy-policy"
+                className="transition duration-300 hover:text-white hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              <span className="hidden sm:inline text-white/40">•</span>
+              <Link
+                to="/terms-of-service"
+                className="transition duration-300 hover:text-white hover:underline"
+              >
+                Terms of Service
+              </Link>
+            </div>
           </div>
         </div>
       </div>

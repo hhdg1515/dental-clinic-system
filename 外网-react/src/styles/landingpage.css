@@ -1034,7 +1034,7 @@ body {
 .visit-amenities-section {
     background: white;
     padding: 80px 0 40px 0;
-    overflow-x: hidden; /* é˜²æ­¢æ¨ªå‘æº¢å‡º */
+    overflow: hidden; /* é˜²æ­¢æº¢å‡ºå¯¼è‡´é¢å¤–æ»šåŠ¨æ¡ */
     position: relative;
     width: 100%; /* å…¨å®½èƒŒæ™¯ */
 }
