@@ -331,6 +331,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+}
+
+/* Documentation status borders for appointment items */
+.popup-appointment-item.doc-pending {
+    border-left: 4px solid #f59e0b;
+}
+
+.popup-appointment-item.doc-completed {
+    border-left: 4px solid #10b981;
 }
 
 .popup-appointment-item:hover {
