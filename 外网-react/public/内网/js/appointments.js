@@ -4556,10 +4556,6 @@ async function saveDetailedStatus() {
         // Save detailed status to Firebase
         await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
 
-        // ALSO update the main tooth status field for color display
-        // The condition maps directly to the status used for coloring
-        await window.firebaseDataService.updateToothStatus(userId, toothNum, { status: condition });
-
         // Update cache
         window.cacheManager.onDentalChartUpdated(userId);
 

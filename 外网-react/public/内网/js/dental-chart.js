@@ -106,11 +106,14 @@ class DentalChart {
 
     generateToothButtons(toothNumbers) {
         return toothNumbers.map(num => {
-            const tooth = this.teethData[num.toString()] || { status: 'healthy', treatments: [] };
+            const tooth = this.teethData[num.toString()] || { detailedStatus: { condition: 'healthy' }, treatments: [] };
 
-            // Validate tooth status against whitelist to prevent XSS in CSS
+            // Get condition from detailedStatus (new system) or fallback to status (legacy)
+            const condition = tooth.detailedStatus?.condition || tooth.status || 'healthy';
+
+            // Validate tooth condition against whitelist to prevent XSS in CSS
             const validStatuses = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op', 'urgent'];
-            const safeStatus = validStatuses.includes(tooth.status) ? tooth.status : 'healthy';
+            const safeStatus = validStatuses.includes(condition) ? condition : 'healthy';
             const color = this.statusColors[safeStatus];
 
             const treatmentCount = tooth.treatments ? tooth.treatments.length : 0;
