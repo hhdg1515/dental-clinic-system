@@ -2767,15 +2767,16 @@ async function updateAppointmentStatus(newStatus, additionalData = {}) {
                 message = 'Appointment put on hold';
                 break;
         }
-        
+
         // Update status display in popup
         if (currentAppointmentData) {
             currentAppointmentData.status = newStatus;
             updateProcessModalDisplay(currentAppointmentData);
         }
-        
-        // Save appointment date before clearing data
+
+        // Save appointment data before clearing
         const appointmentDate = currentAppointmentData.date;
+        const patientName = currentAppointmentData.patientName;
 
         // NOTE: Cache invalidation is now handled by data-manager.js via GlobalCacheManager
         // No need to manually clear cache here
@@ -2784,6 +2785,13 @@ async function updateAppointmentStatus(newStatus, additionalData = {}) {
 
         // Close the process modal immediately using proper closeModal function
         closeModal('processModal');
+
+        // If completed, prompt to update dental chart
+        if (newStatus === 'completed' && patientName) {
+            setTimeout(() => {
+                promptUpdateDentalChart(patientName);
+            }, 500);
+        }
 
         // Clear current appointment data
         currentAppointmentData = null;
@@ -4723,6 +4731,107 @@ function closeComparisonModal() {
     }
 }
 
+// ==================== APPOINTMENT & DENTAL CHART INTEGRATION ====================
+
+/**
+ * Prompt user to update dental chart after completing appointment
+ */
+function promptUpdateDentalChart(patientName) {
+    if (!patientName) return;
+
+    const confirmed = confirm(
+        `Appointment completed for ${patientName}.\n\n` +
+        `Would you like to update their dental chart now?`
+    );
+
+    if (confirmed) {
+        openPatientDentalChart(patientName);
+    }
+}
+
+/**
+ * Open patient account modal and navigate to dental chart tab
+ */
+async function openPatientDentalChart(patientName) {
+    try {
+        // Create patient data object
+        const userId = `patient_${patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        const patientData = {
+            patientName: patientName,
+            userId: userId,
+            phone: '',
+            email: ''
+        };
+
+        // Open patient account modal (this function already exists)
+        if (typeof showPatientAccountModal === 'function') {
+            await showPatientAccountModal(patientData);
+
+            // Wait for modal to open then switch to dental chart tab
+            setTimeout(() => {
+                const dentalChartTab = document.querySelector('[data-tab="dental-chart"]');
+                if (dentalChartTab) {
+                    dentalChartTab.click();
+                }
+            }, 300);
+        }
+    } catch (error) {
+        console.error('Error opening dental chart:', error);
+        showNotification('❌ Failed to open dental chart');
+    }
+}
+
+/**
+ * Get most recent completed appointment for a patient
+ */
+async function getLastCompletedAppointment(patientName) {
+    try {
+        const allAppointments = await window.firebaseDataService.getAllAppointments();
+
+        // Filter by patient name and completed status
+        const completedAppointments = allAppointments.filter(apt =>
+            apt.patientName === patientName &&
+            apt.status === 'completed'
+        );
+
+        if (completedAppointments.length === 0) {
+            return null;
+        }
+
+        // Sort by date (most recent first)
+        completedAppointments.sort((a, b) => {
+            const dateA = new Date(a.appointmentDate);
+            const dateB = new Date(b.appointmentDate);
+            return dateB - dateA;
+        });
+
+        return completedAppointments[0];
+    } catch (error) {
+        console.error('Error fetching last appointment:', error);
+        return null;
+    }
+}
+
+/**
+ * View dental chart from appointment modal
+ */
+function viewDentalChartFromAppointment() {
+    if (!currentAppointmentData || !currentAppointmentData.patientName) {
+        showNotification('⚠️ No patient selected');
+        return;
+    }
+
+    const patientName = currentAppointmentData.patientName;
+
+    // Close process modal
+    closeModal('processModal');
+
+    // Open dental chart
+    setTimeout(() => {
+        openPatientDentalChart(patientName);
+    }, 200);
+}
+
 // Export functions to global scope for HTML onclick handlers
 window.showNotification = showNotification;
 window.savePeriodontalData = savePeriodontalData;
@@ -4734,3 +4843,7 @@ window.deleteSnapshot = deleteSnapshot;
 window.compareWithSnapshot = compareWithSnapshot;
 window.closeComparisonModal = closeComparisonModal;
 window.loadChartSnapshots = loadChartSnapshots;
+window.promptUpdateDentalChart = promptUpdateDentalChart;
+window.openPatientDentalChart = openPatientDentalChart;
+window.getLastCompletedAppointment = getLastCompletedAppointment;
+window.viewDentalChartFromAppointment = viewDentalChartFromAppointment;
