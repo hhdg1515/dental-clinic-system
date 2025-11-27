@@ -1574,6 +1574,7 @@ class FirebaseDataService {
 
         await updateDoc(chartRef, {
             [`teeth.${validToothNum}.detailedStatus`]: detailedStatus,
+            [`teeth.${validToothNum}.status`]: detailedStatus.condition,
             [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         });

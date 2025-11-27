@@ -122,7 +122,7 @@
         <button class="view-btn" data-view="day">Day</button>
         <button class="view-btn" data-view="month">Month</button>
     </div>
-
+    
     <button class="new-appointment-btn" id="newAppointmentBtn">
         <i class="fas fa-plus"></i>
         New Appointment
@@ -326,21 +326,8 @@
                             <i class="fas fa-tooth"></i> View Dental Chart
                         </button>
                     </div>
-
-                    <!-- Documentation Status Section -->
-                    <div class="documentation-status" id="documentationStatus" style="display: none;">
-                        <div class="doc-status-header">
-                            <span class="doc-label">📋 Medical Documentation</span>
-                            <span class="doc-badge" id="docBadge">⚠️ Pending</span>
-                        </div>
-                        <div class="doc-actions">
-                            <button class="btn-complete-doc" id="markDocumentedBtn" onclick="markAsDocumented()" style="display: none;">
-                                <i class="fas fa-check-circle"></i> Mark as Documented
-                            </button>
-                        </div>
-                    </div>
                 </div>
-
+                
                 <div class="process-actions">
                     <h4>Select Action:</h4>
                     <div class="action-buttons-grid">
@@ -811,7 +798,6 @@
                                     <textarea id="clinicalNotes" class="clinical-notes" placeholder="Add clinical observations..."></textarea>
                                 </div>
 
-                                <button class="btn-small btn-primary" onclick="saveDetailedStatus()">Save Classification</button>
                             </div>
 
                             <!-- Periodontal Probing Section -->
@@ -851,7 +837,6 @@
                                 <div class="perio-meta">
                                     <span class="last-measured" id="lastMeasured">No measurements yet</span>
                                 </div>
-                                <button class="btn-small btn-primary" onclick="savePeriodontalData()">Update Periodontal Data</button>
                             </div>
 
                             <div class="treatment-history" id="treatmentHistory">
@@ -860,9 +845,14 @@
                                     <p class="treatment-placeholder">Select a tooth to view history</p>
                                 </div>
                                 <div class="add-treatment">
-                                    <textarea id="treatmentNotes" placeholder="Treatment notes..."></textarea>
-                                    <button class="btn-small btn-primary" id="addTreatmentRecordBtn" onclick="saveToothUpdates()">Update Status</button>
+                                    <textarea id="treatmentNotes" placeholder="Clinical/treatment note (optional)..."></textarea>
                                 </div>
+                            </div>
+
+                            <div class="update-actions">
+                                <button class="btn-small btn-primary" id="updateToothBtn" onclick="saveToothUpdates()">
+                                    Update Status
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -922,7 +912,7 @@
     <script src="js/shared.min.js"></script>
     <script type="module" src="firebase-config.js"></script>
     <script src="js/firebase-data-service.js"></script>
-    <script src="js/dental-chart.min.js"></script>
+    <script src="js/dental-chart.js"></script>
     <script src="js/dental-chart-pdf.js"></script>
     <script type="module" src="js/appointments.js"></script>
 </body>

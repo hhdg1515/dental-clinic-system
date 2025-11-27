@@ -4178,19 +4178,103 @@ async function addTreatmentRecord() {
 }
 
 /**
- * Save treatment record
+ * Unified save: classification + optional perio + optional note
  */
 async function saveToothUpdates() {
-    if (!window.currentToothData) return;
-
-    const notes = document.getElementById('treatmentNotes').value.trim();
-
-    if (!notes) {
-        showNotification('⚠️ Please enter treatment notes');
+    if (!window.currentToothData) {
+        showNotification('⚠️ Please select a tooth first');
         return;
     }
 
-    await addTreatmentRecord();
+    const { userId, toothNum } = window.currentToothData;
+
+    try {
+        // Classification fields
+        const condition = document.getElementById('conditionSelect').value;
+        const severity = document.getElementById('severitySelect').value;
+        const clinicalNotes = document.getElementById('clinicalNotes').value.trim();
+
+        const affectedSurfaces = [];
+        document.querySelectorAll('.surface-checkbox:checked').forEach(checkbox => {
+            affectedSurfaces.push(checkbox.value);
+        });
+
+        const statusData = {
+            condition,
+            severity,
+            affectedSurfaces,
+            clinicalNotes
+        };
+
+        // Save detailed status (also updates tooth.status)
+        const detailedStatus = await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
+
+        // Periodontal data (optional but captured if present)
+        const periodontalData = {
+            buccal: {
+                mesial: parseInt(document.getElementById('b-mesial').value),
+                mid: parseInt(document.getElementById('b-mid').value),
+                distal: parseInt(document.getElementById('b-distal').value)
+            },
+            lingual: {
+                mesial: parseInt(document.getElementById('l-mesial').value),
+                mid: parseInt(document.getElementById('l-mid').value),
+                distal: parseInt(document.getElementById('l-distal').value)
+            },
+            bleedingPoints: getSelectedBleedingPoints()
+        };
+
+        const allValues = [
+            periodontalData.buccal.mesial,
+            periodontalData.buccal.mid,
+            periodontalData.buccal.distal,
+            periodontalData.lingual.mesial,
+            periodontalData.lingual.mid,
+            periodontalData.lingual.distal
+        ];
+        const invalidValues = allValues.filter(v => isNaN(v) || v < 0 || v > 15);
+        if (invalidValues.length > 0) {
+            showNotification('⚠️ Please enter valid depths (0-15mm)');
+            return;
+        }
+
+        await window.firebaseDataService.updatePeriodontalData(userId, toothNum, periodontalData);
+
+        // Optional treatment note -> stored as a treatment record
+        const notes = document.getElementById('treatmentNotes').value.trim();
+        if (notes) {
+            const treatment = {
+                type: 'note',
+                notes
+            };
+            await window.firebaseDataService.addToothTreatment(userId, toothNum, treatment);
+            document.getElementById('treatmentNotes').value = '';
+        }
+
+        // Update cache and refresh UI
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        if (currentDentalChart && currentDentalChart.updateToothData) {
+            const existingTooth = currentDentalChart.teethData?.[toothNum.toString()] || {};
+            currentDentalChart.updateToothData(toothNum, {
+                ...existingTooth,
+                status: condition,
+                detailedStatus
+            });
+        }
+
+        // Refresh details panel with latest data
+        const chartData = await window.firebaseDataService.getDentalChart(userId);
+        if (chartData) {
+            const toothData = chartData.teeth[toothNum.toString()];
+            showToothDetails(userId, toothNum, toothData);
+        }
+
+        showNotification('✅ Tooth status updated');
+    } catch (error) {
+        console.error('❌ Error updating tooth:', error);
+        showNotification('❌ Failed to update tooth: ' + error.message);
+    }
 }
 
 /**
@@ -4429,11 +4513,12 @@ function showNotification(message, type = 'info') {
  */
 function loadDetailedStatus(toothData) {
     const detailedStatus = toothData.detailedStatus || {};
+    const fallbackCondition = toothData.status || 'healthy';
 
     // Set condition
     const conditionSelect = document.getElementById('conditionSelect');
     if (conditionSelect) {
-        conditionSelect.value = detailedStatus.condition || 'healthy';
+        conditionSelect.value = detailedStatus.condition || fallbackCondition;
     }
 
     // Set severity
@@ -4487,10 +4572,23 @@ async function saveDetailedStatus() {
         };
 
         // Save to Firebase
-        await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
+        const detailedStatus = await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
+
+        // Update in-memory chart immediately so the color dot reflects the new condition
+        if (currentDentalChart && currentDentalChart.updateToothData) {
+            const existingTooth = currentDentalChart.teethData?.[toothNum.toString()] || {};
+            currentDentalChart.updateToothData(toothNum, {
+                ...existingTooth,
+                status: condition,
+                detailedStatus: detailedStatus
+            });
+        }
 
         // Update cache
         window.cacheManager.onDentalChartUpdated(userId);
+
+        // Re-render chart so background classes and counts stay in sync
+        await loadDentalChart({ userId });
 
         showNotification('✅ Tooth classification saved successfully');
     } catch (error) {
@@ -4838,6 +4936,7 @@ window.savePeriodontalData = savePeriodontalData;
 window.deleteToothTreatment = deleteToothTreatment;
 window.closeToothDetails = closeToothDetails;
 window.saveDetailedStatus = saveDetailedStatus;
+window.saveToothUpdates = saveToothUpdates;
 window.createNewSnapshot = createNewSnapshot;
 window.deleteSnapshot = deleteSnapshot;
 window.compareWithSnapshot = compareWithSnapshot;

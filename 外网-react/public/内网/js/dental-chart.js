@@ -21,7 +21,7 @@ class DentalChart {
 
         // Status colors (Universal system)
         this.statusColors = {
-            'healthy': '#10b981',      // Green
+            'healthy': '#dff5eb',      // Light Green
             'monitor': '#f59e0b',      // Amber
             'cavity': '#ef4444',       // Red
             'filled': '#3b82f6',       // Blue
@@ -106,25 +106,23 @@ class DentalChart {
 
     generateToothButtons(toothNumbers) {
         return toothNumbers.map(num => {
-            const tooth = this.teethData[num.toString()] || { detailedStatus: { condition: 'healthy' }, treatments: [] };
+            const tooth = this.teethData[num.toString()] || { status: 'healthy', treatments: [] };
+            const rawStatus = tooth.status || tooth.detailedStatus?.condition;
 
-            // Get condition from detailedStatus (new system) or fallback to status (legacy)
-            const condition = tooth.detailedStatus?.condition || tooth.status || 'healthy';
-
-            // Validate tooth condition against whitelist to prevent XSS in CSS
+            // Validate tooth status against whitelist to prevent XSS in CSS
             const validStatuses = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op', 'urgent'];
-            const safeStatus = validStatuses.includes(condition) ? condition : 'healthy';
+            const safeStatus = validStatuses.includes(rawStatus) ? rawStatus : 'healthy';
             const color = this.statusColors[safeStatus];
+            const statusClass = `status-${safeStatus}`;
 
             const treatmentCount = tooth.treatments ? tooth.treatments.length : 0;
 
-            const showDot = safeStatus && safeStatus !== 'healthy';
             return `
-                <button class="tooth-btn"
+                <button class="tooth-btn ${statusClass}"
+                        style="background-color: ${color};"
                         data-tooth="${num}"
                         title="${num}: ${escapeHtml(safeStatus)}${treatmentCount > 0 ? ` (${treatmentCount} treatments)` : ''}">
                     <span class="tooth-number">${num}</span>
-                    ${showDot ? `<span class="status-dot" style="background-color: ${color};"></span>` : ''}
                     ${treatmentCount > 0 ? `<span class="treatment-badge">${treatmentCount}</span>` : ''}
                 </button>
             `;
@@ -178,22 +176,19 @@ class DentalChart {
         if (btn) {
             // Validate tooth status against whitelist
             const validStatuses = ['healthy', 'monitor', 'cavity', 'filled', 'missing', 'implant', 'root-canal', 'post-op', 'urgent'];
-            const safeStatus = validStatuses.includes(data.status) ? data.status : 'healthy';
+            const rawStatus = data.status || data.detailedStatus?.condition;
+            const safeStatus = validStatuses.includes(rawStatus) ? rawStatus : 'healthy';
             const color = this.statusColors[safeStatus];
+            // Update status class for background color
+            validStatuses.forEach(status => btn.classList.remove(`status-${status}`));
+            btn.classList.add(`status-${safeStatus}`);
+            btn.style.backgroundColor = color;
 
             // Use textContent instead of setting HTML to prevent XSS
             btn.title = `${toothNum}: ${safeStatus}`;
-            let statusDot = btn.querySelector('.status-dot');
-            if (safeStatus === 'healthy') {
-                if (statusDot) statusDot.remove();
-            } else {
-                if (!statusDot) {
-                    statusDot = document.createElement('span');
-                    statusDot.className = 'status-dot';
-                    btn.appendChild(statusDot);
-                }
-                statusDot.style.backgroundColor = color;
-            }
+            // Remove status dot usage to rely on full-circle color
+            const statusDot = btn.querySelector('.status-dot');
+            if (statusDot) statusDot.remove();
 
             const treatmentCount = data.treatments ? data.treatments.length : 0;
             if (treatmentCount > 0) {
@@ -234,4 +229,4 @@ if (typeof window !== 'undefined') {
     window.DentalChart = DentalChart;
 }
 
-console.log('✅ DentalChart component loaded');
+console.log('✅ DentalChart component loaded (condition-color fallback v1)');

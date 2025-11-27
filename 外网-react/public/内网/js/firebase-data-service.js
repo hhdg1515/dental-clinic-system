@@ -587,12 +587,11 @@ class FirebaseDataService {
             // Create proper appointment timestamp from date and time
             const appointmentDateTime = await this.createAppointmentTimestamp(appointmentData.date, appointmentData.time);
 
-            // Generate patient-based userId for consistent patient identification
-            // Format: patient_[lowercase name with special chars replaced by underscore]
-            const patientUserId = `patient_${appointmentData.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+            // Get current user ID for Firebase Rules compliance
+            const currentUserId = this.auth?.currentUser?.uid || 'system';
 
             const appointment = {
-                userId: patientUserId, // Patient identifier based on name
+                userId: currentUserId, // REQUIRED by Firebase Rules
                 patientName: appointmentData.patientName,
                 patientPhone: appointmentData.phone || '', // REQUIRED by Firebase Rules
                 service: appointmentData.service,
@@ -1575,6 +1574,7 @@ class FirebaseDataService {
 
         await updateDoc(chartRef, {
             [`teeth.${validToothNum}.detailedStatus`]: detailedStatus,
+            [`teeth.${validToothNum}.status`]: detailedStatus.condition,
             [`teeth.${validToothNum}.lastUpdated`]: new Date().toISOString(),
             lastUpdated: new Date().toISOString()
         });

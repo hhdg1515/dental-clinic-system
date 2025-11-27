@@ -203,14 +203,15 @@ function addDetailedFindings(doc, chartData, startY, pageWidth, pageHeight) {
 
     for (let i = 1; i <= 32; i++) {
         const tooth = chartData.teeth?.[i.toString()];
-        if (tooth && tooth.status !== 'healthy') {
+        const toothStatus = tooth?.status || tooth?.detailedStatus?.condition || 'healthy';
+        if (tooth && toothStatus !== 'healthy') {
             // Check for page break
             if (startY > pageHeight - 20) {
                 doc.addPage();
                 startY = 20;
             }
 
-            const statusText = tooth.status.charAt(0).toUpperCase() + tooth.status.slice(1).replace(/-/g, ' ');
+            const statusText = toothStatus.charAt(0).toUpperCase() + toothStatus.slice(1).replace(/-/g, ' ');
             doc.setFont(undefined, 'bold');
             doc.text(`Tooth #${i}:`, 22, startY);
             doc.setFont(undefined, 'normal');

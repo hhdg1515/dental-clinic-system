@@ -1341,46 +1341,30 @@ function showWeekMoreAppointments(hiddenAppointments, date, timeSlot) {
     hiddenAppointments.forEach(appointment => {
         const appointmentItem = document.createElement('div');
         appointmentItem.className = `popup-appointment-item ${appointment.status}`;
-
-        // Add documentation status classes for completed appointments
-        if (appointment.status === 'completed') {
-            const docStatus = appointment.documentation?.status || 'pending';
-            appointmentItem.classList.add(`doc-${docStatus}`);
-        }
-
         appointmentItem.onclick = () => {
             popup.remove();
             openProcessModal(appointmentItem, appointment);
         };
-
-        // Add documentation badge for pending docs
-        if (appointment.status === 'completed' && appointment.documentation?.status === 'pending') {
-            const badge = document.createElement('span');
-            badge.className = 'doc-pending-badge';
-            badge.textContent = '🦷';
-            badge.title = 'Needs documentation';
-            appointmentItem.appendChild(badge);
-        }
-
+        
         const leftContent = document.createElement('div');
         leftContent.className = 'popup-left-content';
-
+        
         const patientDiv = document.createElement('div');
         patientDiv.className = 'popup-patient-name';
         patientDiv.textContent = appointment.patientName; // Full name in popup
-
+        
         const serviceDiv = document.createElement('div');
         serviceDiv.className = 'popup-service';
         serviceDiv.textContent = appointment.service;
-
+        
         leftContent.appendChild(patientDiv);
         leftContent.appendChild(serviceDiv);
-
+        
         const statusDiv = document.createElement('div');
         const status = appointment.status || 'scheduled'; // Default to 'scheduled' if no status
         statusDiv.className = `popup-status ${status}`;
         statusDiv.textContent = capitalizeFirst(status);
-
+        
         appointmentItem.appendChild(leftContent);
         appointmentItem.appendChild(statusDiv);
         appointmentsList.appendChild(appointmentItem);
@@ -1905,45 +1889,8 @@ function openProcessModal(element, appointmentData = null) {
                 <span class="detail-label">Status:</span>
                 <span class="detail-value">${escapeHtml(capitalizeFirst(status.replace('-', ' ')))}</span>
             </div>
-            <div class="detail-actions">
-                <button class="btn-link-action" id="viewDentalChartBtn" onclick="viewDentalChartFromAppointment()">
-                    <i class="fas fa-tooth"></i> View Dental Chart
-                </button>
-            </div>
-
-            <!-- Documentation Status Section -->
-            <div class="documentation-status" id="documentationStatus" style="display: none;">
-                <div class="doc-status-header">
-                    <span class="doc-label">📋 Medical Documentation</span>
-                    <span class="doc-badge" id="docBadge">⚠️ Pending</span>
-                </div>
-                <div class="doc-actions">
-                    <button class="btn-complete-doc" id="markDocumentedBtn" onclick="markAsDocumented()" style="display: none;">
-                        <i class="fas fa-check-circle"></i> Mark as Documented
-                    </button>
-                </div>
-            </div>
         `;
     }
-
-    // Check if documentation status should be displayed
-    const docStatusSection = document.getElementById('documentationStatus');
-    if (appointmentData && status === 'completed' && docStatusSection) {
-        docStatusSection.style.display = 'block';
-
-        const docStatus = appointmentData.documentation?.status || 'pending';
-        updateDocumentationDisplay(docStatus);
-
-        if (docStatus === 'completed' && appointmentData.documentation?.completedAt) {
-            const completedDate = new Date(appointmentData.documentation.completedAt);
-            const formattedDate = completedDate.toLocaleString();
-            const docBadge = document.getElementById('docBadge');
-            if (docBadge) {
-                docBadge.title = `Documented on ${formattedDate}`;
-            }
-        }
-    }
-
     // Set button selection state
     updateButtonSelection(status);
     openModal('processModal');
@@ -2839,9 +2786,11 @@ async function updateAppointmentStatus(newStatus, additionalData = {}) {
         // Close the process modal immediately using proper closeModal function
         closeModal('processModal');
 
-        // If completed, ensure documentation status is initialized
-        if (newStatus === 'completed' && currentAppointmentData && currentAppointmentData.appointmentId) {
-            ensureDocumentationStatus(currentAppointmentData.appointmentId);
+        // If completed, prompt to update dental chart
+        if (newStatus === 'completed' && patientName) {
+            setTimeout(() => {
+                promptUpdateDentalChart(patientName);
+            }, 500);
         }
 
         // Clear current appointment data
@@ -2993,46 +2942,30 @@ function showMoreAppointmentsPopup(hiddenAppointments, buttonElement) {
     hiddenAppointments.forEach(appointment => {
         const appointmentItem = document.createElement('div');
         appointmentItem.className = `popup-appointment-item ${appointment.status}`;
-
-        // Add documentation status classes for completed appointments
-        if (appointment.status === 'completed') {
-            const docStatus = appointment.documentation?.status || 'pending';
-            appointmentItem.classList.add(`doc-${docStatus}`);
-        }
-
         appointmentItem.onclick = () => {
             popup.remove();
             openProcessModal(appointmentItem, appointment);
         };
-
-        // Add documentation badge for pending docs
-        if (appointment.status === 'completed' && appointment.documentation?.status === 'pending') {
-            const badge = document.createElement('span');
-            badge.className = 'doc-pending-badge';
-            badge.textContent = '🦷';
-            badge.title = 'Needs documentation';
-            appointmentItem.appendChild(badge);
-        }
-
+        
         const leftContent = document.createElement('div');
         leftContent.className = 'popup-left-content';
-
+        
         const patientDiv = document.createElement('div');
         patientDiv.className = 'popup-patient-name';
         patientDiv.textContent = appointment.patientName;
-
+        
         const serviceDiv = document.createElement('div');
         serviceDiv.className = 'popup-service';
         serviceDiv.textContent = appointment.service;
-
+        
         leftContent.appendChild(patientDiv);
         leftContent.appendChild(serviceDiv);
-
+        
         const statusDiv = document.createElement('div');
         const status = appointment.status || 'scheduled'; // Default to 'scheduled' if no status
         statusDiv.className = `popup-status ${status}`;
         statusDiv.textContent = capitalizeFirst(status);
-
+        
         appointmentItem.appendChild(leftContent);
         appointmentItem.appendChild(statusDiv);
         appointmentsList.appendChild(appointmentItem);
@@ -4245,19 +4178,103 @@ async function addTreatmentRecord() {
 }
 
 /**
- * Save treatment record
+ * Unified save: classification + optional perio + optional note
  */
 async function saveToothUpdates() {
-    if (!window.currentToothData) return;
-
-    const notes = document.getElementById('treatmentNotes').value.trim();
-
-    if (!notes) {
-        showNotification('⚠️ Please enter treatment notes');
+    if (!window.currentToothData) {
+        showNotification('⚠️ Please select a tooth first');
         return;
     }
 
-    await addTreatmentRecord();
+    const { userId, toothNum } = window.currentToothData;
+
+    try {
+        // Classification fields
+        const condition = document.getElementById('conditionSelect').value;
+        const severity = document.getElementById('severitySelect').value;
+        const clinicalNotes = document.getElementById('clinicalNotes').value.trim();
+
+        const affectedSurfaces = [];
+        document.querySelectorAll('.surface-checkbox:checked').forEach(checkbox => {
+            affectedSurfaces.push(checkbox.value);
+        });
+
+        const statusData = {
+            condition,
+            severity,
+            affectedSurfaces,
+            clinicalNotes
+        };
+
+        // Save detailed status (also updates tooth.status)
+        const detailedStatus = await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
+
+        // Periodontal data (optional but captured if present)
+        const periodontalData = {
+            buccal: {
+                mesial: parseInt(document.getElementById('b-mesial').value),
+                mid: parseInt(document.getElementById('b-mid').value),
+                distal: parseInt(document.getElementById('b-distal').value)
+            },
+            lingual: {
+                mesial: parseInt(document.getElementById('l-mesial').value),
+                mid: parseInt(document.getElementById('l-mid').value),
+                distal: parseInt(document.getElementById('l-distal').value)
+            },
+            bleedingPoints: getSelectedBleedingPoints()
+        };
+
+        const allValues = [
+            periodontalData.buccal.mesial,
+            periodontalData.buccal.mid,
+            periodontalData.buccal.distal,
+            periodontalData.lingual.mesial,
+            periodontalData.lingual.mid,
+            periodontalData.lingual.distal
+        ];
+        const invalidValues = allValues.filter(v => isNaN(v) || v < 0 || v > 15);
+        if (invalidValues.length > 0) {
+            showNotification('⚠️ Please enter valid depths (0-15mm)');
+            return;
+        }
+
+        await window.firebaseDataService.updatePeriodontalData(userId, toothNum, periodontalData);
+
+        // Optional treatment note -> stored as a treatment record
+        const notes = document.getElementById('treatmentNotes').value.trim();
+        if (notes) {
+            const treatment = {
+                type: 'note',
+                notes
+            };
+            await window.firebaseDataService.addToothTreatment(userId, toothNum, treatment);
+            document.getElementById('treatmentNotes').value = '';
+        }
+
+        // Update cache and refresh UI
+        window.cacheManager.onDentalChartUpdated(userId);
+
+        if (currentDentalChart && currentDentalChart.updateToothData) {
+            const existingTooth = currentDentalChart.teethData?.[toothNum.toString()] || {};
+            currentDentalChart.updateToothData(toothNum, {
+                ...existingTooth,
+                status: condition,
+                detailedStatus
+            });
+        }
+
+        // Refresh details panel with latest data
+        const chartData = await window.firebaseDataService.getDentalChart(userId);
+        if (chartData) {
+            const toothData = chartData.teeth[toothNum.toString()];
+            showToothDetails(userId, toothNum, toothData);
+        }
+
+        showNotification('✅ Tooth status updated');
+    } catch (error) {
+        console.error('❌ Error updating tooth:', error);
+        showNotification('❌ Failed to update tooth: ' + error.message);
+    }
 }
 
 /**
@@ -4496,11 +4513,12 @@ function showNotification(message, type = 'info') {
  */
 function loadDetailedStatus(toothData) {
     const detailedStatus = toothData.detailedStatus || {};
+    const fallbackCondition = toothData.status || 'healthy';
 
     // Set condition
     const conditionSelect = document.getElementById('conditionSelect');
     if (conditionSelect) {
-        conditionSelect.value = detailedStatus.condition || 'healthy';
+        conditionSelect.value = detailedStatus.condition || fallbackCondition;
     }
 
     // Set severity
@@ -4553,19 +4571,26 @@ async function saveDetailedStatus() {
             clinicalNotes: clinicalNotes
         };
 
-        // Save detailed status to Firebase
-        await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
+        // Save to Firebase
+        const detailedStatus = await window.firebaseDataService.updateDetailedToothStatus(userId, toothNum, statusData);
+
+        // Update in-memory chart immediately so the color dot reflects the new condition
+        if (currentDentalChart && currentDentalChart.updateToothData) {
+            const existingTooth = currentDentalChart.teethData?.[toothNum.toString()] || {};
+            currentDentalChart.updateToothData(toothNum, {
+                ...existingTooth,
+                status: condition,
+                detailedStatus: detailedStatus
+            });
+        }
 
         // Update cache
         window.cacheManager.onDentalChartUpdated(userId);
 
-        showNotification('✅ Tooth classification saved successfully');
+        // Re-render chart so background classes and counts stay in sync
+        await loadDentalChart({ userId });
 
-        // Refresh the dental chart to show updated colors
-        const chartData = await window.firebaseDataService.getDentalChart(userId);
-        if (chartData && window.currentPatientData) {
-            await loadDentalChart(window.currentPatientData);
-        }
+        showNotification('✅ Tooth classification saved successfully');
     } catch (error) {
         console.error('❌ Error saving detailed status:', error);
         showNotification('❌ Failed to save classification: ' + error.message);
@@ -4807,79 +4832,18 @@ function closeComparisonModal() {
 // ==================== APPOINTMENT & DENTAL CHART INTEGRATION ====================
 
 /**
- * Ensure appointment has documentation status field
+ * Prompt user to update dental chart after completing appointment
  */
-async function ensureDocumentationStatus(appointmentId) {
-    try {
-        const appointment = await window.firebaseDataService.findAppointmentById(appointmentId);
+function promptUpdateDentalChart(patientName) {
+    if (!patientName) return;
 
-        // If no documentation field, initialize it
-        if (!appointment.documentation) {
-            await window.firebaseDataService.updateAppointment(appointmentId, {
-                documentation: {
-                    status: 'pending',
-                    completedAt: null,
-                    completedBy: null
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Error ensuring documentation status:', error);
-    }
-}
+    const confirmed = confirm(
+        `Appointment completed for ${patientName}.\n\n` +
+        `Would you like to update their dental chart now?`
+    );
 
-/**
- * Mark appointment as documented
- */
-async function markAsDocumented() {
-    if (!currentAppointmentData || !currentAppointmentData.appointmentId) {
-        showNotification('⚠️ No appointment selected');
-        return;
-    }
-
-    try {
-        const appointmentId = currentAppointmentData.appointmentId;
-
-        // Update documentation status
-        await window.firebaseDataService.updateAppointment(appointmentId, {
-            documentation: {
-                status: 'completed',
-                completedAt: new Date().toISOString(),
-                completedBy: window.firebase?.auth?.currentUser?.uid || null
-            }
-        });
-
-        showNotification('✅ Appointment marked as documented');
-
-        // Update UI
-        updateDocumentationDisplay('completed');
-
-        // Refresh appointments view
-        await refreshCurrentViewOnly();
-
-    } catch (error) {
-        console.error('Error marking as documented:', error);
-        showNotification('❌ Failed to mark as documented');
-    }
-}
-
-/**
- * Update documentation status display in modal
- */
-function updateDocumentationDisplay(status) {
-    const docBadge = document.getElementById('docBadge');
-    const markBtn = document.getElementById('markDocumentedBtn');
-
-    if (!docBadge) return;
-
-    if (status === 'completed') {
-        docBadge.textContent = '✅ Documented';
-        docBadge.className = 'doc-badge doc-completed';
-        if (markBtn) markBtn.style.display = 'none';
-    } else {
-        docBadge.textContent = '⚠️ Pending';
-        docBadge.className = 'doc-badge doc-pending';
-        if (markBtn) markBtn.style.display = 'inline-flex';
+    if (confirmed) {
+        openPatientDentalChart(patientName);
     }
 }
 
@@ -4978,7 +4942,7 @@ window.deleteSnapshot = deleteSnapshot;
 window.compareWithSnapshot = compareWithSnapshot;
 window.closeComparisonModal = closeComparisonModal;
 window.loadChartSnapshots = loadChartSnapshots;
+window.promptUpdateDentalChart = promptUpdateDentalChart;
 window.openPatientDentalChart = openPatientDentalChart;
 window.getLastCompletedAppointment = getLastCompletedAppointment;
 window.viewDentalChartFromAppointment = viewDentalChartFromAppointment;
-window.markAsDocumented = markAsDocumented;
