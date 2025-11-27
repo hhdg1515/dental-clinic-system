@@ -4065,14 +4065,10 @@ async function loadDentalChart(patientData) {
 function showToothDetails(userId, toothNum, toothData) {
     const panel = document.getElementById('toothDetailsPanel');
     const title = document.getElementById('selectedToothTitle');
-    const statusSelect = document.getElementById('toothStatusSelect');
     const treatmentsList = document.getElementById('treatmentsList');
 
     // Update title
     title.textContent = `Tooth ${toothNum}`;
-
-    // Update status select
-    statusSelect.value = toothData.status || 'healthy';
 
     // Clear and populate treatments list
     treatmentsList.innerHTML = '';
@@ -4116,51 +4112,17 @@ function closeToothDetails() {
     const panel = document.getElementById('toothDetailsPanel');
     const title = document.getElementById('selectedToothTitle');
     const treatmentsList = document.getElementById('treatmentsList');
-    const statusSelect = document.getElementById('toothStatusSelect');
     panel.style.display = 'none';
     window.currentToothData = null;
 
     if (title) {
         title.textContent = 'Select a tooth';
     }
-    if (statusSelect) {
-        statusSelect.value = 'healthy';
-    }
     if (treatmentsList) {
         treatmentsList.innerHTML = '<p class="treatment-placeholder">Select a tooth to view history</p>';
     }
 }
 
-/**
- * Update tooth status
- */
-async function updateToothStatus() {
-    if (!window.currentToothData) return;
-
-    const { userId, toothNum } = window.currentToothData;
-    const status = document.getElementById('toothStatusSelect').value;
-
-    try {
-        await window.firebaseDataService.updateToothStatus(userId, toothNum, { status });
-
-        // Update cache
-        window.cacheManager.onDentalChartUpdated(userId);
-
-        // Update UI
-        if (currentDentalChart) {
-            const toothData = currentDentalChart.getToothData(toothNum);
-            if (toothData) {
-                toothData.status = status;
-                currentDentalChart.updateToothData(toothNum, toothData);
-            }
-        }
-
-        showNotification('✅ Tooth status updated successfully');
-    } catch (error) {
-        console.error('❌ Error updating tooth status:', error);
-        showNotification('❌ Failed to update tooth status');
-    }
-}
 
 /**
  * Add treatment record to tooth
@@ -4201,19 +4163,15 @@ async function addTreatmentRecord() {
 }
 
 /**
- * Unified save: update status first, then add record (if any)
+ * Save treatment record
  */
 async function saveToothUpdates() {
     if (!window.currentToothData) return;
 
-    // Always update status first
-    await updateToothStatus();
-
-    // Then add record if notes/file provided
     const notes = document.getElementById('treatmentNotes').value.trim();
 
     if (!notes) {
-        // No record to add; status already updated
+        showNotification('⚠️ Please enter treatment notes');
         return;
     }
 
