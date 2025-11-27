@@ -4560,6 +4560,12 @@ async function saveDetailedStatus() {
         window.cacheManager.onDentalChartUpdated(userId);
 
         showNotification('✅ Tooth classification saved successfully');
+
+        // Refresh the dental chart to show updated colors
+        const chartData = await window.firebaseDataService.getDentalChart(userId);
+        if (chartData && window.currentPatientData) {
+            await loadDentalChart(window.currentPatientData);
+        }
     } catch (error) {
         console.error('❌ Error saving detailed status:', error);
         showNotification('❌ Failed to save classification: ' + error.message);
@@ -4966,6 +4972,7 @@ window.savePeriodontalData = savePeriodontalData;
 window.deleteToothTreatment = deleteToothTreatment;
 window.closeToothDetails = closeToothDetails;
 window.saveDetailedStatus = saveDetailedStatus;
+window.saveToothUpdates = saveToothUpdates;
 window.createNewSnapshot = createNewSnapshot;
 window.deleteSnapshot = deleteSnapshot;
 window.compareWithSnapshot = compareWithSnapshot;
