@@ -4,6 +4,23 @@ import { OptimizedImage } from '../components/OptimizedImage';
 import { useLanguage, type TranslationKey } from '../context/LanguageContext';
 import { SEO } from '../components/SEO';
 
+// Floating Decorations - consistent with other themed pages
+const FloatingDecorations = () => (
+  <div className="sv-decorations" aria-hidden="true">
+    {/* Left side - gold tones */}
+    <div className="sv-dot sv-dot--gold sv-dot--animate" style={{ left: '4%', top: '15%', width: 14, height: 14, animationDelay: '0.2s' }} />
+    <div className="sv-dot sv-dot--blur" style={{ left: '6%', top: '35%', width: 90, height: 90, animationDelay: '0.4s' }} />
+    <div className="sv-dot sv-dot--sage" style={{ left: '3%', top: '55%', width: 18, height: 18, animationDelay: '0.6s' }} />
+    <div className="sv-dot sv-dot--gold sv-dot--animate" style={{ left: '5%', top: '75%', width: 12, height: 12, animationDelay: '0.8s' }} />
+
+    {/* Right side - sage accents */}
+    <div className="sv-dot sv-dot--sage sv-dot--animate" style={{ right: '5%', top: '20%', width: 16, height: 16, animationDelay: '0.3s' }} />
+    <div className="sv-dot sv-dot--blur" style={{ right: '4%', top: '50%', width: 70, height: 70, animationDelay: '0.5s' }} />
+    <div className="sv-dot sv-dot--gold sv-dot--animate" style={{ right: '6%', top: '70%', width: 20, height: 20, animationDelay: '0.7s' }} />
+    <div className="sv-dot sv-dot--sage" style={{ right: '3%', top: '85%', width: 10, height: 10, animationDelay: '0.9s' }} />
+  </div>
+);
+
 type ServiceCard = {
   id: string;
   image: string;
@@ -167,7 +184,8 @@ export const Service = () => {
         ogTitle="牙科服务项目 - First Ave Dental & Orthodontics"
         ogDescription="专业牙科服务：家庭、美容、正畸、根管治疗等"
       />
-    <div className="flex min-h-screen flex-col">
+    <div className="service-page flex min-h-screen flex-col">
+      <FloatingDecorations />
       <div className="flex-1">
         {/* Sub Hero Section with Navigation */}
         <div className="sub-hero">

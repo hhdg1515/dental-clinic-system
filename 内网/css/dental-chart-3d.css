@@ -1,0 +1,384 @@
+/* ===========================================
+   3D Dental Chart Styles
+   =========================================== */
+
+/* 3D Canvas Wrapper */
+.dental-chart-3d-canvas {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #f7fbff 0%, #eef3ff 60%, #f9fbff 100%);
+}
+
+.dental-chart-3d-canvas canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+
+.dental-chart-3d-canvas canvas:active {
+    cursor: grabbing;
+}
+
+/* Tooth Number Labels */
+.tooth-3d-label {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 3px 7px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.12),
+        0 1px 2px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.tooth-3d-label.selected {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-color: transparent;
+    transform: scale(1.1);
+    box-shadow:
+        0 4px 12px rgba(59, 130, 246, 0.4),
+        0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Treatment Badge */
+.tooth-3d-badge {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    box-shadow:
+        0 2px 6px rgba(239, 68, 68, 0.5),
+        0 1px 2px rgba(239, 68, 68, 0.3);
+    pointer-events: none;
+    user-select: none;
+    border: 2px solid white;
+}
+
+/* Controls Overlay */
+.dental-chart-3d-controls {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.chart-control-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #475569;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.1),
+        0 2px 4px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.chart-control-btn:hover {
+    background: #ffffff;
+    color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.12),
+        0 3px 6px rgba(37, 99, 235, 0.1);
+}
+
+.chart-control-btn:active {
+    transform: translateY(0);
+}
+
+.chart-control-btn i {
+    pointer-events: none;
+}
+
+/* Instructions Overlay */
+.dental-chart-3d-instructions {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #64748b;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.instruction-item i {
+    font-size: 12px;
+    color: #94a3b8;
+    width: 16px;
+    text-align: center;
+}
+
+/* Legend below 3D chart */
+.dental-chart-3d-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(248, 250, 252, 0.9);
+    border-radius: 0 0 16px 16px;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+    margin-top: -16px;
+}
+
+.legend-3d-title {
+    font-weight: 600;
+    font-size: 11px;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    margin-right: 4px;
+}
+
+.legend-3d-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #475569;
+}
+
+.legend-3d-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Loading State */
+.dental-chart-3d-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(247, 251, 255, 0.95);
+    z-index: 20;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(59, 130, 246, 0.2);
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-text {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Error State */
+.dental-chart-3d-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(254, 242, 242, 0.95);
+    z-index: 20;
+    padding: 24px;
+    text-align: center;
+}
+
+.error-icon {
+    font-size: 48px;
+    color: #ef4444;
+    margin-bottom: 16px;
+}
+
+.error-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #991b1b;
+    margin-bottom: 8px;
+}
+
+.error-message {
+    font-size: 13px;
+    color: #b91c1c;
+    margin-bottom: 16px;
+}
+
+.error-fallback-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.error-fallback-btn:hover {
+    background: #2563eb;
+}
+
+/* Tooth Hover Tooltip */
+.tooth-3d-tooltip {
+    position: fixed;
+    background: rgba(15, 23, 42, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%, -100%);
+    margin-top: -12px;
+    white-space: nowrap;
+}
+
+.tooth-3d-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(15, 23, 42, 0.95);
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .dental-chart-3d-canvas {
+        height: 360px;
+    }
+
+    .dental-chart-3d-instructions {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .dental-chart-3d-canvas {
+        height: 300px;
+    }
+
+    .tooth-3d-label {
+        font-size: 9px;
+        padding: 2px 5px;
+    }
+
+    .chart-control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .dental-chart-3d-legend {
+        padding: 10px 14px;
+        gap: 10px;
+    }
+
+    .legend-3d-item {
+        font-size: 10px;
+    }
+
+    .legend-3d-color {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dental-chart-3d-canvas {
+        height: 260px;
+    }
+
+    .tooth-3d-label {
+        font-size: 8px;
+        padding: 1px 4px;
+    }
+
+    .dental-chart-3d-controls {
+        bottom: 10px;
+        right: 10px;
+        gap: 6px;
+    }
+
+    .chart-control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+}
+
+/* Animation for tooth selection */
+@keyframes toothPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+    }
+}
+
+.tooth-3d-label.pulse {
+    animation: toothPulse 0.6s ease-out;
+}

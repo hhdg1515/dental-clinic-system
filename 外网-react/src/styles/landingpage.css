@@ -2,8 +2,7 @@
 /* åŸºç¡€æ ·å¼å·²ç§»è‡³ shared-styles.css */
 /* æ­¤æ–‡ä»¶ä»…åŒ…å« landing page ç‰¹å®šçš„æ ·å¼ */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+/* Google Fonts consolidated in legacy-bridge.css */
 /* Responsive adjustments for smaller screens */
 @media (max-width: 900px) {
     .flex {

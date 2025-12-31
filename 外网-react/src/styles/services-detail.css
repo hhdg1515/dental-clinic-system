@@ -1,6 +1,324 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+/* Google Fonts consolidated in legacy-bridge.css */
 
 /* =================== Services Detail Pages Styles =================== */
+/* Updated with "Radiant Transformation" Theme */
+
+/* =================== Theme Variables =================== */
+.service-detail-page {
+  --sd-gold: #C9A962;
+  --sd-gold-light: #E8D5A3;
+  --sd-gold-dark: #A88B4A;
+  --sd-sage: #7A9A7E;
+  --sd-sage-light: #A8C4AB;
+  --sd-sage-dark: #5B7A5E;
+  --sd-cream: #FDF8F3;
+  --sd-cream-dark: #F5EDE3;
+  --sd-charcoal: #2C3E3A;
+  --sd-text: #4A5568;
+  --sd-text-light: #718096;
+  --sd-white: #FFFFFF;
+  --sd-shadow: rgba(201, 169, 98, 0.15);
+  --sd-shadow-dark: rgba(0, 0, 0, 0.1);
+}
+
+/* =================== Keyframe Animations =================== */
+@keyframes sdFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sdFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
+}
+
+@keyframes sdPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+/* =================== Page Container =================== */
+.service-detail-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    var(--sd-white) 0%,
+    var(--sd-cream) 30%,
+    var(--sd-cream-dark) 70%,
+    var(--sd-cream) 100%
+  );
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* =================== Floating Decorations =================== */
+.sd-decorations {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.sd-dot {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.sd-dot--gold {
+  background: radial-gradient(circle, var(--sd-gold-light) 0%, var(--sd-gold) 100%);
+  box-shadow: 0 0 20px var(--sd-shadow);
+}
+
+.sd-dot--sage {
+  background: radial-gradient(circle, var(--sd-sage-light) 0%, var(--sd-sage) 100%);
+  box-shadow: 0 0 15px rgba(122, 154, 126, 0.3);
+}
+
+.sd-dot--blur {
+  background: radial-gradient(circle, rgba(201, 169, 98, 0.15) 0%, transparent 70%);
+  filter: blur(30px);
+}
+
+.sd-dot--animate {
+  animation: sdFloat 6s ease-in-out infinite;
+}
+
+/* =================== Diamond Divider =================== */
+.sd-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  gap: 16px;
+}
+
+.sd-divider__line {
+  flex: 1;
+  max-width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--sd-gold-light), transparent);
+}
+
+.sd-divider__diamond {
+  width: 10px;
+  height: 10px;
+  background: var(--sd-gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--sd-shadow);
+}
+
+/* =================== Pricing Bubbles =================== */
+.sd-pricing-bubbles {
+  position: absolute;
+  top: -10px;
+  right: 50px;
+  pointer-events: none;
+}
+
+.sd-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--sd-gold);
+  opacity: 0.2;
+}
+
+.sd-bubble--1 {
+  width: 60px;
+  height: 60px;
+  top: 0;
+  right: 20px;
+  opacity: 0.25;
+}
+
+.sd-bubble--2 {
+  width: 38px;
+  height: 38px;
+  top: 28px;
+  right: 65px;
+  opacity: 0.2;
+}
+
+.sd-bubble--3 {
+  width: 24px;
+  height: 24px;
+  top: 12px;
+  right: 95px;
+  opacity: 0.3;
+}
+
+/* =================== Enhanced Hero Overlay =================== */
+.service-detail-page .hero-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(to top, rgba(253, 248, 243, 1) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* =================== Enhanced Content Section =================== */
+.service-detail-page .content-section {
+  background: linear-gradient(
+    180deg,
+    #FDF8F3 0%,
+    #FFFFFF 20%,
+    #FFFFFF 80%,
+    #F5EDE3 100%
+  );
+  position: relative;
+}
+
+/* Enhanced Section Headers */
+.service-detail-page .section-title-elegant {
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  color: #C9A962;
+  font-size: 3rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.service-detail-page .section-subtitle-bold {
+  font-family: 'Outfit', 'Montserrat', sans-serif;
+  color: #2C3E3A;
+  font-weight: 600;
+}
+
+/* Enhanced Pricing Section */
+.service-detail-page .pricing-section {
+  background: linear-gradient(135deg, #FDF8F3 0%, #FFFFFF 50%, #F5EDE3 100%);
+  padding: 60px 40px;
+  border-radius: 24px;
+  margin-top: 40px;
+  position: relative;
+  overflow: visible;
+}
+
+.service-detail-page .pricing-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+  color: #2C3E3A;
+  font-size: 2.2rem;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+.service-detail-page .pricing-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(201, 169, 98, 0.15);
+  box-shadow: 0 8px 32px rgba(201, 169, 98, 0.12);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.service-detail-page .pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(201, 169, 98, 0.2);
+  border-color: rgba(201, 169, 98, 0.3);
+}
+
+.service-detail-page .pricing-card.featured {
+  background: linear-gradient(135deg, #FFFCF5 0%, #FFFFFF 100%);
+  border: 2px solid #C9A962;
+  box-shadow: 0 12px 40px rgba(201, 169, 98, 0.25);
+}
+
+.service-detail-page .pricing-card.featured:hover {
+  transform: scale(1.03) translateY(-5px);
+  box-shadow: 0 20px 60px rgba(201, 169, 98, 0.3);
+}
+
+.service-detail-page .featured-badge {
+  background: linear-gradient(135deg, #C9A962 0%, #A88B4A 100%);
+  box-shadow: 0 4px 12px rgba(201, 169, 98, 0.4);
+}
+
+.service-detail-page .package-price {
+  color: #C9A962;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.service-detail-page .package-features li::before {
+  color: #7A9A7E;
+}
+
+/* Enhanced Overview Highlight */
+.service-detail-page .overview-highlight {
+  background: linear-gradient(135deg, #FDF8F3 0%, #F5EDE3 100%);
+  border-left: 4px solid #C9A962;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(201, 169, 98, 0.1);
+}
+
+/* Enhanced Process Steps */
+.service-detail-page .process-steps-section {
+  background: linear-gradient(135deg, #F5EDE3 0%, #FDF8F3 50%, #FFFFFF 100%);
+  border: 1px solid rgba(201, 169, 98, 0.1);
+}
+
+.service-detail-page .step-card {
+  border: 1px solid rgba(201, 169, 98, 0.1);
+  box-shadow: 0 6px 24px rgba(201, 169, 98, 0.08);
+}
+
+.service-detail-page .step-card:hover {
+  border-color: rgba(201, 169, 98, 0.25);
+  box-shadow: 0 12px 36px rgba(201, 169, 98, 0.15);
+}
+
+.service-detail-page .step-number {
+  color: #C9A962;
+}
+
+/* Enhanced Ideal Candidates */
+.service-detail-page .ideal-candidates-section {
+  background: linear-gradient(135deg, #F5EDE3 0%, #FDF8F3 50%, #FFFFFF 100%);
+  border: 1px solid rgba(201, 169, 98, 0.1);
+}
+
+.service-detail-page .suitable-candidates,
+.service-detail-page .not-suitable-candidates {
+  border: 1px solid rgba(201, 169, 98, 0.1);
+  box-shadow: 0 6px 24px rgba(201, 169, 98, 0.08);
+}
+
+/* Enhanced FAQ */
+.service-detail-page .faq-item {
+  border: 1px solid rgba(201, 169, 98, 0.1);
+  box-shadow: 0 4px 16px rgba(201, 169, 98, 0.06);
+}
+
+.service-detail-page .faq-item:hover {
+  border-color: rgba(201, 169, 98, 0.2);
+  box-shadow: 0 8px 28px rgba(201, 169, 98, 0.12);
+}
+
+.service-detail-page .toggle-icon {
+  color: #C9A962;
+}
 
 /* Hero Section - å‚è€ƒ faq.html é£Žæ ¼ */
 .hero-section {
@@ -287,11 +605,12 @@
 
 .pricing-title {
     font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 400;
-    font-style: italic;
-    color: #D4A574;
-    margin: 0 0 40px 0;
+    font-style: normal;
+    color: #2D2926;
+    margin: 0 0 32px 0;
+    letter-spacing: 0;
 }
 
 .pricing-cards {
@@ -306,29 +625,29 @@
 
 .pricing-card {
     background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 15px;
+    border: none;
+    border-radius: 20px;
     padding: 30px 25px;
-    transition: all 0.3s ease;
+    transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
 }
 
 .pricing-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    border-color: #D4A574;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
 }
 
 .pricing-card.featured {
-    border-color: #D4A574;
-    border-width: 3px;
-    background: linear-gradient(135deg, #fff9f0 0%, #ffffff 100%);
-    transform: scale(1.05);
+    border: 1px solid rgba(212, 165, 116, 0.3);
+    background: linear-gradient(135deg, #fffcf8 0%, #ffffff 100%);
+    transform: scale(1.02);
+    box-shadow: 0 6px 35px rgba(0, 0, 0, 0.08);
 }
 
 .pricing-card.featured:hover {
-    transform: scale(1.08) translateY(-5px);
+    transform: scale(1.04) translateY(-3px);
+    box-shadow: 0 10px 45px rgba(0, 0, 0, 0.12);
 }
 
 .featured-badge {
@@ -347,41 +666,45 @@
 }
 
 .package-name {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #263C38;
-    margin: 0 0 15px 0;
-    letter-spacing: 0.5px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #2D2926;
+    margin: 0 0 12px 0;
+    letter-spacing: 0;
+    line-height: 1.4;
 }
 
 .package-price {
-    font-size: 2rem;
-    font-weight: 300;
+    font-size: 1.75rem;
+    font-weight: 400;
     color: #D4A574;
     margin: 0 0 5px 0;
     white-space: nowrap;
 }
 
 .price-note {
-    font-size: 0.85rem;
-    color: #666;
-    margin: 0 0 20px 0;
-    font-style: italic;
+    font-size: 0.8rem;
+    color: #9A8A7C;
+    margin: 0 0 18px 0;
+    font-style: normal;
 }
 
 .package-features {
     list-style: none;
     padding: 0;
-    margin: 20px 0 0 0;
+    margin: 16px 0 0 0;
     text-align: left;
+    border-top: 1px solid #F2EDE8;
+    padding-top: 16px;
 }
 
 .package-features li {
-    padding: 8px 0 8px 25px;
-    font-size: 0.95rem;
-    color: #555;
+    padding: 6px 0 6px 22px;
+    font-size: 0.9rem;
+    color: #6B5E54;
     position: relative;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .package-features li::before {
@@ -821,16 +1144,16 @@ html {
 
 .step-card {
     background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
 }
 
 .step-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.1);
 }
 
 .step-number {
@@ -846,18 +1169,20 @@ html {
 }
 
 .step-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #263C38;
-    margin: 0 0 15px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: #2D2926;
+    margin: 0 0 12px 0;
     position: relative;
     z-index: 1;
+    line-height: 1.4;
 }
 
 .step-description {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #6B5E54;
     margin: 0;
 }
 
@@ -881,17 +1206,17 @@ html {
 
 .benefit-card {
     background: white;
-    padding: 35px;
-    border-radius: 15px;
+    padding: 32px;
+    border-radius: 20px;
     text-align: center;
-    border: 2px solid #f0f0f0;
-    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .benefit-card:hover {
-    border-color: #D4A574;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-5px);
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
 }
 
 .benefit-icon {
@@ -904,16 +1229,18 @@ html {
 }
 
 .benefit-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #263C38;
-    margin: 0 0 15px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: #2D2926;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
 }
 
 .benefit-description {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: #6B5E54;
     margin: 0;
 }
 
@@ -953,17 +1280,19 @@ html {
 .suitable-candidates,
 .not-suitable-candidates {
     background: white;
-    padding: 35px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
 }
 
 .candidates-subtitle {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #263C38;
-    margin: 0 0 25px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: #2D2926;
+    margin: 0 0 20px 0;
     text-align: center;
+    line-height: 1.4;
 }
 
 .candidates-list {
@@ -973,10 +1302,10 @@ html {
 }
 
 .candidate-item {
-    padding: 12px 20px;
-    font-size: 1.05rem;
-    line-height: 1.5;
-    color: #555;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #6B5E54;
     text-align: center;
 }
 
@@ -997,20 +1326,20 @@ html {
 
 .faq-item {
     background: white;
-    border: 2px solid #f0f0f0;
-    border-radius: 12px;
-    margin-bottom: 15px;
+    border: none;
+    border-radius: 16px;
+    margin-bottom: 12px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .faq-item:hover {
-    border-color: #D4A574;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
 }
 
 .faq-item.open {
-    border-color: #f0f0f0;
-    box-shadow: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .faq-question {
@@ -1031,11 +1360,13 @@ html {
 }
 
 .question-text {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: #263C38;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #2D2926;
     flex: 1;
     padding-right: 20px;
+    line-height: 1.4;
 }
 
 .toggle-icon {
@@ -1057,9 +1388,9 @@ html {
 }
 
 .faq-answer p {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #6B5E54;
     margin: 0;
 }
 

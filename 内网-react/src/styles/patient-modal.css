@@ -1,0 +1,892 @@
+/* ==========================================================================
+   PATIENT ACCOUNT MODAL - "Clinical Luxury" Design System
+   Premium, refined modal styling for patient data management
+   ========================================================================== */
+
+/* ==========================================================================
+   Modal Container & Backdrop
+   ========================================================================== */
+.patient-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: backdropFadeIn 0.3s ease;
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.patient-modal-container {
+  width: 100%;
+  max-width: 1100px;
+  max-height: 90vh;
+  background: white;
+  border-radius: 24px;
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.2),
+    0 16px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalSlideIn 0.4s var(--ease-out-expo);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ==========================================================================
+   Modal Header
+   ========================================================================== */
+.patient-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(
+    135deg,
+    rgba(13, 148, 136, 0.08) 0%,
+    rgba(13, 148, 136, 0.03) 100%
+  );
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.patient-header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.patient-avatar-large {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px var(--color-primary-glow);
+}
+
+.patient-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.patient-modal-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.patient-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.patient-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.patient-meta-item i {
+  color: var(--color-primary);
+  opacity: 0.7;
+}
+
+.patient-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modal-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.modal-action-btn.secondary {
+  background: white;
+  color: var(--color-text-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-action-btn.secondary:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.modal-action-btn.primary {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--color-primary-glow);
+}
+
+.modal-action-btn.primary:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.modal-close-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--color-text-primary);
+}
+
+/* ==========================================================================
+   Tab Navigation
+   ========================================================================== */
+.patient-tab-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 2rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.patient-tab-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.patient-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.patient-tab-btn i {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.patient-tab-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--color-text-secondary);
+}
+
+.patient-tab-btn.active {
+  background: white;
+  color: var(--color-primary);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.patient-tab-btn.active i {
+  opacity: 1;
+}
+
+/* Tab indicator dot for new items */
+.patient-tab-btn .tab-indicator {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+/* ==========================================================================
+   Modal Content Area
+   ========================================================================== */
+.patient-modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 2rem;
+  background: var(--color-bg-base);
+}
+
+/* Custom scrollbar */
+.patient-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.patient-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.patient-modal-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+.patient-modal-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   Information Cards
+   ========================================================================== */
+.info-section {
+  margin-bottom: 1.5rem;
+}
+
+.info-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.info-section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-section-title i {
+  color: var(--color-primary);
+  font-size: 1rem;
+}
+
+.info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.info-value {
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.info-value.empty {
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   Appointment History
+   ========================================================================== */
+.appointment-timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.appointment-timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    var(--color-primary) 0%,
+    rgba(13, 148, 136, 0.2) 100%
+  );
+  border-radius: 1px;
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 1.5rem;
+  animation: timelineSlideIn 0.3s ease forwards;
+  opacity: 0;
+}
+
+.timeline-item:nth-child(1) { animation-delay: 0.05s; }
+.timeline-item:nth-child(2) { animation-delay: 0.1s; }
+.timeline-item:nth-child(3) { animation-delay: 0.15s; }
+.timeline-item:nth-child(4) { animation-delay: 0.2s; }
+.timeline-item:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes timelineSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -2rem;
+  top: 0.25rem;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border: 3px solid var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px var(--color-primary-glow);
+}
+
+.timeline-dot.completed { border-color: var(--color-success); box-shadow: 0 2px 8px var(--color-success-glow); }
+.timeline-dot.cancelled { border-color: var(--color-text-muted); box-shadow: none; }
+.timeline-dot.no-show { border-color: var(--color-error); box-shadow: 0 2px 8px var(--color-error-glow); }
+
+.timeline-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.timeline-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateX(4px);
+}
+
+.timeline-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-bottom: 0.375rem;
+}
+
+.timeline-service {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.timeline-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   Medical Records
+   ========================================================================== */
+.records-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.record-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  display: flex;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.record-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-primary);
+}
+
+.record-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  border-radius: 12px;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.record-icon.pdf { background: #fef2f2; color: #dc2626; }
+.record-icon.image { background: #f0f9ff; color: #0284c7; }
+.record-icon.doc { background: #f0fdf4; color: #16a34a; }
+
+.record-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.record-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.25rem;
+}
+
+.record-meta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.record-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.record-action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.record-action-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--color-text-primary);
+}
+
+.record-action-btn.delete:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* Upload Zone */
+.upload-zone {
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.upload-zone:hover {
+  border-color: var(--color-primary);
+  background: rgba(13, 148, 136, 0.04);
+}
+
+.upload-zone.dragging {
+  border-color: var(--color-primary);
+  background: rgba(13, 148, 136, 0.08);
+  transform: scale(1.01);
+}
+
+.upload-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  border-radius: 16px;
+  font-size: 1.5rem;
+}
+
+.upload-text {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.upload-hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Dental Chart Tab
+   ========================================================================== */
+.dental-chart-container {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  min-height: 500px;
+}
+
+@media (max-width: 1024px) {
+  .dental-chart-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-3d-wrapper {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.tooth-details-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tooth-number-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-primary-glow);
+}
+
+.condition-select-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.condition-option {
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  background: white;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.condition-option:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+}
+
+.condition-option.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--color-primary-glow);
+}
+
+/* Condition colors */
+.condition-option[data-condition="healthy"].selected { background: #059669; border-color: #059669; }
+.condition-option[data-condition="monitor"].selected { background: #d97706; border-color: #d97706; }
+.condition-option[data-condition="cavity"].selected { background: #ea580c; border-color: #ea580c; }
+.condition-option[data-condition="filled"].selected { background: #0284c7; border-color: #0284c7; }
+.condition-option[data-condition="missing"].selected { background: #64748b; border-color: #64748b; }
+.condition-option[data-condition="implant"].selected { background: #7c3aed; border-color: #7c3aed; }
+.condition-option[data-condition="root-canal"].selected { background: #dc2626; border-color: #dc2626; }
+.condition-option[data-condition="post-op"].selected { background: #db2777; border-color: #db2777; }
+
+/* ==========================================================================
+   Chart History Tab
+   ========================================================================== */
+.chart-comparison-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .chart-comparison-view {
+    grid-template-columns: 1fr;
+  }
+}
+
+.comparison-panel {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.comparison-header {
+  padding: 1rem 1.25rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comparison-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+}
+
+.comparison-date {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.comparison-content {
+  padding: 1rem;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Snapshot selector */
+.snapshot-selector {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.snapshot-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background: var(--color-bg-subtle);
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.snapshot-chip:hover {
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+}
+
+.snapshot-chip.active {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 12px var(--color-primary-glow);
+}
+
+/* ==========================================================================
+   Treatment Plan Tab
+   ========================================================================== */
+.treatment-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+  padding: 2rem;
+}
+
+.treatment-empty-icon {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-50);
+  color: var(--color-primary);
+  border-radius: 20px;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.treatment-empty-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.treatment-empty-text {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  max-width: 320px;
+  margin-bottom: 1.5rem;
+}
+
+/* ==========================================================================
+   Loading States
+   ========================================================================== */
+.patient-modal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.patient-modal-loading .spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--color-primary-50);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.patient-modal-loading .loading-text {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Responsive Adjustments
+   ========================================================================== */
+@media (max-width: 768px) {
+  .patient-modal-container {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .patient-modal-header {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .patient-header-info {
+    width: 100%;
+  }
+
+  .patient-header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .patient-tab-nav {
+    padding: 0.5rem 1rem;
+  }
+
+  .patient-modal-content {
+    padding: 1rem;
+  }
+
+  .dental-chart-container {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}

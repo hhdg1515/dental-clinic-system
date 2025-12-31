@@ -29,6 +29,17 @@ const adminRedirectCopy = (isZh: boolean) => ({
   subtitle: isZh ? '正在跳转至内部控制面板…' : 'Redirecting to the internal dashboard…'
 });
 
+const getAdminRedirectUrl = () => {
+  const envUrl = import.meta.env.VITE_ADMIN_DASHBOARD_URL as string | undefined;
+  if (envUrl) {
+    return envUrl;
+  }
+  // Use same-origin path to share Firebase auth state
+  // In dev: proxied via vite to localhost:5174
+  // In prod: served from same origin under /内网/
+  return '/内网/';
+};
+
 export const UserDashboard = () => {
   const { currentUser, userData, signOut, isAdmin, requestAuthInit } = useAuth();
   const { currentLanguage } = useLanguage();
@@ -113,8 +124,9 @@ export const UserDashboard = () => {
       localStorage.setItem('dashboard:view-location', defaultViewLocation);
     }
 
+    const adminRedirectUrl = getAdminRedirectUrl();
     setTimeout(() => {
-      window.location.href = '/内网/dashboard.html';
+      window.location.href = adminRedirectUrl;
     }, 2000);
 
     const copy = adminRedirectCopy(isZh);

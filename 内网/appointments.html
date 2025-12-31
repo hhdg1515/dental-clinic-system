@@ -11,7 +11,13 @@
     <link rel="stylesheet" href="css/appointments.css">
     <link rel="stylesheet" href="css/liquid-glass-modal.css">
     <link rel="stylesheet" href="css/dental-chart.css">
+    <link rel="stylesheet" href="css/dental-chart-3d.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Three.js for 3D Dental Chart (using older version with examples/js support) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
 
     <!-- 认证检查由各页面的 JS 文件处理 -->
 
@@ -864,13 +870,110 @@
                 <div class="chart-history-container">
                     <div class="history-header">
                         <h3>Dental Chart History & Snapshots</h3>
-                        <button class="btn-primary" onclick="createNewSnapshot()">
-                            <i class="fas fa-camera"></i> Create Snapshot
+                        <div class="history-header-actions">
+                            <button class="btn-secondary" onclick="document.getElementById('uploadImageInput').click()">
+                                <i class="fas fa-upload"></i> Upload Image
+                            </button>
+                            <button class="btn-primary" onclick="createNewSnapshot()">
+                                <i class="fas fa-camera"></i> Create Snapshot
+                            </button>
+                        </div>
+                        <input type="file" id="uploadImageInput" accept="image/*" multiple style="display: none;">
+                    </div>
+
+                    <!-- Tab Navigation for Data vs Images -->
+                    <div class="history-tab-navigation">
+                        <button class="history-tab-btn active" data-history-tab="data">
+                            <i class="fas fa-database"></i> Data Comparison
+                        </button>
+                        <button class="history-tab-btn" data-history-tab="images">
+                            <i class="fas fa-images"></i> Image Comparison
                         </button>
                     </div>
 
-                    <div class="snapshots-list" id="snapshotsList">
-                        <p class="placeholder-text">No snapshots created yet. Click "Create Snapshot" to save the current chart state.</p>
+                    <!-- Data Comparison Tab -->
+                    <div class="history-tab-pane active" id="data-comparison">
+                        <div class="snapshots-list" id="snapshotsList">
+                            <p class="placeholder-text">No snapshots created yet. Click "Create Snapshot" to save the current chart state.</p>
+                        </div>
+                    </div>
+
+                    <!-- Image Comparison Tab -->
+                    <div class="history-tab-pane" id="image-comparison">
+                        <div class="image-comparison-title">
+                            <h4>影像对比分析</h4>
+                            <p>对比不同时期的X光片，追踪病情变化</p>
+                        </div>
+
+                        <!-- Image Comparison Viewer -->
+                        <div class="image-comparison-viewer">
+                            <!-- Left/Top Image -->
+                            <div class="comparison-image-panel">
+                                <div class="panel-header">
+                                    <span class="panel-label">对比基准</span>
+                                    <select class="image-date-selector" id="baselineImageSelector">
+                                        <option value="">选择时间点...</option>
+                                    </select>
+                                    <span class="panel-visit-label" id="baselineVisitLabel"></span>
+                                </div>
+                                <div class="image-display" id="baselineImageDisplay">
+                                    <div class="image-placeholder">
+                                        <i class="fas fa-image"></i>
+                                        <p>请选择基准影像</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right/Bottom Image -->
+                            <div class="comparison-image-panel">
+                                <div class="panel-header">
+                                    <span class="panel-label current">当前对比</span>
+                                    <select class="image-date-selector" id="currentImageSelector">
+                                        <option value="">选择时间点...</option>
+                                    </select>
+                                    <span class="panel-visit-label" id="currentVisitLabel"></span>
+                                </div>
+                                <div class="image-display" id="currentImageDisplay">
+                                    <div class="image-placeholder">
+                                        <i class="fas fa-image"></i>
+                                        <p>请选择对比影像</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Comparison Controls -->
+                        <div class="image-comparison-controls">
+                            <div class="zoom-controls">
+                                <button class="control-btn" id="zoomOutBtn">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <input type="range" class="zoom-slider" id="zoomSlider" min="100" max="300" value="100">
+                                <span class="zoom-value" id="zoomValue">100%</span>
+                                <button class="control-btn" id="zoomInBtn">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                            </div>
+                            <div class="control-actions">
+                                <button class="control-btn" id="resetViewBtn">
+                                    <i class="fas fa-undo"></i> 重置
+                                </button>
+                                <button class="control-btn" id="fullscreenBtn">
+                                    <i class="fas fa-expand"></i> 全屏
+                                </button>
+                                <button class="control-btn" id="downloadComparisonBtn">
+                                    <i class="fas fa-download"></i> 导出
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Image Timeline -->
+                        <div class="image-timeline-container">
+                            <h5>影像时间轴 <span class="timeline-count" id="timelineCount">4 份记录</span></h5>
+                            <div class="image-timeline" id="imageTimeline">
+                                <!-- Timeline items will be dynamically populated -->
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Comparison Modal -->
@@ -913,6 +1016,7 @@
     <script type="module" src="firebase-config.js"></script>
     <script src="js/firebase-data-service.js"></script>
     <script src="js/dental-chart.js"></script>
+    <script src="js/dental-chart-3d.js"></script>
     <script src="js/dental-chart-pdf.js"></script>
     <script type="module" src="js/appointments.js"></script>
 </body>

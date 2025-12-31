@@ -16,6 +16,21 @@ const ServiceDetail = lazy(() =>
     default: module.ServiceDetail,
   }))
 );
+const Stories = lazy(() =>
+  import('./pages/Stories').then((module) => ({
+    default: module.Stories,
+  }))
+);
+const StoryDetail = lazy(() =>
+  import('./pages/StoryDetail').then((module) => ({
+    default: module.StoryDetail,
+  }))
+);
+const PromotionDetail = lazy(() =>
+  import('./pages/PromotionDetail').then((module) => ({
+    default: module.PromotionDetail,
+  }))
+);
 const AppLogin = lazy(() =>
   import('./app/pages/LoginPage').then((module) => ({
     default: module.AppLoginPage,
@@ -86,6 +101,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/service" element={<Service />} />
+        <Route path="/stories" element={<Stories />} />
+        <Route path="/stories/:id" element={<StoryDetail />} />
+        <Route path="/promotions/spring-whitening" element={<PromotionDetail />} />
         <Route path="/faq" element={<FAQ />} />
         {/* Dynamic service routes - SEO friendly */}
         <Route path="/services/:slug" element={<ServiceDetail />} />

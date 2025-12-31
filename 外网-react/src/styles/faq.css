@@ -1,0 +1,958 @@
+/* ============================================================
+   FAQ PAGE STYLES - "Radiant Transformation" Theme
+   Consistent with promotion-detail.css and stories.css
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   CSS Variables
+   ------------------------------------------------------------ */
+:root {
+  --faq-gold: #C9A962;
+  --faq-gold-light: #E8D5A3;
+  --faq-gold-dark: #A88B4A;
+  --faq-sage: #7A9A7E;
+  --faq-sage-light: #A8C4AB;
+  --faq-sage-dark: #5B7A5E;
+  --faq-cream: #FDF8F3;
+  --faq-cream-dark: #F5EDE3;
+  --faq-charcoal: #2C3E3A;
+  --faq-text: #4A5568;
+  --faq-text-light: #718096;
+  --faq-white: #FFFFFF;
+  --faq-shadow: rgba(201, 169, 98, 0.15);
+  --faq-shadow-dark: rgba(0, 0, 0, 0.1);
+}
+
+/* ------------------------------------------------------------
+   Keyframe Animations
+   ------------------------------------------------------------ */
+@keyframes faqFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes faqFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
+}
+
+@keyframes faqPulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes faqShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes faqSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ------------------------------------------------------------
+   Page Container
+   ------------------------------------------------------------ */
+.faq-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    180deg,
+    var(--faq-cream) 0%,
+    var(--faq-white) 30%,
+    var(--faq-cream-dark) 70%,
+    var(--faq-cream) 100%
+  );
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ------------------------------------------------------------
+   Floating Decorations
+   ------------------------------------------------------------ */
+.faq-decorations {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.faq-dot {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.faq-dot--gold {
+  background: radial-gradient(circle, var(--faq-gold-light) 0%, var(--faq-gold) 100%);
+  box-shadow: 0 0 20px var(--faq-shadow);
+}
+
+.faq-dot--sage {
+  background: radial-gradient(circle, var(--faq-sage-light) 0%, var(--faq-sage) 100%);
+  box-shadow: 0 0 15px rgba(122, 154, 126, 0.3);
+}
+
+.faq-dot--blur {
+  background: radial-gradient(circle, rgba(201, 169, 98, 0.15) 0%, transparent 70%);
+  filter: blur(30px);
+}
+
+.faq-dot--animate {
+  animation: faqFloat 6s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------
+   Hero Section
+   ------------------------------------------------------------ */
+.faq-hero {
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.faq-hero__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.faq-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.faq-hero__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(44, 62, 58, 0.5) 0%,
+    rgba(44, 62, 58, 0.6) 50%,
+    rgba(44, 62, 58, 0.75) 100%
+  );
+  z-index: 1;
+}
+
+.faq-hero__content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 24px 60px;
+  text-align: center;
+}
+
+.faq-hero__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  animation: faqFadeInUp 0.6s ease-out;
+}
+
+.faq-hero__breadcrumb a {
+  color: var(--faq-gold-light);
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.faq-hero__breadcrumb a:hover {
+  color: var(--faq-white);
+}
+
+.faq-hero__breadcrumb-separator {
+  color: var(--faq-gold);
+  font-size: 0.8rem;
+}
+
+.faq-hero__breadcrumb-current {
+  color: var(--faq-white);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.faq-hero__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 500;
+  color: var(--faq-white);
+  margin: 0 0 16px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  animation: faqFadeInUp 0.6s ease-out 0.1s backwards;
+}
+
+.faq-hero__desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
+  line-height: 1.7;
+  margin: 0;
+  animation: faqFadeInUp 0.6s ease-out 0.2s backwards;
+}
+
+.faq-hero__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+  animation: faqFadeInUp 0.6s ease-out 0.3s backwards;
+}
+
+.faq-hero__divider-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--faq-gold), transparent);
+}
+
+.faq-hero__divider-diamond {
+  width: 10px;
+  height: 10px;
+  background: var(--faq-gold);
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--faq-shadow);
+}
+
+/* ------------------------------------------------------------
+   Main Content Section
+   ------------------------------------------------------------ */
+.faq-content {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------------
+   Section Headers
+   ------------------------------------------------------------ */
+.faq-section-header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: faqFadeInUp 0.6s ease-out;
+}
+
+.faq-section-header__elegant {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--faq-gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.faq-section-header__bold {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 600;
+  color: var(--faq-charcoal);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.faq-section-header__divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.faq-section-header__divider-line {
+  width: 40px;
+  height: 2px;
+  background: var(--faq-gold);
+  border-radius: 1px;
+}
+
+.faq-section-header__divider-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--faq-sage);
+  border-radius: 50%;
+}
+
+/* ------------------------------------------------------------
+   Things to Bring Card
+   ------------------------------------------------------------ */
+.faq-bring-card {
+  background: var(--faq-white);
+  border-radius: 20px;
+  box-shadow:
+    0 20px 60px var(--faq-shadow),
+    0 0 0 1px rgba(201, 169, 98, 0.2);
+  padding: 50px;
+  margin-bottom: 100px;
+  position: relative;
+  overflow: hidden;
+  animation: faqFadeInUp 0.6s ease-out 0.2s backwards;
+}
+
+/* Top bar removed per user request */
+
+.faq-bring-card__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  position: relative;
+}
+
+.faq-bring-card__column {
+  text-align: center;
+  padding: 0 20px;
+  position: relative;
+}
+
+.faq-bring-card__column:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--faq-gold-light), transparent);
+}
+
+.faq-bring-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.faq-bring-card__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.faq-bring-card__dot--safety {
+  background: var(--faq-sage);
+}
+
+.faq-bring-card__dot--comfort {
+  background: var(--faq-gold);
+}
+
+.faq-bring-card__dot--convenience {
+  background: #5B9BD5;
+}
+
+.faq-bring-card__title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--faq-charcoal);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.faq-bring-card__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-bring-card__item {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: var(--faq-text);
+  line-height: 1.6;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.faq-bring-card__item:hover {
+  background: var(--faq-cream);
+  color: var(--faq-charcoal);
+  transform: translateX(4px);
+}
+
+/* ------------------------------------------------------------
+   Carousel Common Styles
+   ------------------------------------------------------------ */
+.faq-carousel {
+  position: relative;
+  margin: 0 auto 80px;
+  max-width: 1000px;
+  animation: faqFadeInUp 0.6s ease-out 0.3s backwards;
+}
+
+.faq-carousel__container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px var(--faq-shadow-dark);
+}
+
+.faq-carousel__slide {
+  display: none;
+  animation: faqSlideIn 0.5s ease-out;
+}
+
+.faq-carousel__slide.active {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.faq-carousel__image {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+
+.faq-carousel__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.faq-carousel__slide:hover .faq-carousel__image img {
+  transform: scale(1.05);
+}
+
+.faq-carousel__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 70%, rgba(255, 255, 255, 0.1) 100%);
+}
+
+.faq-carousel__content {
+  background: var(--faq-white);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.faq-carousel__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--faq-gold-light) 0%, var(--faq-gold) 100%);
+  color: var(--faq-charcoal);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+
+.faq-carousel__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--faq-charcoal);
+  margin: 0 0 24px;
+  line-height: 1.3;
+}
+
+.faq-carousel__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.faq-carousel__list-item {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: var(--faq-text);
+  line-height: 1.8;
+  padding-left: 16px;
+  position: relative;
+}
+
+.faq-carousel__list-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--faq-text-light);
+}
+
+/* Carousel Navigation */
+.faq-carousel__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--faq-white);
+  border: none;
+  box-shadow: 0 4px 20px var(--faq-shadow-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--faq-charcoal);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.faq-carousel__nav:hover {
+  background: var(--faq-gold);
+  color: var(--faq-white);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.faq-carousel__nav--prev {
+  left: -24px;
+}
+
+.faq-carousel__nav--next {
+  right: -24px;
+}
+
+.faq-carousel__nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Carousel Indicators */
+.faq-carousel__indicators {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.faq-carousel__indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--faq-cream-dark);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.faq-carousel__indicator:hover {
+  background: var(--faq-gold-light);
+}
+
+.faq-carousel__indicator.active {
+  background: var(--faq-gold);
+  border-color: var(--faq-gold-light);
+  transform: scale(1.2);
+}
+
+/* ------------------------------------------------------------
+   Tips Section
+   ------------------------------------------------------------ */
+.faq-tips {
+  background: linear-gradient(135deg, var(--faq-cream) 0%, var(--faq-white) 50%, var(--faq-cream-dark) 100%);
+  padding: 80px 0;
+  margin: 0 -24px;
+  position: relative;
+}
+
+.faq-tips::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--faq-gold), transparent);
+}
+
+.faq-tips__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Tips Carousel - Alternative Layout */
+.faq-tips-carousel {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.faq-tips-carousel__container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px var(--faq-shadow-dark);
+}
+
+.faq-tips-carousel__slide {
+  display: none;
+  animation: faqSlideIn 0.5s ease-out;
+}
+
+.faq-tips-carousel__slide.active {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+}
+
+.faq-tips-carousel__image {
+  position: relative;
+  height: 450px;
+  overflow: hidden;
+}
+
+.faq-tips-carousel__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.faq-tips-carousel__slide:hover .faq-tips-carousel__image img {
+  transform: scale(1.05);
+}
+
+.faq-tips-carousel__content {
+  background: linear-gradient(135deg, var(--faq-charcoal) 0%, #1a2b27 100%);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.faq-tips-carousel__content::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(201, 169, 98, 0.1) 0%, transparent 60%);
+}
+
+.faq-tips-carousel__number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--faq-gold);
+  opacity: 0.3;
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  line-height: 1;
+}
+
+.faq-tips-carousel__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--faq-white);
+  margin: 0 0 28px;
+  line-height: 1.3;
+  position: relative;
+}
+
+.faq-tips-carousel__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.faq-tips-carousel__list-item {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.8;
+  padding-left: 16px;
+  position: relative;
+}
+
+.faq-tips-carousel__list-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--faq-gold-light);
+}
+
+/* Tips Carousel Navigation */
+.faq-tips-carousel__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--faq-gold);
+  border: none;
+  box-shadow: 0 4px 20px rgba(201, 169, 98, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--faq-charcoal);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.faq-tips-carousel__nav:hover {
+  background: var(--faq-white);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.faq-tips-carousel__nav--prev {
+  left: -26px;
+}
+
+.faq-tips-carousel__nav--next {
+  right: -26px;
+}
+
+.faq-tips-carousel__nav svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Tips Carousel Indicators */
+.faq-tips-carousel__indicators {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.faq-tips-carousel__indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--faq-cream-dark);
+  border: 2px solid var(--faq-gold-light);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.faq-tips-carousel__indicator:hover {
+  background: var(--faq-gold-light);
+}
+
+.faq-tips-carousel__indicator.active {
+  background: var(--faq-gold);
+  border-color: var(--faq-gold);
+  transform: scale(1.3);
+  box-shadow: 0 0 10px var(--faq-shadow);
+}
+
+/* ------------------------------------------------------------
+   Decorative Elements (Maples, Pinecones)
+   ------------------------------------------------------------ */
+.faq-decor {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.faq-decor--maple1 {
+  top: 15%;
+  left: -5%;
+  width: 120px;
+  height: 120px;
+  opacity: 0.15;
+  animation: faqFloat 8s ease-in-out infinite;
+}
+
+.faq-decor--maple2 {
+  top: 25%;
+  right: -3%;
+  width: 100px;
+  height: 100px;
+  opacity: 0.12;
+  animation: faqFloat 7s ease-in-out infinite 0.5s;
+}
+
+.faq-decor--pinecone {
+  bottom: 30%;
+  left: 2%;
+  width: 80px;
+  height: 80px;
+  opacity: 0.1;
+  animation: faqFloat 9s ease-in-out infinite 1s;
+}
+
+/* ------------------------------------------------------------
+   Responsive Design
+   ------------------------------------------------------------ */
+@media (max-width: 1024px) {
+  .faq-carousel__slide.active,
+  .faq-tips-carousel__slide.active {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-carousel__image,
+  .faq-tips-carousel__image {
+    height: 300px;
+  }
+
+  .faq-carousel__nav,
+  .faq-tips-carousel__nav {
+    width: 42px;
+    height: 42px;
+  }
+
+  .faq-carousel__nav--prev,
+  .faq-tips-carousel__nav--prev {
+    left: 16px;
+  }
+
+  .faq-carousel__nav--next,
+  .faq-tips-carousel__nav--next {
+    right: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-hero {
+    min-height: 350px;
+  }
+
+  .faq-hero__content {
+    padding: 100px 20px 50px;
+  }
+
+  .faq-content {
+    padding: 50px 20px;
+  }
+
+  .faq-bring-card {
+    padding: 30px 20px;
+  }
+
+  .faq-bring-card__grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .faq-bring-card__column:not(:last-child)::after {
+    display: none;
+  }
+
+  .faq-bring-card__column:not(:last-child) {
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--faq-cream-dark);
+  }
+
+  .faq-carousel__content,
+  .faq-tips-carousel__content {
+    padding: 32px 24px;
+  }
+
+  .faq-carousel__title,
+  .faq-tips-carousel__title {
+    font-size: 1.5rem;
+  }
+
+  .faq-tips {
+    padding: 50px 0;
+    margin: 0 -20px;
+  }
+
+  .faq-tips__container {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-hero__title {
+    font-size: 2rem;
+  }
+
+  .faq-hero__desc {
+    font-size: 1rem;
+  }
+
+  .faq-section-header__bold {
+    font-size: 1.6rem;
+  }
+
+  .faq-bring-card__title {
+    font-size: 1rem;
+  }
+
+  .faq-carousel__image,
+  .faq-tips-carousel__image {
+    height: 220px;
+  }
+
+  .faq-carousel__nav,
+  .faq-tips-carousel__nav {
+    width: 36px;
+    height: 36px;
+  }
+
+  .faq-tips-carousel__number {
+    font-size: 3rem;
+  }
+}

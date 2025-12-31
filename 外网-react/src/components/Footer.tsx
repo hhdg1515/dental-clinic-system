@@ -15,7 +15,8 @@ const FOOTER_NAV: Array<{ to: string; labelKey: TranslationKey; external?: boole
   { to: '/service', labelKey: 'footer-nav-services' },
   { to: '/faq', labelKey: 'footer-nav-faq' },
   { to: '#', labelKey: 'footer-nav-contact', external: true },
-  { to: '/#login-section', labelKey: 'footer-nav-book' }
+  { to: '/#login-section', labelKey: 'footer-nav-book' },
+  { to: '/stories', labelKey: 'footer-nav-stories' }
 ];
 
 const SOCIAL_LINKS: Array<{ iconClass: string; label: string }> = [

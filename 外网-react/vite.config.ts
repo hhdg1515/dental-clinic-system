@@ -28,7 +28,22 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    strictPort: false
+    strictPort: false,
+    proxy: {
+      // 开发模式下代理内网-react请求到5174端口
+      // 需要同时匹配中文和URL编码版本
+      '/内网': {
+        target: 'http://localhost:5174',
+        changeOrigin: true,
+        ws: true  // 支持WebSocket（HMR热更新）
+      },
+      // URL编码版本: %E5%86%85%E7%BD%91 = 内网
+      '/%E5%86%85%E7%BD%91': {
+        target: 'http://localhost:5174',
+        changeOrigin: true,
+        ws: true
+      }
+    }
   },
   build: {
     sourcemap: false,

@@ -23,6 +23,11 @@ const NAV_LINKS: NavLinkConfig[] = [
       path.startsWith('/service') || path.startsWith('/services')
   },
   {
+    to: '/stories',
+    labelKey: 'nav-stories',
+    isActive: (path) => path.startsWith('/stories')
+  },
+  {
     to: '/faq',
     labelKey: 'nav-faq',
     isActive: (path) => path.startsWith('/faq')

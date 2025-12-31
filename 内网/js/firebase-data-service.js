@@ -1850,6 +1850,87 @@ class FirebaseDataService {
         }
     }
 
+    // ==================== MEDICAL IMAGES ====================
+
+    /**
+     * Get all medical images for a patient
+     */
+    async getPatientImages(patientId) {
+        await this.ensureReady();
+        const { collection, query, where, orderBy, getDocs } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const imagesRef = collection(db, 'medicalImages');
+        const q = query(
+            imagesRef,
+            where('patientId', '==', patientId),
+            orderBy('date', 'desc')
+        );
+
+        try {
+            const querySnapshot = await getDocs(q);
+            const images = [];
+
+            querySnapshot.forEach((doc) => {
+                images.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            console.log(`✅ Loaded ${images.length} images for patient ${patientId}`);
+            return images;
+        } catch (error) {
+            // If no images exist or permission denied, return empty array
+            if (error.code === 'permission-denied' || error.code === 'not-found') {
+                console.log('📝 No images found or access denied');
+                return [];
+            }
+            throw error;
+        }
+    }
+
+    /**
+     * Save a medical image metadata
+     */
+    async saveMedicalImage(patientId, imageData) {
+        await this.ensureReady();
+        const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const imagesRef = collection(db, 'medicalImages');
+
+        const docData = {
+            patientId,
+            url: imageData.url,
+            date: imageData.date || new Date().toISOString(),
+            type: imageData.type || '全景片',
+            fileName: imageData.fileName || 'unknown',
+            size: imageData.size || 0,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        };
+
+        const docRef = await addDoc(imagesRef, docData);
+        console.log('✅ Medical image saved:', docRef.id);
+        return { id: docRef.id, ...docData };
+    }
+
+    /**
+     * Delete a medical image
+     */
+    async deleteMedicalImage(imageId) {
+        await this.ensureReady();
+        const { doc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js');
+
+        const db = this.validateDatabase();
+        const imageRef = doc(db, 'medicalImages', imageId);
+        await deleteDoc(imageRef);
+
+        console.log('✅ Medical image deleted:', imageId);
+        return true;
+    }
+
     /**
      * Get a specific snapshot by ID
      */

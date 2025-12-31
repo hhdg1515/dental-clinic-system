@@ -32,13 +32,17 @@ export const ProcessSteps = ({ titleKey, subtitleKey, steps }: ProcessStepsProps
   };
 
   return (
-    <div className="process-steps-carousel">
+    <div className="process-steps-carousel" style={{ position: 'relative' }}>
       <div className="section-header">
         <h3 className="section-title-elegant">{t(titleKey)}</h3>
         {subtitleKey && <p className="section-subtitle">{t(subtitleKey)}</p>}
       </div>
 
-      <div className="carousel-wrapper">
+      <div className="carousel-wrapper" style={{ position: 'relative' }}>
+        {/* Gold bubble decorations - bottom right corner */}
+        <div style={{ position: 'absolute', bottom: '20px', right: '30px', width: '45px', height: '45px', borderRadius: '50%', backgroundColor: 'rgba(212, 165, 116, 0.25)', zIndex: 1, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '45px', right: '55px', width: '25px', height: '25px', borderRadius: '50%', backgroundColor: 'rgba(212, 165, 116, 0.2)', zIndex: 1, pointerEvents: 'none' }} />
+
         {/* Carousel Container with Image Background */}
         <div className="carousel-container">
           {steps.map((step, index) => (

@@ -56,6 +56,37 @@
     /* --breakpoint-mobile: 768px; */
     /* --breakpoint-tablet: 1024px; */
     /* --breakpoint-desktop: 1440px; */
+
+    /* =================== Radiant Transformation Theme =================== */
+    /* 用于 Stories, PromotionDetail, FAQ 页面 */
+
+    /* 主题色 - 金色系 */
+    --theme-gold: #C9A962;
+    --theme-gold-light: #E8D5A3;
+    --theme-gold-dark: #A88B4A;
+
+    /* 主题色 - 鼠尾草绿 */
+    --theme-sage: #7A9A7E;
+    --theme-sage-light: #A8C4AB;
+    --theme-sage-dark: #5B7A5E;
+
+    /* 主题背景 */
+    --theme-cream: #FDF8F3;
+    --theme-cream-dark: #F5EDE3;
+    --theme-ivory: #FBF9F4;
+
+    /* 主题文字 */
+    --theme-charcoal: #2C3E3A;
+    --theme-text: #4A5568;
+    --theme-text-light: #718096;
+
+    /* 主题字体 */
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Outfit', -apple-system, sans-serif;
+
+    /* 主题缓动 */
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 /* =================== 全局重置 =================== */

@@ -97,6 +97,7 @@ export const translations = {
         'footer-nav-contact': 'Contact us',
         'footer-nav-faq': 'FAQ',
         'footer-nav-services': 'Services',
+        'footer-nav-stories': 'Patient Stories',
         'footer-nav-title': 'NAVIGATION',
         'for-comfort-title': 'FOR COMFORT',
         'for-convenience-title': 'FOR CONVENIENCE',
@@ -141,6 +142,7 @@ export const translations = {
         'nav-home': 'Home',
         'nav-logo': 'FIRST AVE DENTAL & ORTHODONTICS',
         'nav-services': 'Services',
+        'nav-stories': 'Patient Stories',
         'nearby-amenities': 'NEARBY AMENITIES',
         'oral-surgery-card-title': 'Surgical Procedures',
         'oral-surgery-detail-1': 'Wisdom tooth extraction',
@@ -328,6 +330,174 @@ export const translations = {
         'story-button': 'ONLINE FORM',
         'story-subtitle': 'WE LOVE HEARING FROM PATIENTS',
         'story-title': 'SHARE YOUR JOURNEY',
+        'stories-hero-title': 'Real Stories, Real Smiles',
+        'stories-hero-desc': 'These aren\'t actors or stock photos—just real people from our community sharing what their experience was actually like. The good, the nervous, and the "I can\'t stop smiling" moments.',
+        'stories-featured-title': 'Spring Whitening: Lisa\'s Story',
+        'stories-featured-desc': '"I kept putting it off for years. Then my daughter\'s graduation came up, and I thought—why not now?" Lisa came in nervous about sensitivity. Three weeks later, she texted us a selfie from the ceremony. That\'s the kind of moment we live for.',
+        'stories-featured-offer': '20% off this month—same results Lisa got',
+        'stories-featured-season': 'Spring 2024',
+        'stories-seasonal-special': 'Seasonal Pick',
+        'stories-limited-time-tag': 'This Month Only',
+        'stories-special-offer': 'Current Offer',
+        'stories-views': 'views',
+        'stories-learn-more': 'Learn More',
+        'stories-filter-all': 'All Stories',
+        'stories-filter-implants': 'Dental Implants',
+        'stories-filter-orthodontics': 'Orthodontics',
+        'stories-filter-cosmetic': 'Cosmetic',
+        'stories-filter-general': 'General Care',
+        'stories-category-general': 'General Care',
+        'stories-category-orthodontics': 'Orthodontics',
+        'stories-category-cosmetic': 'Cosmetic',
+        'stories-category-implants': 'Dental Implants',
+        'stories-tag-deep-cleaning': 'Deep Cleaning',
+        'stories-tag-invisalign': 'Invisalign',
+        'stories-tag-veneers': 'Porcelain Veneers',
+        'stories-tag-root-canal': 'Root Canal',
+        'stories-tag-whitening': 'Teeth Whitening',
+        'stories-tag-family-checkup': 'Family Checkup',
+        'stories-date-jun-8-2024': 'Jun 8, 2024',
+        'stories-date-oct-22-2024': 'Oct 22, 2024',
+        'stories-date-dec-5-2024': 'Dec 5, 2024',
+        'stories-date-apr-3-2024': 'Apr 3, 2024',
+        'stories-date-jul-18-2024': 'Jul 18, 2024',
+        'stories-date-sep-12-2024': 'Sep 12, 2024',
+        'stories-card-anxiety-title': 'I Used to Cancel Every Appointment',
+        'stories-card-anxiety-excerpt': 'Fifteen years of avoiding dentists. My husband finally convinced me to try one more time. I ugly-cried in the waiting room. But what happened next surprised me...',
+        'stories-card-invisalign-title': '18 Months Later: Was Invisalign Worth It?',
+        'stories-card-invisalign-excerpt': 'Honest answer? The first month was annoying. Really annoying. But somewhere around month four, I stopped noticing the trays and started noticing my smile changing...',
+        'stories-card-veneers-title': 'The Zoom Call That Made Me Get Veneers',
+        'stories-card-veneers-excerpt': 'I\'m a realtor. I spend half my life on video calls. One day I watched a recording and couldn\'t stop staring at my teeth. That was my wake-up call.',
+        'stories-card-rootcanal-title': 'So About That Root Canal...',
+        'stories-card-rootcanal-excerpt': 'I spent two weeks googling horror stories. My palms were sweating in the parking lot. Turns out, the anticipation was way worse than the actual thing. Let me explain.',
+        'stories-card-whitening-title': 'Wedding in 4 Weeks—Was It Too Late?',
+        'stories-card-whitening-excerpt': 'My fiancé said my smile was perfect. My mom said I was overthinking. But every time I looked at our engagement photos, something felt off. So I made the call.',
+        'stories-card-family-title': 'Taking Three Kids to the Dentist (Yes, All at Once)',
+        'stories-card-family-excerpt': 'Ages 4, 7, and 9. Different moods. Different fears. I expected chaos. What I got was a staff that actually understood kids—and one son who now wants to be a dentist.',
+
+        // Story Detail Page
+        'story-back-to-stories': 'Back to Stories',
+        'story-by-author': 'by',
+        'story-more-stories': 'More Patient Stories',
+
+        // Promotion Detail Page - Spring Whitening
+        'promo-spring-whitening-title': 'Spring Renewal: Teeth Whitening Special',
+        'promo-spring-whitening-subtitle': 'Transform Your Smile This Season',
+        'promo-spring-whitening-tag': 'Limited Time Offer',
+        'promo-back-to-stories': 'Back to Stories',
+
+        // Introduction
+        'promo-spring-intro-p1': 'Spring is the perfect time for renewal and fresh beginnings. Just as nature awakens with vibrant colors, it\'s the ideal season to brighten your smile and boost your confidence. Our exclusive Spring Whitening Special offers you professional-grade teeth whitening at an exceptional value.',
+        'promo-spring-intro-p2': 'For a limited time, enjoy 20% off all whitening treatments. Whether you\'re preparing for wedding season, graduation photos, or simply want to refresh your appearance, our advanced whitening solutions deliver stunning, natural-looking results that last.',
+        'promo-spring-intro-p3': 'This special offer runs through the end of spring season. Take advantage of this opportunity to achieve the radiant smile you\'ve always wanted, with the expertise and care that First Ave Dental is known for.',
+
+        // Treatment Options Section
+        'promo-treatment-options-title': 'Choose Your Perfect Whitening Solution',
+        'promo-treatment-1-title': 'Professional In-Office Whitening',
+        'promo-treatment-1-desc': 'Experience immediate, dramatic results in just one visit. Our advanced LED-accelerated whitening system can brighten your teeth up to 8 shades in approximately 60-90 minutes. Perfect for those who want fast results before a special event.',
+        'promo-treatment-1-detail': 'The procedure is performed by our experienced dental professionals who carefully protect your gums and soft tissues while applying professional-strength whitening gel. You can relax in our comfortable treatment chairs while your smile transforms.',
+
+        'promo-treatment-2-title': 'Take-Home Whitening Kits',
+        'promo-treatment-2-desc': 'Prefer the convenience of whitening at home? Our custom-fitted whitening trays and professional-grade gel allow you to brighten your smile on your own schedule. Achieve beautiful results over 7-14 days with just 30 minutes of daily application.',
+        'promo-treatment-2-detail': 'We create custom trays molded precisely to your teeth for optimal gel contact and comfort. This personalized approach ensures even whitening and minimizes sensitivity, while being gentle enough for daily use.',
+
+        'promo-treatment-3-title': 'Combination Treatment Plan',
+        'promo-treatment-3-desc': 'For the most dramatic and long-lasting results, we recommend our combination approach: start with an in-office session for immediate brightening, then maintain and enhance your results with take-home treatments.',
+        'promo-treatment-3-detail': 'This hybrid method gives you the instant gratification of professional whitening plus the flexibility to touch up your smile whenever needed. It\'s our most popular option for patients seeking maximum impact.',
+
+        // Why Choose Us Section
+        'promo-why-choose-title': 'Why Choose Professional Whitening?',
+        'promo-why-point-1': 'Clinical-Grade Formula: Our professional whitening products are significantly more effective than over-the-counter strips or toothpaste, with results that are both faster and longer-lasting.',
+        'promo-why-point-2': 'Expert Supervision: Every treatment is overseen by our licensed dentists who ensure your safety and optimal results. We evaluate your dental health first to customize the perfect treatment.',
+        'promo-why-point-3': 'Personalized Care: We assess your unique tooth color, sensitivity levels, and whitening goals to create a customized plan that works specifically for you.',
+        'promo-why-point-4': 'Safe & Comfortable: Our techniques minimize sensitivity while protecting your gums and enamel. We use proven methods that brighten without damage.',
+
+        // Ideal Candidates Section
+        'promo-ideal-candidates-title': 'Is This Treatment Right for You?',
+        'promo-ideal-intro': 'Our Spring Whitening Special is perfect for:',
+        'promo-candidate-1': 'Brides, grooms, and wedding party members preparing for the big day',
+        'promo-candidate-2': 'Graduates getting ready for commencement and professional photos',
+        'promo-candidate-3': 'Anyone with yellowing or staining from coffee, tea, wine, or tobacco',
+        'promo-candidate-4': 'Professionals seeking a more confident, polished appearance',
+        'promo-candidate-5': 'First-time whitening patients curious about professional treatments',
+        'promo-candidate-6': 'Previous whitening patients ready for a refresh',
+
+        // Expected Results Section
+        'promo-results-title': 'What Results Can You Expect?',
+        'promo-results-p1': 'Most patients see their teeth brighten by 2 to 8 shades, depending on the original tooth color and treatment chosen. Results are typically visible immediately after in-office treatments, while take-home kits show progressive improvement over 1-2 weeks.',
+        'promo-results-p2': 'With proper care, your whitening results can last anywhere from 6 months to 2 years. We provide detailed aftercare instructions and maintenance tips to help you preserve your brilliant new smile as long as possible.',
+        'promo-results-p3': 'Individual results vary based on factors like natural tooth color, lifestyle habits, and adherence to maintenance recommendations. During your consultation, we\'ll discuss realistic expectations for your specific situation.',
+
+        // CTA Section
+        'promo-cta-title': 'Ready to Brighten Your Smile?',
+        'promo-cta-subtitle': 'Limited slots available for this special offer',
+        'promo-cta-button': 'Book Your Appointment',
+        'promo-cta-phone': 'Or call us: (555) 123-4567',
+        'promo-cta-urgent': 'This 20% discount is only available through the end of spring season. Don\'t miss this opportunity to invest in your smile at exceptional savings.',
+
+        // FAQ Section
+        'promo-faq-title': 'Frequently Asked Questions',
+        'promo-faq-q1': 'Will whitening damage my teeth?',
+        'promo-faq-a1': 'No. When performed by dental professionals using approved products, teeth whitening is safe and does not harm your enamel. Our methods have been extensively tested and proven safe for dental health.',
+
+        'promo-faq-q2': 'How long do the results last?',
+        'promo-faq-a2': 'Results typically last 6 months to 2 years depending on your habits. Avoiding staining foods and beverages, good oral hygiene, and occasional touch-ups help maintain your bright smile longer.',
+
+        'promo-faq-q3': 'How long does the treatment take?',
+        'promo-faq-a3': 'In-office whitening takes about 60-90 minutes in a single visit. Take-home kits require 30 minutes daily for 7-14 days. We\'ll help you choose the option that fits your schedule and goals.',
+
+        'promo-faq-q4': 'Will I experience sensitivity?',
+        'promo-faq-a4': 'Some patients experience temporary sensitivity during or after whitening, but it typically subsides within 24-48 hours. We use desensitizing agents and can adjust treatment intensity to minimize discomfort.',
+
+        'promo-faq-q5': 'Can I whiten if I have crowns or veneers?',
+        'promo-faq-a5': 'Whitening only affects natural tooth enamel, not porcelain restorations. We can help you decide if whitening makes sense for your situation and discuss options for matching your dental work to your new brighter shade.',
+
+        // Dental Anxiety Story
+        'story-anxiety-p1': 'For as long as I can remember, visiting the dentist filled me with overwhelming anxiety. The sound of the drill, the clinical smell, even just sitting in the waiting room would make my heart race. I avoided appointments for years, letting my dental health deteriorate.',
+        'story-anxiety-p2': 'Everything changed when a friend recommended First Ave Dental. From my first phone call, I felt different. The receptionist was warm and understanding when I mentioned my anxiety. She scheduled me with Dr. Lee, who specializes in treating anxious patients.',
+        'story-anxiety-p3': 'Walking into the clinic felt different too. Instead of harsh fluorescent lights and sterile white walls, I found a calming space with soft colors and gentle music. Dr. Lee took the time to explain every step before doing anything, and gave me control with a simple hand signal to pause anytime I needed.',
+        'story-anxiety-p4': 'My first deep cleaning was completely different from what I expected. The hygienist was patient, the numbing gel actually worked, and I could watch my favorite show on the ceiling-mounted screen. For the first time ever, I didn\'t grip the armrests in fear.',
+        'story-anxiety-p5': 'Now, I actually look forward to my dental visits. It sounds impossible, but it\'s true. The team has shown me that dental care doesn\'t have to be traumatic. If you\'re avoiding the dentist because of fear, I urge you to give First Ave Dental a try. They transformed my relationship with dental health.',
+        'story-anxiety-quote': 'Dr. Lee made me feel like a person, not just a patient. She understood my fear and never made me feel silly for it.',
+
+        // Invisalign Story
+        'story-invisalign-p1': 'I\'ve wanted straight teeth my whole life, but at 28, I thought I\'d missed my chance. Traditional braces felt too embarrassing for my corporate job. When I learned about Invisalign at First Ave Dental, I was skeptical but hopeful.',
+        'story-invisalign-p2': 'Dr. Martinez showed me a 3D preview of how my smile would transform over 18 months. Seeing the end result before even starting gave me so much confidence. The clear aligners were practically invisible, and I could remove them for important meetings and meals.',
+        'story-invisalign-p3': 'The first few days with each new set of aligners were uncomfortable, but nothing compared to what I imagined braces would feel like. I documented my progress with monthly photos, and watching my teeth gradually shift was incredible. Every checkup, the team celebrated the small victories with me.',
+        'story-invisalign-p4': 'The best part? Nobody at work noticed until I told them! I maintained my professional image while completely transforming my smile. The aligners became part of my routine - like brushing my teeth.',
+        'story-invisalign-p5': 'Eighteen months later, I have the smile I always dreamed of. The confidence it\'s given me is priceless. I smile freely in photos now, something I never did before. If you\'re considering Invisalign, don\'t wait like I did. It\'s absolutely worth it.',
+        'story-invisalign-quote': 'Watching my smile transform week by week was like watching a beautiful time-lapse. Every small change brought me closer to the confidence I\'d always wanted.',
+
+        // Veneers Story
+        'story-veneers-p1': 'As a TV host, my smile is my trademark - or at least it should be. Years of coffee, genetics, and one unfortunate sports accident left me with stained, chipped teeth that I constantly tried to hide. I smiled with my mouth closed, which looked awkward on camera.',
+        'story-veneers-p2': 'After researching cosmetic dentistry for months, I chose First Ave Dental for their portfolio of natural-looking results. Dr. Kim understood immediately: I needed a camera-ready smile that still looked like me, not an artificial Hollywood smile.',
+        'story-veneers-p3': 'The process was meticulous but worth every moment. We spent an entire consultation discussing shade, shape, and my vision. Dr. Kim created temporary veneers first, so I could \'test drive\' my new smile and request any adjustments before the permanent ones.',
+        'story-veneers-p4': 'When I saw my final veneers for the first time, I cried happy tears. My smile looked natural, bright, and most importantly - like an enhanced version of my own teeth. The craftsmanship was incredible; even my makeup artist couldn\'t tell they weren\'t my natural teeth.',
+        'story-veneers-p5': 'My career has taken off since getting veneers. I smile confidently on camera, in photos, everywhere. It\'s changed how I carry myself. For anyone hesitant about veneers, find a skilled cosmetic dentist like Dr. Kim who truly listens to your vision.',
+        'story-veneers-quote': 'These aren\'t just veneers - they\'re a confidence boost I wear every single day. My smile finally matches how I feel inside.',
+
+        // Root Canal Story
+        'story-rootcanal-p1': 'When my tooth started throbbing on a Friday night, I panicked. \'Root canal\' were the two words I dreaded most. All I\'d heard were horror stories about the pain, the cost, the trauma. I was terrified.',
+        'story-rootcanal-p2': 'First Ave Dental got me in first thing Monday morning. Dr. Lee was so calm and reassuring that my anxiety started melting away. She explained that modern root canals aren\'t like the nightmares people describe - technology has advanced tremendously.',
+        'story-rootcanal-p3': 'I won\'t lie: I was still nervous sitting in the chair. But Dr. Lee talked me through every single step. The numbing was thorough, and I felt only pressure, never pain. She checked in constantly, making sure I was comfortable. The whole procedure took about an hour.',
+        'story-rootcanal-p4': 'Honestly? It was easier than I expected. Less painful than the toothache I\'d been enduring! The relief was immediate. Following the aftercare instructions, I had minimal discomfort and was back to normal within days. The crown that followed completed the treatment perfectly.',
+        'story-rootcanal-quote': 'I built up this procedure in my mind as this terrible ordeal, but Dr. Lee made it surprisingly comfortable. Modern dentistry is nothing like the old horror stories.',
+
+        // Wedding Whitening Story
+        'story-whitening-p1': 'Four weeks before my wedding, I looked at my engagement photos and realized my smile wasn\'t as bright as I wanted for the big day. Between work stress and my coffee addiction, my teeth had yellowed more than I\'d noticed.',
+        'story-whitening-p2': 'I called First Ave Dental in a mild panic, and they were amazing. They assured me four weeks was perfect timing for their professional whitening treatment. Unlike drugstore strips, this would give me dramatic, even results.',
+        'story-whitening-p3': 'The in-office whitening session took about an hour. I relaxed in the chair while the treatment worked its magic. There was some sensitivity afterward, but nothing the special toothpaste they provided couldn\'t handle. They also gave me custom trays for touch-ups at home.',
+        'story-whitening-p4': 'My wedding day smile was absolutely radiant! Every photo shows bright, white teeth that I\'m proud to display. My husband jokes that I smiled non-stop that day - because I finally could without feeling self-conscious. It was the best pre-wedding investment I made.',
+        'story-whitening-quote': 'Looking at my wedding photos, I\'m so grateful I chose professional whitening. My smile is gorgeous in every single shot.',
+
+        // Family Visit Story
+        'story-family-p1': 'Taking my two young kids to the dentist used to be a nightmare. They\'d cry, hide, refuse to open their mouths. As a single mom, I dreaded every appointment and sometimes skipped them altogether, knowing the stress it would cause.',
+        'story-family-p2': 'A friend recommended First Ave Dental, specifically mentioning how amazing they were with kids. I was skeptical - we\'d tried \'kid-friendly\' dentists before - but desperate enough to give it one more shot.',
+        'story-family-p3': 'From the moment we walked in, my kids\' eyes lit up. There were toys in the waiting room, tablets with games, and the hygienist came out to meet us with stickers and high-fives. They made it fun, not scary.',
+        'story-family-p4': 'During the exam, they let my 5-year-old hold the \'tooth camera\' and see her teeth on the big screen. My 7-year-old got to pick the flavor of his toothpaste. They explained everything in kid-friendly terms, comparing the \'tooth tickler\' (polisher) to a silly electric toothbrush.',
+        'story-family-p5': 'We left with goody bags, clean teeth, and my kids actually asking when we could come back. I nearly cried with relief. First Ave Dental didn\'t just treat my children\'s teeth - they transformed our entire relationship with dental care. Other parents need to know about this place.',
+        'story-family-quote': 'They turned dental visits from our most dreaded errand into something my kids actually enjoy. It\'s not just about clean teeth - it\'s about building lifelong healthy habits without fear.',
+
         'things-to-bring-elegant': 'Things to Bring',
         'things-to-know-title': 'Things to Know',
         'tip-aftercare-text': 'Plan for soft foods after procedures and arrange transportation if sedation is involved.',
@@ -1148,6 +1318,7 @@ export const translations = {
         'footer-nav-contact': '联系我们',
         'footer-nav-faq': '常见问题',
         'footer-nav-services': '服务项目',
+        'footer-nav-stories': '患者故事',
         'footer-nav-title': '网站导航',
         'for-comfort-title': '方便看诊',
         'for-convenience-title': '便利准备',
@@ -1192,6 +1363,7 @@ export const translations = {
         'nav-home': '首页',
         'nav-logo': 'FIRST AVE DENTAL & ORTHODONTICS',
         'nav-services': '服务项目',
+        'nav-stories': '患者故事',
         'nearby-amenities': '便民设施',
         'oral-surgery-card-title': '外科手术',
         'oral-surgery-detail-1': '智齿拔除',
@@ -1379,6 +1551,174 @@ export const translations = {
         'story-button': '在线表单',
         'story-subtitle': '我们倾听每一位患者',
         'story-title': '分享您的历程',
+        'stories-hero-title': '真实的人，真实的故事',
+        'stories-hero-desc': '这里没有演员，没有摆拍——只有我们社区里真实的朋友，分享他们真实的经历。有紧张，有期待，也有那些"忍不住想笑"的瞬间。',
+        'stories-featured-title': '春季美白：Lisa的故事',
+        'stories-featured-desc': '"拖了好几年，直到女儿毕业典礼要到了，我想——不如就现在吧？" Lisa 第一次来时很担心敏感问题。三周后，她从典礼现场发来一张自拍。那种时刻，就是我们做这行最开心的事。',
+        'stories-featured-offer': '本月享8折——和 Lisa 同款效果',
+        'stories-featured-season': '2024 春季',
+        'stories-seasonal-special': '本季推荐',
+        'stories-limited-time-tag': '仅限本月',
+        'stories-special-offer': '当前优惠',
+        'stories-views': '次浏览',
+        'stories-learn-more': '了解更多',
+        'stories-filter-all': '全部故事',
+        'stories-filter-implants': '种植牙',
+        'stories-filter-orthodontics': '正畸',
+        'stories-filter-cosmetic': '美容牙科',
+        'stories-filter-general': '综合护理',
+        'stories-category-general': '综合护理',
+        'stories-category-orthodontics': '正畸',
+        'stories-category-cosmetic': '美容牙科',
+        'stories-category-implants': '种植牙',
+        'stories-tag-deep-cleaning': '深度洁牙',
+        'stories-tag-invisalign': '隐形矫正',
+        'stories-tag-veneers': '全瓷贴面',
+        'stories-tag-root-canal': '根管治疗',
+        'stories-tag-whitening': '牙齿美白',
+        'stories-tag-family-checkup': '家庭检查',
+        'stories-date-jun-8-2024': '2024年6月8日',
+        'stories-date-oct-22-2024': '2024年10月22日',
+        'stories-date-dec-5-2024': '2024年12月5日',
+        'stories-date-apr-3-2024': '2024年4月3日',
+        'stories-date-jul-18-2024': '2024年7月18日',
+        'stories-date-sep-12-2024': '2024年9月12日',
+        'stories-card-anxiety-title': '我以前每次预约都会取消',
+        'stories-card-anxiety-excerpt': '躲了十五年的牙医。老公终于说服我再试一次。在候诊室我哭得稀里哗啦。但接下来发生的事，让我自己都没想到……',
+        'stories-card-invisalign-title': '18个月后：隐形矫正到底值不值？',
+        'stories-card-invisalign-excerpt': '说实话，第一个月真的很烦。非常烦。但大概到第四个月，我不再注意牙套了，开始注意到自己的笑容在变……',
+        'stories-card-veneers-title': '那通视频会议让我决定做贴面',
+        'stories-card-veneers-excerpt': '我做房产中介，一半时间都在视频通话。有天看回放，发现自己一直盯着自己的牙看。那一刻我知道该行动了。',
+        'stories-card-rootcanal-title': '关于根管治疗这件事……',
+        'stories-card-rootcanal-excerpt': '提前两周我就在网上搜各种恐怖经历。到诊所停车场手心都是汗。结果发现，之前的担心比实际过程可怕多了。听我说。',
+        'stories-card-whitening-title': '婚礼还有4周——来得及吗？',
+        'stories-card-whitening-excerpt': '未婚夫说我笑容已经很完美。我妈说我想太多。但每次看订婚照，总觉得哪里不对。于是我打了那通电话。',
+        'stories-card-family-title': '带三个娃一起看牙（对，同时）',
+        'stories-card-family-excerpt': '4岁、7岁、9岁。三种心情，三种害怕的东西。我以为会是一场混战。结果遇到了真正懂孩子的团队——现在我儿子说他以后想当牙医。',
+
+        // Story Detail Page
+        'story-back-to-stories': '返回故事列表',
+        'story-by-author': '作者：',
+        'story-more-stories': '更多患者故事',
+
+        // Promotion Detail Page - Spring Whitening
+        'promo-spring-whitening-title': '春季焕新：牙齿美白特惠',
+        'promo-spring-whitening-subtitle': '本季焕新您的笑容',
+        'promo-spring-whitening-tag': '限时优惠',
+        'promo-back-to-stories': '返回故事列表',
+
+        // Introduction
+        'promo-spring-intro-p1': '春天是焕新和新开始的完美时机。就像大自然以鲜艳的色彩苏醒一样，这也是让您的笑容更加灿烂、提升自信的理想季节。我们的春季美白特惠以超值的价格为您提供专业级牙齿美白服务。',
+        'promo-spring-intro-p2': '限时享受所有美白治疗8折优惠。无论您是在为婚礼季做准备、拍摄毕业照，还是只是想焕新您的外貌，我们先进的美白解决方案都能带来持久的、自然美观的效果。',
+        'promo-spring-intro-p3': '此特惠活动持续至春季结束。抓住这个机会，用第一大道牙科诊所的专业技术和关怀，实现您一直想要的灿烂笑容。',
+
+        // Treatment Options Section
+        'promo-treatment-options-title': '选择适合您的美白方案',
+        'promo-treatment-1-title': '诊所专业美白',
+        'promo-treatment-1-desc': '仅需一次就诊即可体验立竿见影的惊艳效果。我们的先进LED加速美白系统可在约60-90分钟内让您的牙齿提亮8个色阶。非常适合希望在特殊活动前快速见效的客人。',
+        'promo-treatment-1-detail': '该程序由我们经验丰富的牙科专业人员执行，他们会小心保护您的牙龈和软组织，同时涂抹专业强度的美白凝胶。您可以在我们舒适的治疗椅上放松，见证笑容的蜕变。',
+
+        'promo-treatment-2-title': '家用美白套装',
+        'promo-treatment-2-desc': '更喜欢在家美白的便利性？我们的定制美白托盘和专业级凝胶让您可以按照自己的时间表提亮笑容。只需每天使用30分钟，7-14天即可获得美丽效果。',
+        'promo-treatment-2-detail': '我们根据您的牙齿精确定制托盘，以实现最佳的凝胶接触和舒适度。这种个性化方法可确保均匀美白并最大限度地减少敏感性，同时足够温和可供日常使用。',
+
+        'promo-treatment-3-title': '组合治疗方案',
+        'promo-treatment-3-desc': '为获得最显著和持久的效果，我们推荐组合方法：从诊所美白开始立即提亮，然后通过家用治疗维护和增强您的效果。',
+        'promo-treatment-3-detail': '这种混合方法既能让您享受专业美白的即时满足感，又能在需要时随时为笑容补妆。这是寻求最大效果的患者最受欢迎的选择。',
+
+        // Why Choose Us Section
+        'promo-why-choose-title': '为什么选择专业美白？',
+        'promo-why-point-1': '临床级配方：我们的专业美白产品比非处方美白贴或牙膏更有效，效果更快且更持久。',
+        'promo-why-point-2': '专家监督：每项治疗都由我们的持证牙医监督，确保您的安全和最佳效果。我们首先评估您的牙齿健康，以定制完美的治疗方案。',
+        'promo-why-point-3': '个性化护理：我们评估您独特的牙齿颜色、敏感度和美白目标，为您量身定制专属方案。',
+        'promo-why-point-4': '安全舒适：我们的技术在保护牙龈和牙釉质的同时最大限度地减少敏感性。我们使用经过验证的方法，在不损害牙齿的情况下美白。',
+
+        // Ideal Candidates Section
+        'promo-ideal-candidates-title': '这种治疗适合您吗？',
+        'promo-ideal-intro': '我们的春季美白特惠非常适合：',
+        'promo-candidate-1': '准备迎接大喜之日的新娘、新郎和婚礼派对成员',
+        'promo-candidate-2': '准备参加毕业典礼和拍摄专业照片的毕业生',
+        'promo-candidate-3': '因咖啡、茶、红酒或烟草导致牙齿发黄或染色的任何人',
+        'promo-candidate-4': '寻求更自信、更精致外观的专业人士',
+        'promo-candidate-5': '对专业美白治疗感到好奇的首次美白患者',
+        'promo-candidate-6': '准备焕新的老美白客户',
+
+        // Expected Results Section
+        'promo-results-title': '您可以期待什么效果？',
+        'promo-results-p1': '大多数患者的牙齿会提亮2到8个色阶，具体取决于原始牙齿颜色和所选治疗方案。诊所美白治疗后通常立即可见效果，而家用套装则在1-2周内逐步改善。',
+        'promo-results-p2': '通过适当的护理，您的美白效果可以持续6个月到2年。我们提供详细的术后护理说明和维护技巧，帮助您尽可能长时间地保持灿烂的新笑容。',
+        'promo-results-p3': '个体效果因自然牙齿颜色、生活习惯和维护建议的遵守程度等因素而异。在咨询期间，我们将讨论您特定情况的实际预期。',
+
+        // CTA Section
+        'promo-cta-title': '准备好让笑容更灿烂了吗？',
+        'promo-cta-subtitle': '此特惠的名额有限',
+        'promo-cta-button': '预约您的时间',
+        'promo-cta-phone': '或致电我们：(555) 123-4567',
+        'promo-cta-urgent': '此8折优惠仅在春季结束前有效。不要错过以超值价格投资您笑容的机会。',
+
+        // FAQ Section
+        'promo-faq-title': '常见问题',
+        'promo-faq-q1': '美白会损害我的牙齿吗？',
+        'promo-faq-a1': '不会。当由牙科专业人员使用经批准的产品进行时，牙齿美白是安全的，不会损害您的牙釉质。我们的方法经过广泛测试，证明对牙齿健康安全。',
+
+        'promo-faq-q2': '效果能持续多久？',
+        'promo-faq-a2': '效果通常持续6个月到2年，具体取决于您的习惯。避免染色食物和饮料、良好的口腔卫生习惯以及偶尔的补妆可以帮助您更长时间地保持灿烂笑容。',
+
+        'promo-faq-q3': '治疗需要多长时间？',
+        'promo-faq-a3': '诊所美白在一次就诊中需要约60-90分钟。家用套装需要每天30分钟，持续7-14天。我们将帮助您选择适合您时间安排和目标的方案。',
+
+        'promo-faq-q4': '我会感到敏感吗？',
+        'promo-faq-a4': '一些患者在美白期间或之后会感到暂时的敏感，但通常会在24-48小时内消退。我们使用脱敏剂，并可以调整治疗强度以最大限度地减少不适。',
+
+        'promo-faq-q5': '如果我有牙冠或贴面可以美白吗？',
+        'promo-faq-a5': '美白只影响天然牙釉质，不影响瓷修复体。我们可以帮助您决定美白是否适合您的情况，并讨论将您的牙科修复物与新的更亮色调相匹配的选项。',
+
+        // Dental Anxiety Story
+        'story-anxiety-p1': '从我记事起，看牙医就让我感到巨大的焦虑。电钻的声音、消毒水的气味，甚至只是坐在候诊室里，都会让我心跳加速。我逃避预约了好几年，任由牙齿健康恶化。',
+        'story-anxiety-p2': '一切都在朋友推荐第一大道牙科诊所后改变了。从我第一次打电话开始，感觉就不一样了。当我提到自己的焦虑时，前台非常温暖和理解。她为我安排了李医生，李医生擅长治疗焦虑患者。',
+        'story-anxiety-p3': '走进诊所的感觉也不同。没有刺眼的荧光灯和冰冷的白墙，我发现了一个舒缓的空间，有柔和的色彩和轻柔的音乐。李医生在做任何事情之前都会花时间解释每一步，并给了我一个简单的手势来随时暂停。',
+        'story-anxiety-p4': '我的第一次深度洁牙与我想象的完全不同。牙科助理很有耐心，麻醉凝胶真的有效，我可以在天花板上的屏幕上看我最喜欢的节目。有史以来第一次，我没有紧紧抓住扶手。',
+        'story-anxiety-p5': '现在，我实际上期待着牙科就诊。听起来不可思议，但这是真的。团队向我展示了牙科护理不必是创伤性的。如果你因为恐惧而逃避牙医，我强烈建议你试试第一大道牙科。他们改变了我与牙齿健康的关系。',
+        'story-anxiety-quote': '李医生让我感觉自己是一个人，而不仅仅是一个患者。她理解我的恐惧，从不让我觉得自己很傻。',
+
+        // Invisalign Journey Story
+        'story-invisalign-p1': '我一生都想要整齐的牙齿，但到了28岁，我以为我错过了机会。传统牙套对我的公司工作来说太尴尬了。当我在第一大道牙科了解到隐适美时，我既怀疑又充满希望。',
+        'story-invisalign-p2': '马丁内斯医生向我展示了我的笑容在18个月内如何转变的3D预览。在开始之前看到最终结果给了我很大的信心。透明牙套几乎看不见，我可以在重要会议和用餐时取下它们。',
+        'story-invisalign-p3': '每套新牙套的前几天都有些不舒服，但与我想象中的牙套相比根本不算什么。我用每月的照片记录我的进展，看着我的牙齿逐渐移位真是太不可思议了。每次检查，团队都会和我一起庆祝小小的胜利。',
+        'story-invisalign-p4': '最好的部分？直到我告诉他们，公司里没人注意到！我在完全改变笑容的同时保持了专业形象。牙套成为我日常生活的一部分 - 就像刷牙一样。',
+        'story-invisalign-p5': '18个月后，我拥有了我一直梦想的笑容。它给我带来的自信是无价的。我现在在照片中自由地微笑，这是我以前从未做过的。如果你正在考虑隐适美，不要像我一样等待。这绝对值得。',
+        'story-invisalign-quote': '看着我的笑容一周一周地转变就像看一个美丽的延时摄影。每一个小变化都让我更接近我一直想要的自信。',
+
+        // Veneers Story
+        'story-veneers-p1': '作为一名电视主持人，我的笑容是我的标志 - 或者至少应该是。多年的咖啡、遗传因素和一次不幸的运动事故让我的牙齿染色和破损，我不断试图隐藏。我闭着嘴微笑，这在镜头前看起来很尴尬。',
+        'story-veneers-p2': '在研究了几个月的美容牙科后，我选择了第一大道牙科，因为他们的自然效果作品集。金医生立即理解了：我需要一个适合镜头的笑容，但仍然看起来像我，而不是人工的好莱坞笑容。',
+        'story-veneers-p3': '这个过程很细致，但每一刻都值得。我们花了整整一次咨询讨论色调、形状和我的愿景。金医生首先制作了临时贴面，这样我就可以"试驾"我的新笑容，并在永久贴面之前要求任何调整。',
+        'story-veneers-p4': '当我第一次看到我的最终贴面时，我哭了开心的眼泪。我的笑容看起来自然、明亮，最重要的是 - 像我自己牙齿的增强版。工艺令人难以置信；甚至我的化妆师都看不出它们不是我的天然牙齿。',
+        'story-veneers-p5': '自从做了贴面后，我的职业生涯起飞了。我在镜头前、照片中、任何地方都自信地微笑。它改变了我的举止。对于任何对贴面犹豫不决的人，找一位像金医生这样真正倾听你愿景的熟练美容牙医。',
+        'story-veneers-quote': '这些不仅仅是贴面 - 它们是我每天都佩戴的自信提升。我的笑容终于与我内心的感受相匹配。',
+
+        // Root Canal Story
+        'story-rootcanal-p1': '当我的牙齿在周五晚上开始跳痛时，我惊慌失措。"根管治疗"是我最害怕的两个词。我听到的都是关于疼痛、费用和创伤的恐怖故事。我很害怕。',
+        'story-rootcanal-p2': '第一大道牙科在周一一大早就为我安排了时间。李医生非常冷静和令人安心，我的焦虑开始消退。她解释说，现代根管治疗不像人们描述的噩梦 - 技术已经有了巨大的进步。',
+        'story-rootcanal-p3': '我不会撒谎：我坐在椅子上仍然很紧张。但李医生带我了解每一个步骤。麻醉很彻底，我只感到压力，从未感到疼痛。她不断检查，确保我舒适。整个过程大约花了一个小时。',
+        'story-rootcanal-p4': '老实说？这比我预期的要容易。比我一直忍受的牙痛还要轻！缓解是立竿见影的。遵循术后护理说明，我的不适感最小，几天内就恢复正常了。随后的牙冠完美地完成了治疗。',
+        'story-rootcanal-quote': '我在脑海中把这个过程想象成一场可怕的磨难，但李医生让它出乎意料地舒适。现代牙科与旧的恐怖故事完全不同。',
+
+        // Wedding Whitening Story
+        'story-whitening-p1': '婚礼前四周，我看着订婚照，意识到我的笑容不像我希望的那样在大日子里明亮。由于工作压力和我对咖啡的上瘾，我的牙齿比我注意到的要黄。',
+        'story-whitening-p2': '我有点慌张地打电话给第一大道牙科，他们太棒了。他们向我保证四周是他们专业美白治疗的完美时机。与药店美白贴不同，这将给我戏剧性、均匀的效果。',
+        'story-whitening-p3': '诊所内美白疗程大约需要一个小时。我在椅子上放松，而治疗发挥了它的魔力。之后有一些敏感，但他们提供的特殊牙膏可以处理。他们还给了我定制托盘，用于在家里补妆。',
+        'story-whitening-p4': '我婚礼当天的笑容绝对灿烂！每张照片都显示出明亮、洁白的牙齿，我很自豪地展示。我丈夫开玩笑说我那天一直在微笑 - 因为我终于可以不感到自我意识了。这是我做的最好的婚前投资。',
+        'story-whitening-quote': '看着我的婚礼照片，我非常感激我选择了专业美白。我的笑容在每一张照片中都很漂亮。',
+
+        // Family First Visit Story
+        'story-family-p1': '带我的两个小孩去看牙医曾经是一场噩梦。他们会哭、躲藏、拒绝张开嘴。作为一个单身妈妈，我害怕每次预约，有时甚至完全跳过，因为知道这会带来压力。',
+        'story-family-p2': '一个朋友推荐了第一大道牙科，特别提到他们对孩子有多么出色。我很怀疑 - 我们以前试过"儿童友好"的牙医 - 但足够绝望，愿意再试一次。',
+        'story-family-p3': '从我们走进来的那一刻起，我孩子们的眼睛就亮了。候诊室里有玩具、带游戏的平板电脑，牙科助理带着贴纸和击掌出来迎接我们。他们让它变得有趣，而不是可怕。',
+        'story-family-p4': '在检查期间，他们让我5岁的孩子拿着"牙齿相机"，在大屏幕上看她的牙齿。我7岁的孩子可以选择他牙膏的味道。他们用儿童友好的术语解释一切，将"牙齿挠痒器"（抛光机）比作一把傻傻的电动牙刷。',
+        'story-family-p5': '我们带着礼品袋、干净的牙齿离开了，我的孩子们实际上问什么时候可以再来。我几乎哭了，因为松了一口气。第一大道牙科不仅治疗了我孩子的牙齿 - 他们改变了我们与牙科护理的整个关系。其他父母需要了解这个地方。',
+        'story-family-quote': '他们把牙科就诊从我们最害怕的差事变成了我孩子实际上喜欢的事情。这不仅仅是关于干净的牙齿 - 这是关于建立终身健康习惯，没有恐惧。',
+
         'things-to-bring-elegant': '看诊携带',
         'things-to-know-title': '周边信息',
         'tip-aftercare-text': '治疗后请准备软食，如涉及镇静，请安排交通工具。',

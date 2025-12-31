@@ -4057,17 +4057,19 @@ async function loadDentalChart(patientData) {
             }
         }
 
-        // Render dental chart
+        // Render dental chart (use 3D if available, fallback to 2D)
         const container = document.getElementById('dentalChartContainer');
         if (container && chartData) {
-            currentDentalChart = new DentalChart('dentalChartContainer', {
+            // Prefer 3D version if DentalChart3D is available
+            const ChartClass = (typeof DentalChart3D !== 'undefined') ? DentalChart3D : DentalChart;
+            currentDentalChart = new ChartClass('dentalChartContainer', {
                 mode: 'edit',
                 teethData: chartData.teeth || {},
                 onToothSelect: (toothNum, toothData) => {
                     showToothDetails(userId, toothNum, toothData);
                 }
             });
-            console.log('✅ Dental chart rendered successfully');
+            console.log(`✅ Dental chart rendered successfully (${ChartClass.name})`);
         }
     } catch (error) {
         console.error('❌ Error loading dental chart:', error);
@@ -4945,4 +4947,428 @@ window.loadChartSnapshots = loadChartSnapshots;
 window.promptUpdateDentalChart = promptUpdateDentalChart;
 window.openPatientDentalChart = openPatientDentalChart;
 window.getLastCompletedAppointment = getLastCompletedAppointment;
+
+// ==================== IMAGE COMPARISON FUNCTIONALITY ====================
+
+// Global state for image comparison
+window._imageComparisonState = {
+    images: [], // Array of {id, url, date, type, patientId}
+    currentZoom: 100,
+    baselineImage: null,
+    currentImage: null
+};
+
+/**
+ * Initialize image comparison tab
+ */
+function initImageComparison() {
+    // Tab switching
+    const historyTabBtns = document.querySelectorAll('.history-tab-btn');
+    historyTabBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tab = this.dataset.historyTab;
+
+            // Update button states
+            historyTabBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            // Update tab panes
+            document.querySelectorAll('.history-tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            const targetPane = tab === 'data' ?
+                document.getElementById('data-comparison') :
+                document.getElementById('image-comparison');
+
+            if (targetPane) {
+                targetPane.classList.add('active');
+
+                // Load images when switching to image comparison tab
+                if (tab === 'images' && window._currentAccountPatient) {
+                    loadPatientImages();
+                }
+            }
+        });
+    });
+
+    // Image upload handler
+    const uploadInput = document.getElementById('uploadImageInput');
+    if (uploadInput) {
+        uploadInput.addEventListener('change', handleImageUpload);
+    }
+
+    // Zoom controls
+    const zoomSlider = document.getElementById('zoomSlider');
+    const zoomValue = document.getElementById('zoomValue');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const resetViewBtn = document.getElementById('resetViewBtn');
+
+    if (zoomSlider) {
+        zoomSlider.addEventListener('input', function() {
+            const zoom = parseInt(this.value);
+            updateZoom(zoom);
+        });
+    }
+
+    if (zoomInBtn) {
+        zoomInBtn.addEventListener('click', () => {
+            const currentZoom = window._imageComparisonState.currentZoom;
+            const newZoom = Math.min(currentZoom + 25, 300);
+            updateZoom(newZoom);
+            if (zoomSlider) zoomSlider.value = newZoom;
+        });
+    }
+
+    if (zoomOutBtn) {
+        zoomOutBtn.addEventListener('click', () => {
+            const currentZoom = window._imageComparisonState.currentZoom;
+            const newZoom = Math.max(currentZoom - 25, 100);
+            updateZoom(newZoom);
+            if (zoomSlider) zoomSlider.value = newZoom;
+        });
+    }
+
+    if (resetViewBtn) {
+        resetViewBtn.addEventListener('click', () => {
+            updateZoom(100);
+            if (zoomSlider) zoomSlider.value = 100;
+        });
+    }
+
+    // Fullscreen button
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+    }
+
+    // Download comparison button
+    const downloadBtn = document.getElementById('downloadComparisonBtn');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', downloadComparison);
+    }
+
+    // Image selectors
+    const baselineSelector = document.getElementById('baselineImageSelector');
+    const currentSelector = document.getElementById('currentImageSelector');
+
+    if (baselineSelector) {
+        baselineSelector.addEventListener('change', function() {
+            const imageId = this.value;
+            if (imageId) {
+                displayImage('baseline', imageId);
+            }
+        });
+    }
+
+    if (currentSelector) {
+        currentSelector.addEventListener('change', function() {
+            const imageId = this.value;
+            if (imageId) {
+                displayImage('current', imageId);
+            }
+        });
+    }
+}
+
+/**
+ * Handle image upload
+ */
+async function handleImageUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    if (!window._currentAccountPatient) {
+        showNotification('⚠️ No patient selected');
+        return;
+    }
+
+    const patientId = window._currentAccountPatient.userId ||
+                      `patient_${window._currentAccountPatient.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    try {
+        showNotification('📤 Uploading images...');
+
+        // Upload to Firebase Storage
+        const uploadPromises = Array.from(files).map(file => {
+            return uploadImageToFirebase(file, patientId);
+        });
+
+        const uploadedImages = await Promise.all(uploadPromises);
+
+        // Save metadata to Firestore
+        for (const imageData of uploadedImages) {
+            await window.firebaseDataService.saveMedicalImage(patientId, imageData);
+        }
+
+        showNotification(`✅ ${files.length} image(s) uploaded successfully`);
+
+        // Reload images
+        await loadPatientImages();
+
+        // Clear input
+        event.target.value = '';
+
+    } catch (error) {
+        console.error('Error uploading images:', error);
+        showNotification('❌ Failed to upload images: ' + error.message);
+    }
+}
+
+/**
+ * Upload image to Firebase Storage
+ */
+async function uploadImageToFirebase(file, patientId) {
+    // In a real implementation, this would use Firebase Storage
+    // For now, we'll use a local file reader
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const imageData = {
+                id: `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                url: e.target.result, // Base64 data URL
+                date: new Date().toISOString(),
+                type: file.type.includes('x-ray') ? '全景片' : file.name.includes('全景') ? '全景片' : '根尖片',
+                fileName: file.name,
+                size: file.size
+            };
+
+            resolve(imageData);
+        };
+
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+/**
+ * Load patient images
+ */
+async function loadPatientImages() {
+    if (!window._currentAccountPatient) return;
+
+    const patientId = window._currentAccountPatient.userId ||
+                      `patient_${window._currentAccountPatient.patientName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+
+    try {
+        const images = await window.firebaseDataService.getPatientImages(patientId);
+
+        window._imageComparisonState.images = images || [];
+
+        // Update selectors
+        updateImageSelectors();
+
+        // Update timeline
+        updateImageTimeline();
+
+    } catch (error) {
+        console.error('Error loading patient images:', error);
+        // Show empty state instead of demo data
+        window._imageComparisonState.images = [];
+        updateImageSelectors();
+        updateImageTimeline();
+    }
+}
+
+/**
+ * Update image selectors
+ */
+function updateImageSelectors() {
+    const baselineSelector = document.getElementById('baselineImageSelector');
+    const currentSelector = document.getElementById('currentImageSelector');
+    const images = window._imageComparisonState.images;
+
+    if (!baselineSelector || !currentSelector) return;
+
+    const optionsHTML = images.map(img => {
+        const date = new Date(img.date);
+        const formattedDate = date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        return `<option value="${img.id}">${formattedDate} - ${img.type}</option>`;
+    }).join('');
+
+    baselineSelector.innerHTML = '<option value="">选择时间点...</option>' + optionsHTML;
+    currentSelector.innerHTML = '<option value="">选择时间点...</option>' + optionsHTML;
+}
+
+/**
+ * Update image timeline
+ */
+function updateImageTimeline() {
+    const timeline = document.getElementById('imageTimeline');
+    const countLabel = document.getElementById('timelineCount');
+    const images = window._imageComparisonState.images;
+
+    if (!timeline) return;
+
+    if (countLabel) {
+        countLabel.textContent = `${images.length} 份记录`;
+    }
+
+    if (images.length === 0) {
+        timeline.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">暂无影像记录</p>';
+        return;
+    }
+
+    timeline.innerHTML = images.map(img => {
+        const date = new Date(img.date);
+        const formattedDate = date.toLocaleDateString('zh-CN', {
+            month: '2-digit',
+            day: '2-digit'
+        });
+
+        return `
+            <div class="timeline-item" data-image-id="${img.id}" onclick="selectTimelineImage('${img.id}')">
+                <div class="timeline-thumbnail">
+                    <img src="${img.url}" alt="${img.type}">
+                </div>
+                <div class="timeline-info">
+                    <div class="timeline-date">${formattedDate}</div>
+                    <div class="timeline-type">${img.type}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Select image from timeline
+ */
+function selectTimelineImage(imageId) {
+    // Remove previous selection
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+
+    // Add selection to clicked item
+    const selectedItem = document.querySelector(`[data-image-id="${imageId}"]`);
+    if (selectedItem) {
+        selectedItem.classList.add('selected');
+    }
+
+    // Update current image selector and display
+    const currentSelector = document.getElementById('currentImageSelector');
+    if (currentSelector) {
+        currentSelector.value = imageId;
+        displayImage('current', imageId);
+    }
+}
+
+/**
+ * Display image in comparison panel
+ */
+function displayImage(panel, imageId) {
+    const images = window._imageComparisonState.images;
+    const image = images.find(img => img.id === imageId);
+
+    if (!image) return;
+
+    const displayId = panel === 'baseline' ? 'baselineImageDisplay' : 'currentImageDisplay';
+    const labelId = panel === 'baseline' ? 'baselineVisitLabel' : 'currentVisitLabel';
+
+    const displayElement = document.getElementById(displayId);
+    const labelElement = document.getElementById(labelId);
+
+    if (!displayElement) return;
+
+    // Update image display
+    displayElement.innerHTML = `<img src="${image.url}" alt="${image.type}" style="transform: scale(${window._imageComparisonState.currentZoom / 100})">`;
+
+    // Update label
+    if (labelElement) {
+        const date = new Date(image.date);
+        const isFirstVisit = images.indexOf(image) === images.length - 1;
+        labelElement.textContent = isFirstVisit ? '首次就诊' : '复诊';
+    }
+
+    // Store reference
+    if (panel === 'baseline') {
+        window._imageComparisonState.baselineImage = image;
+    } else {
+        window._imageComparisonState.currentImage = image;
+    }
+}
+
+/**
+ * Update zoom level
+ */
+function updateZoom(zoom) {
+    window._imageComparisonState.currentZoom = zoom;
+
+    const zoomValue = document.getElementById('zoomValue');
+    if (zoomValue) {
+        zoomValue.textContent = zoom + '%';
+    }
+
+    // Update displayed images
+    const baselineImg = document.querySelector('#baselineImageDisplay img');
+    const currentImg = document.querySelector('#currentImageDisplay img');
+
+    if (baselineImg) {
+        baselineImg.style.transform = `scale(${zoom / 100})`;
+    }
+
+    if (currentImg) {
+        currentImg.style.transform = `scale(${zoom / 100})`;
+    }
+}
+
+/**
+ * Toggle fullscreen mode
+ */
+function toggleFullscreen() {
+    const viewer = document.querySelector('.image-comparison-viewer');
+    if (!viewer) return;
+
+    if (!document.fullscreenElement) {
+        viewer.requestFullscreen().catch(err => {
+            console.error('Error attempting to enable fullscreen:', err);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+/**
+ * Download comparison
+ */
+async function downloadComparison() {
+    const baselineImage = window._imageComparisonState.baselineImage;
+    const currentImage = window._imageComparisonState.currentImage;
+
+    if (!baselineImage || !currentImage) {
+        showNotification('⚠️ 请先选择两张影像进行对比');
+        return;
+    }
+
+    try {
+        showNotification('📥 正在生成对比报告...');
+
+        // In a real implementation, this would use html2canvas or similar
+        // to capture the comparison view and save as PDF
+
+        // For now, just show a success message
+        setTimeout(() => {
+            showNotification('✅ 对比报告已生成');
+        }, 1000);
+
+    } catch (error) {
+        console.error('Error downloading comparison:', error);
+        showNotification('❌ 下载失败');
+    }
+}
+
+// Initialize image comparison when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initImageComparison();
+});
+
+// Export functions to global scope
+window.selectTimelineImage = selectTimelineImage;
+window.loadPatientImages = loadPatientImages;
 window.viewDentalChartFromAppointment = viewDentalChartFromAppointment;

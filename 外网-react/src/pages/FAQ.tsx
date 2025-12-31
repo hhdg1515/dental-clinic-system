@@ -5,11 +5,150 @@ import { SEO } from '../components/SEO';
 import { useLanguage } from '../context/LanguageContext';
 import { useAmenitiesCarousel } from '../hooks/useAmenitiesCarousel';
 import { useTipsCarousel } from '../hooks/useTipsCarousel';
+import '../styles/faq.css';
+
+// ============================================================
+// ICONS
+// ============================================================
+
+const ChevronLeftIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <path d="M12.5 5L7.5 10L12.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+
+// ============================================================
+// DECORATIVE ELEMENTS
+// ============================================================
+
+const FloatingDecorations = () => (
+  <div className="faq-decorations" aria-hidden="true">
+    {/* Left side - gold tones */}
+    <div className="faq-dot faq-dot--gold faq-dot--animate" style={{ left: '4%', top: '15%', width: 14, height: 14, animationDelay: '0.2s' }} />
+    <div className="faq-dot faq-dot--blur" style={{ left: '6%', top: '35%', width: 90, height: 90, animationDelay: '0.4s' }} />
+    <div className="faq-dot faq-dot--sage" style={{ left: '3%', top: '55%', width: 18, height: 18, animationDelay: '0.6s' }} />
+    <div className="faq-dot faq-dot--gold faq-dot--animate" style={{ left: '5%', top: '75%', width: 12, height: 12, animationDelay: '0.8s' }} />
+
+    {/* Right side - sage accents */}
+    <div className="faq-dot faq-dot--sage faq-dot--animate" style={{ right: '5%', top: '20%', width: 16, height: 16, animationDelay: '0.3s' }} />
+    <div className="faq-dot faq-dot--blur" style={{ right: '4%', top: '50%', width: 70, height: 70, animationDelay: '0.5s' }} />
+    <div className="faq-dot faq-dot--gold faq-dot--animate" style={{ right: '6%', top: '70%', width: 20, height: 20, animationDelay: '0.7s' }} />
+    <div className="faq-dot faq-dot--sage" style={{ right: '3%', top: '85%', width: 10, height: 10, animationDelay: '0.9s' }} />
+  </div>
+);
+
+// ============================================================
+// DATA
+// ============================================================
+
+const thingsToBringData = {
+  safety: [
+    'safety-insurance',
+    'safety-medical',
+    'safety-allergies',
+    'safety-emergency',
+    'safety-history',
+    'safety-referral'
+  ],
+  comfort: [
+    'comfort-headphones',
+    'comfort-blanket',
+    'comfort-entertainment',
+    'comfort-clothing',
+    'comfort-snacks',
+    'comfort-water',
+    'comfort-sunglasses'
+  ],
+  convenience: [
+    'convenience-payment',
+    'convenience-forms',
+    'convenience-questions',
+    'convenience-transport',
+    'convenience-childcare',
+    'convenience-work'
+  ]
+};
+
+const amenitiesData = [
+  {
+    id: 'parking',
+    image: '/images/parking.jpg',
+    titleKey: 'amenity-parking-title',
+    items: ['amenity-parking-1', 'amenity-parking-2', 'amenity-parking-3']
+  },
+  {
+    id: 'dining',
+    image: '/images/dining2.jpg',
+    titleKey: 'amenity-dining-title',
+    items: ['amenity-dining-1', 'amenity-dining-2', 'amenity-dining-3']
+  },
+  {
+    id: 'pharmacy',
+    image: '/images/drug.jpg',
+    titleKey: 'amenity-pharmacy-title',
+    items: ['amenity-pharmacy-1', 'amenity-pharmacy-2', 'amenity-pharmacy-3']
+  },
+  {
+    id: 'waiting',
+    image: '/images/relax.jpg',
+    titleKey: 'amenity-waiting-title',
+    items: ['amenity-waiting-1', 'amenity-waiting-2', 'amenity-waiting-3']
+  },
+  {
+    id: 'transport',
+    image: '/images/bus.jpg',
+    titleKey: 'amenity-transport-title',
+    items: ['amenity-transport-1', 'amenity-transport-2', 'amenity-transport-3', 'amenity-transport-4']
+  },
+  {
+    id: 'accessibility',
+    image: '/images/wheelchair.jpg',
+    titleKey: 'amenity-accessibility-title',
+    items: ['amenity-accessibility-1', 'amenity-accessibility-2', 'amenity-accessibility-3', 'amenity-accessibility-4']
+  }
+];
+
+const tipsData = [
+  {
+    id: 'appointment',
+    image: '/images/Appointment.jpg',
+    titleKey: 'tips-appointment-title',
+    items: ['tips-appointment-1', 'tips-appointment-2', 'tips-appointment-3', 'tips-appointment-4']
+  },
+  {
+    id: 'during',
+    image: '/images/during.jpg',
+    titleKey: 'tips-during-title',
+    items: ['tips-during-1', 'tips-during-2', 'tips-during-3', 'tips-during-4']
+  },
+  {
+    id: 'after',
+    image: '/images/after.jpg',
+    titleKey: 'tips-after-title',
+    items: ['tips-after-1', 'tips-after-2', 'tips-after-3', 'tips-after-4']
+  },
+  {
+    id: 'general',
+    image: '/images/health.jpg',
+    titleKey: 'tips-general-title',
+    items: ['tips-general-1', 'tips-general-2', 'tips-general-3', 'tips-general-4']
+  }
+];
+
+// ============================================================
+// COMPONENT
+// ============================================================
 
 export const FAQ = () => {
   const { t } = useLanguage();
 
-  // Amenities carousel state
   const {
     currentSlide: amenitiesSlide,
     nextSlide: nextAmenity,
@@ -19,7 +158,6 @@ export const FAQ = () => {
     resumeAutoSlide: resumeAmenities
   } = useAmenitiesCarousel(6, 5000);
 
-  // Tips carousel state
   const {
     currentSlide: tipsSlide,
     nextSlide: nextTip,
@@ -28,103 +166,6 @@ export const FAQ = () => {
     pauseAutoSlide: pauseTips,
     resumeAutoSlide: resumeTips
   } = useTipsCarousel(4, 6000);
-
-  // Things to Bring 数据
-  const thingsToBringData = {
-    safety: [
-      'safety-insurance',
-      'safety-medical',
-      'safety-allergies',
-      'safety-emergency',
-      'safety-history',
-      'safety-referral'
-    ],
-    comfort: [
-      'comfort-headphones',
-      'comfort-blanket',
-      'comfort-entertainment',
-      'comfort-clothing',
-      'comfort-snacks',
-      'comfort-water',
-      'comfort-sunglasses'
-    ],
-    convenience: [
-      'convenience-payment',
-      'convenience-forms',
-      'convenience-questions',
-      'convenience-transport',
-      'convenience-childcare',
-      'convenience-work'
-    ]
-  };
-
-  // Amenities 轮播数据
-  const amenitiesData = [
-    {
-      id: 'parking',
-      image: '/images/parking.jpg',
-      titleKey: 'amenity-parking-title',
-      items: ['amenity-parking-1', 'amenity-parking-2', 'amenity-parking-3']
-    },
-    {
-      id: 'dining',
-      image: '/images/dining2.jpg',
-      titleKey: 'amenity-dining-title',
-      items: ['amenity-dining-1', 'amenity-dining-2', 'amenity-dining-3']
-    },
-    {
-      id: 'pharmacy',
-      image: '/images/drug.jpg',
-      titleKey: 'amenity-pharmacy-title',
-      items: ['amenity-pharmacy-1', 'amenity-pharmacy-2', 'amenity-pharmacy-3']
-    },
-    {
-      id: 'waiting',
-      image: '/images/relax.jpg',
-      titleKey: 'amenity-waiting-title',
-      items: ['amenity-waiting-1', 'amenity-waiting-2', 'amenity-waiting-3']
-    },
-    {
-      id: 'transport',
-      image: '/images/bus.jpg',
-      titleKey: 'amenity-transport-title',
-      items: ['amenity-transport-1', 'amenity-transport-2', 'amenity-transport-3', 'amenity-transport-4']
-    },
-    {
-      id: 'accessibility',
-      image: '/images/wheelchair.jpg',
-      titleKey: 'amenity-accessibility-title',
-      items: ['amenity-accessibility-1', 'amenity-accessibility-2', 'amenity-accessibility-3', 'amenity-accessibility-4']
-    }
-  ];
-
-  // Tips 轮播数据
-  const tipsData = [
-    {
-      id: 'appointment',
-      image: '/images/Appointment.jpg',
-      titleKey: 'tips-appointment-title',
-      items: ['tips-appointment-1', 'tips-appointment-2', 'tips-appointment-3', 'tips-appointment-4']
-    },
-    {
-      id: 'during',
-      image: '/images/during.jpg',
-      titleKey: 'tips-during-title',
-      items: ['tips-during-1', 'tips-during-2', 'tips-during-3', 'tips-during-4']
-    },
-    {
-      id: 'after',
-      image: '/images/after.jpg',
-      titleKey: 'tips-after-title',
-      items: ['tips-after-1', 'tips-after-2', 'tips-after-3', 'tips-after-4']
-    },
-    {
-      id: 'general',
-      image: '/images/health.jpg',
-      titleKey: 'tips-general-title',
-      items: ['tips-general-1', 'tips-general-2', 'tips-general-3', 'tips-general-4']
-    }
-  ];
 
   return (
     <>
@@ -135,335 +176,254 @@ export const FAQ = () => {
         ogTitle="牙科常见问题 - First Ave Dental & Orthodontics"
         ogDescription="专业解答牙科相关问题，提供详细的治疗说明和建议"
       />
-      <div className="flex min-h-screen flex-col">
-        <div className="flex-1">
-        {/* Hero Section - 使用OptimizedImage替代CSS background */}
-      <section className="hero-section" style={{ position: 'relative', overflow: 'hidden' }}>
-        {/* Background Image using OptimizedImage */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 0
-        }}>
-          <OptimizedImage
-            src="/images/forest35.jpg"
-            alt="FAQ Background"
-            loading="eager"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center'
-            }}
-          />
-        </div>
 
-        {/* Content overlay */}
-        <div style={{ position: 'relative', zIndex: 1 }}>
+      <div className="faq-page">
+        <FloatingDecorations />
+
+        {/* Hero Section */}
+        <section className="faq-hero">
+          <div className="faq-hero__bg">
+            <OptimizedImage
+              src="/images/forest35.jpg"
+              alt="FAQ Background"
+              loading="eager"
+            />
+          </div>
+          <div className="faq-hero__overlay" />
+
           <Navigation variant="plain" />
 
-          <div className="hero-content">
-            <div className="breadcrumb-wrapper">
-              <ul className="breadcrumbs">
-                <li><a href="/" aria-label="Go to home page">{t('nav-home')}</a></li>
-                <li>{t('breadcrumb-faq')}</li>
-              </ul>
+          <div className="faq-hero__content">
+            <nav className="faq-hero__breadcrumb">
+              <a href="/" aria-label="Go to home page">{t('nav-home')}</a>
+              <span className="faq-hero__breadcrumb-separator">›</span>
+              <span className="faq-hero__breadcrumb-current">{t('breadcrumb-faq')}</span>
+            </nav>
+
+            <h1 className="faq-hero__title">{t('faq-page-title')}</h1>
+            <p className="faq-hero__desc">{t('faq-page-desc')}</p>
+
+            <div className="faq-hero__divider">
+              <span className="faq-hero__divider-line" />
+              <span className="faq-hero__divider-diamond" />
+              <span className="faq-hero__divider-line" />
             </div>
-
-            <h1>{t('faq-page-title')}</h1>
-            <p className="hero-description">{t('faq-page-desc')}</p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Content Section */}
-      <section className="content-section">
-        <div className="content-container">
+        {/* Main Content */}
+        <main className="faq-content">
           {/* Things to Bring Section */}
-          <div className="section-header">
-            <h2 className="section-title-elegant">{t('things-to-bring-elegant')}</h2>
-            <h3 className="section-subtitle-bold">{t('for-your-visit')}</h3>
-          </div>
-
-          {/* 装饰图片元素 */}
-          <div className="maples"></div>
-          <div className="maple2"></div>
-          <div className="pinecone"></div>
-
-          {/* Things to Bring Card - 使用内联样式避免CSS冲突 */}
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '15px',
-            boxShadow: '0 15px 40px rgba(0, 0, 0, 0.1)',
-            padding: '50px',
-            margin: '0 auto 80px',
-            maxWidth: '100%',
-            position: 'relative',
-            border: '1px solid #D4A574'
-          }}>
-            {/* 三列布局 */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '40px',
-              position: 'relative',
-              zIndex: 2
-            }}>
-              {/* FOR SAFETY 部分 */}
-              <div style={{ flex: 1, textAlign: 'center' }}>
-                <h4 style={{
-                  fontSize: '1.4rem',
-                  fontWeight: 700,
-                  color: '#263C38',
-                  margin: '0 0 20px 0',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
-                  {t('for-safety-title')}
-                </h4>
-                <ul style={{
-                  listStyle: 'none',
-                  padding: 0,
-                  margin: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  alignItems: 'center'
-                }}>
-                  {thingsToBringData.safety.map((itemKey) => (
-                    <li key={itemKey} style={{
-                      padding: '5px 0',
-                      fontSize: '1rem',
-                      color: '#333',
-                      lineHeight: '1.5'
-                    }}>
-                      {t(itemKey as any)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* FOR COMFORT 部分 */}
-              <div style={{ flex: 1, textAlign: 'center' }}>
-                <h4 style={{
-                  fontSize: '1.4rem',
-                  fontWeight: 700,
-                  color: '#263C38',
-                  margin: '0 0 20px 0',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
-                  {t('for-comfort-title')}
-                </h4>
-                <ul style={{
-                  listStyle: 'none',
-                  padding: 0,
-                  margin: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  alignItems: 'center'
-                }}>
-                  {thingsToBringData.comfort.map((itemKey) => (
-                    <li key={itemKey} style={{
-                      padding: '5px 0',
-                      fontSize: '1rem',
-                      color: '#333',
-                      lineHeight: '1.5'
-                    }}>
-                      {t(itemKey as any)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* FOR CONVENIENCE 部分 */}
-              <div style={{ flex: 1, textAlign: 'center' }}>
-                <h4 style={{
-                  fontSize: '1.4rem',
-                  fontWeight: 700,
-                  color: '#263C38',
-                  margin: '0 0 20px 0',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
-                  {t('for-convenience-title')}
-                </h4>
-                <ul style={{
-                  listStyle: 'none',
-                  padding: 0,
-                  margin: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  alignItems: 'center'
-                }}>
-                  {thingsToBringData.convenience.map((itemKey) => (
-                    <li key={itemKey} style={{
-                      padding: '5px 0',
-                      fontSize: '1rem',
-                      color: '#333',
-                      lineHeight: '1.5'
-                    }}>
-                      {t(itemKey as any)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          <div className="faq-section-header">
+            <p className="faq-section-header__elegant">{t('things-to-bring-elegant')}</p>
+            <h2 className="faq-section-header__bold">{t('for-your-visit')}</h2>
+            <div className="faq-section-header__divider">
+              <span className="faq-section-header__divider-line" />
+              <span className="faq-section-header__divider-dot" />
+              <span className="faq-section-header__divider-line" />
             </div>
           </div>
 
-          {/* Other Sections */}
-          <div className="other-sections">
-            {/* Things to Know Section */}
-            <div className="section-header">
-              <h2 className="section-title-elegant">{t('things-to-know-title')}</h2>
-              <h3 className="section-subtitle-bold">{t('nearby-amenities')}</h3>
-            </div>
-            <div className="maple6"></div>
-            <div className="maple3"></div>
-
-            {/* Amenities Carousel */}
-            <div
-              className="amenities-carousel"
-              onMouseEnter={pauseAmenities}
-              onMouseLeave={resumeAmenities}
-            >
-              <div className="carousel-content">
-                {amenitiesData.map((amenity, index) => (
-                  <div
-                    key={amenity.id}
-                    className={`carousel-item ${index === amenitiesSlide ? 'active' : ''}`}
-                  >
-                    <div className="image-section">
-                      <OptimizedImage
-                        className="left-image"
-                        src={amenity.image}
-                        alt={t(amenity.titleKey as any)}
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="text-section">
-                      <h3 className="amenity-title">{t(amenity.titleKey as any)}</h3>
-                      <ul className="amenity-details">
-                        {amenity.items.map((itemKey) => (
-                          <li key={itemKey}>{t(itemKey as any)}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* 导航按钮 */}
-              <button
-                className="carousel-nav prev"
-                onClick={prevAmenity}
-                aria-label="Previous nearby amenity"
-              >
-                <i className="fas fa-chevron-left"></i>
-              </button>
-              <button
-                className="carousel-nav next"
-                onClick={nextAmenity}
-                aria-label="Next nearby amenity"
-              >
-                <i className="fas fa-chevron-right"></i>
-              </button>
-
-              {/* 指示器 */}
-              <div className="carousel-indicators">
-                {amenitiesData.map((_, index) => (
-                  <span
-                    key={index}
-                    className={`indicator ${index === amenitiesSlide ? 'active' : ''}`}
-                    onClick={() => goToAmenity(index)}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Tips for Smooth Visits Section */}
-            <section className="tips-section">
-              <div className="tips-container">
-                {/* 章节标题 */}
-                <div className="tips-header">
-                  <h3 className="tips-subtitle-bold">{t('tips-comfort-guide')}</h3>
+          <div className="faq-bring-card">
+            <div className="faq-bring-card__grid">
+              {/* Safety Column */}
+              <div className="faq-bring-card__column">
+                <div className="faq-bring-card__header">
+                  <span className="faq-bring-card__dot faq-bring-card__dot--safety" />
+                  <h3 className="faq-bring-card__title">{t('for-safety-title')}</h3>
                 </div>
-                <div className="maple4"></div>
-                <div className="maple5"></div>
+                <ul className="faq-bring-card__list">
+                  {thingsToBringData.safety.map((itemKey) => (
+                    <li key={itemKey} className="faq-bring-card__item">
+                      {t(itemKey as any)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-                {/* Tips Carousel */}
+              {/* Comfort Column */}
+              <div className="faq-bring-card__column">
+                <div className="faq-bring-card__header">
+                  <span className="faq-bring-card__dot faq-bring-card__dot--comfort" />
+                  <h3 className="faq-bring-card__title">{t('for-comfort-title')}</h3>
+                </div>
+                <ul className="faq-bring-card__list">
+                  {thingsToBringData.comfort.map((itemKey) => (
+                    <li key={itemKey} className="faq-bring-card__item">
+                      {t(itemKey as any)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Convenience Column */}
+              <div className="faq-bring-card__column">
+                <div className="faq-bring-card__header">
+                  <span className="faq-bring-card__dot faq-bring-card__dot--convenience" />
+                  <h3 className="faq-bring-card__title">{t('for-convenience-title')}</h3>
+                </div>
+                <ul className="faq-bring-card__list">
+                  {thingsToBringData.convenience.map((itemKey) => (
+                    <li key={itemKey} className="faq-bring-card__item">
+                      {t(itemKey as any)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Amenities Section */}
+          <div className="faq-section-header">
+            <p className="faq-section-header__elegant">{t('things-to-know-title')}</p>
+            <h2 className="faq-section-header__bold">{t('nearby-amenities')}</h2>
+            <div className="faq-section-header__divider">
+              <span className="faq-section-header__divider-line" />
+              <span className="faq-section-header__divider-dot" />
+              <span className="faq-section-header__divider-line" />
+            </div>
+          </div>
+
+          <div
+            className="faq-carousel"
+            onMouseEnter={pauseAmenities}
+            onMouseLeave={resumeAmenities}
+          >
+            <div className="faq-carousel__container">
+              {amenitiesData.map((amenity, index) => (
                 <div
-                  className="tips-carousel"
-                  onMouseEnter={pauseTips}
-                  onMouseLeave={resumeTips}
+                  key={amenity.id}
+                  className={`faq-carousel__slide ${index === amenitiesSlide ? 'active' : ''}`}
                 >
-                  <div className="tips-carousel-content">
-                    {tipsData.map((tip, index) => (
-                      <div
-                        key={tip.id}
-                        className={`tips-carousel-item ${index === tipsSlide ? 'active' : ''}`}
-                      >
+                  <div className="faq-carousel__image">
+                    <OptimizedImage
+                      src={amenity.image}
+                      alt={t(amenity.titleKey as any)}
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="faq-carousel__content">
+                    <span className="faq-carousel__badge">
+                      Nearby
+                    </span>
+                    <h3 className="faq-carousel__title">{t(amenity.titleKey as any)}</h3>
+                    <ul className="faq-carousel__list">
+                      {amenity.items.map((itemKey) => (
+                        <li key={itemKey} className="faq-carousel__list-item">
+                          {t(itemKey as any)}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              className="faq-carousel__nav faq-carousel__nav--prev"
+              onClick={prevAmenity}
+              aria-label="Previous amenity"
+            >
+              <ChevronLeftIcon />
+            </button>
+            <button
+              className="faq-carousel__nav faq-carousel__nav--next"
+              onClick={nextAmenity}
+              aria-label="Next amenity"
+            >
+              <ChevronRightIcon />
+            </button>
+
+            <div className="faq-carousel__indicators">
+              {amenitiesData.map((_, index) => (
+                <span
+                  key={index}
+                  className={`faq-carousel__indicator ${index === amenitiesSlide ? 'active' : ''}`}
+                  onClick={() => goToAmenity(index)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Tips Section */}
+          <section className="faq-tips">
+            <div className="faq-tips__container">
+              <div className="faq-section-header">
+                <p className="faq-section-header__elegant">Helpful Tips</p>
+                <h2 className="faq-section-header__bold">{t('tips-comfort-guide')}</h2>
+                <div className="faq-section-header__divider">
+                  <span className="faq-section-header__divider-line" />
+                  <span className="faq-section-header__divider-dot" />
+                  <span className="faq-section-header__divider-line" />
+                </div>
+              </div>
+
+              <div
+                className="faq-tips-carousel"
+                onMouseEnter={pauseTips}
+                onMouseLeave={resumeTips}
+              >
+                <div className="faq-tips-carousel__container">
+                  {tipsData.map((tip, index) => (
+                    <div
+                      key={tip.id}
+                      className={`faq-tips-carousel__slide ${index === tipsSlide ? 'active' : ''}`}
+                    >
+                      <div className="faq-tips-carousel__image">
                         <OptimizedImage
-                          className="tips-image-section"
                           src={tip.image}
                           alt={t(tip.titleKey as any)}
                           loading="lazy"
                         />
-
-                        <div className="tips-text-section">
-                          <h3 className="tips-card-title">{t(tip.titleKey as any)}</h3>
-                          <ul className="tips-card-list">
-                            {tip.items.map((itemKey) => (
-                              <li key={itemKey}>{t(itemKey as any)}</li>
-                            ))}
-                          </ul>
-                        </div>
                       </div>
-                    ))}
-                  </div>
+                      <div className="faq-tips-carousel__content">
+                        <span className="faq-tips-carousel__number">0{index + 1}</span>
+                        <h3 className="faq-tips-carousel__title">{t(tip.titleKey as any)}</h3>
+                        <ul className="faq-tips-carousel__list">
+                          {tip.items.map((itemKey) => (
+                            <li key={itemKey} className="faq-tips-carousel__list-item">
+                              {t(itemKey as any)}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-                  {/* 导航箭头 */}
-                  <button
-                    className="tips-carousel-nav tips-prev"
-                    onClick={prevTip}
-                    aria-label="Previous tip"
-                  >
-                    <i className="fas fa-chevron-left"></i>
-                  </button>
-                  <button
-                    className="tips-carousel-nav tips-next"
-                    onClick={nextTip}
-                    aria-label="Next tip"
-                  >
-                    <i className="fas fa-chevron-right"></i>
-                  </button>
+                <button
+                  className="faq-tips-carousel__nav faq-tips-carousel__nav--prev"
+                  onClick={prevTip}
+                  aria-label="Previous tip"
+                >
+                  <ChevronLeftIcon />
+                </button>
+                <button
+                  className="faq-tips-carousel__nav faq-tips-carousel__nav--next"
+                  onClick={nextTip}
+                  aria-label="Next tip"
+                >
+                  <ChevronRightIcon />
+                </button>
 
-                  {/* 轮播指示器 */}
-                  <div className="tips-carousel-indicators">
-                    {tipsData.map((_, index) => (
-                      <span
-                        key={index}
-                        className={`tips-indicator ${index === tipsSlide ? 'active' : ''}`}
-                        onClick={() => goToTip(index)}
-                      />
-                    ))}
-                  </div>
+                <div className="faq-tips-carousel__indicators">
+                  {tipsData.map((_, index) => (
+                    <span
+                      key={index}
+                      className={`faq-tips-carousel__indicator ${index === tipsSlide ? 'active' : ''}`}
+                      onClick={() => goToTip(index)}
+                    />
+                  ))}
                 </div>
               </div>
-            </section>
-          </div>
-        </div>
-      </section>
-      </div>
+            </div>
+          </section>
+        </main>
 
-      {/* Footer */}
-      <Footer />
+        <Footer />
       </div>
     </>
   );
 };
+
+export default FAQ;
