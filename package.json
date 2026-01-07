@@ -1,0 +1,32 @@
+{
+  "name": "dental-clinic-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Dental clinic management system with React frontend",
+  "scripts": {
+    "prepare": "husky",
+    "lint": "npm run lint --prefix 外网-react && npm run lint --prefix 内网-react",
+    "format": "prettier --write \"**/*.{ts,tsx,css,json,md}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,css,json,md}\" --ignore-path .prettierignore",
+    "test": "npm run test:run --prefix 外网-react && npm run test:run --prefix 内网-react",
+    "build": "npm run build --prefix 外网-react && npm run build --prefix 内网-react"
+  },
+  "devDependencies": {
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.4.0"
+  },
+  "lint-staged": {
+    "外网-react/src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "内网-react/src/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "**/*.{css,json,md}": [
+      "prettier --write"
+    ]
+  }
+}
