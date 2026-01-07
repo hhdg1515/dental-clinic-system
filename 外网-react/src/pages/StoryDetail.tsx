@@ -3,6 +3,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
 import { SEO } from '../components/SEO';
+import { OptimizedImage } from '../components/OptimizedImage';
 import { useLanguage, type TranslationKey } from '../context/LanguageContext';
 
 // ============================================================
@@ -258,9 +259,10 @@ export const StoryDetail = () => {
               height: '460px',
               overflow: 'hidden'
             }}>
-              <img
+              <OptimizedImage
                 src={story.heroImage}
                 alt={t(story.titleKey)}
+                loading="eager"
                 style={{
                   width: '100%',
                   height: '100%',
@@ -464,9 +466,10 @@ export const StoryDetail = () => {
                       }}
                     >
                       <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
-                        <img
+                        <OptimizedImage
                           src={relatedStory.image}
                           alt={t(relatedStory.titleKey)}
+                          loading="lazy"
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                         <span style={{

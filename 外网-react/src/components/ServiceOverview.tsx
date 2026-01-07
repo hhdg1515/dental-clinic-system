@@ -1,4 +1,5 @@
 import { useLanguage, type TranslationKey } from '../context/LanguageContext';
+import { OptimizedImage } from './OptimizedImage';
 
 interface ServiceOverviewProps {
   titleKey: TranslationKey;
@@ -16,7 +17,7 @@ export const ServiceOverview = ({ titleKey, paragraphs, highlightKey, imageSrc, 
       {/* Left side - Image */}
       {imageSrc && (
         <div className="overview-image-container">
-          <img src={imageSrc} alt={imageAlt || t(titleKey)} className="overview-image" />
+          <OptimizedImage src={imageSrc} alt={imageAlt || t(titleKey)} className="overview-image" loading="lazy" />
         </div>
       )}
 

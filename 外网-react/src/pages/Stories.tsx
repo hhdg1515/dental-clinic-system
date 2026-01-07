@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
 import { SEO } from '../components/SEO';
+import { OptimizedImage } from '../components/OptimizedImage';
 import { useLanguage, type TranslationKey } from '../context/LanguageContext';
 import '../styles/stories.css';
 
@@ -223,7 +224,7 @@ export const Stories = () => {
             <div className="stories-featured__card">
               {/* Image */}
               <div className="stories-featured__image">
-                <img src={featuredStory.image} alt={t(featuredStory.titleKey)} />
+                <OptimizedImage src={featuredStory.image} alt={t(featuredStory.titleKey)} loading="eager" />
                 <span className="stories-featured__badge">
                   <span className="stories-featured__badge-icon">✿</span>
                   {t('stories-seasonal-special')}
@@ -287,7 +288,7 @@ export const Stories = () => {
               <Link key={story.id} to={`/stories/${story.id}`} className="stories-card">
                 {/* Card Image */}
                 <div className="stories-card__image">
-                  <img src={story.image} alt={t(story.titleKey)} />
+                  <OptimizedImage src={story.image} alt={t(story.titleKey)} loading="lazy" />
                   <span className="stories-card__tag">{t(story.tagKey)}</span>
                 </div>
 

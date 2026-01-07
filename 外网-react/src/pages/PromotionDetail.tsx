@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Navigation } from '../components/Navigation';
 import { Footer } from '../components/Footer';
 import { SEO } from '../components/SEO';
+import { OptimizedImage } from '../components/OptimizedImage';
 import { useLanguage } from '../context/LanguageContext';
 import '../styles/promotion-detail.css';
 
@@ -78,7 +79,7 @@ export const PromotionDetail = () => {
         {/* Hero Section */}
         <section className="promo-hero">
           <div className="promo-hero__image">
-            <img
+            <OptimizedImage
               src={heroImage}
               alt={t('promo-spring-whitening-title')}
               loading="eager"
