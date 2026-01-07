@@ -19,15 +19,23 @@ const CONFIG = {
   webpQuality: 78
 };
 
-// 需要压缩的超大图片 (>700KB)
+// 需要压缩的超大图片 (>500KB)
 const LARGE_IMAGES = [
+  '根管hero.jpg',
   'health.jpg',
   'before.jpg',
-  'root-canal-hero.jpg',
   'wheelchair.jpg',
+  'root-canal-hero.jpg',
   'during.jpg',
+  'after.jpg',
+  'service1.jpg',
+  'forest35.jpg',
+  'forest20.jpg',
   'relax.jpg',
-  'dining2.jpg'
+  'drug.jpg',
+  'bus.jpg',
+  'dining2.jpg',
+  'dining.jpg'
 ];
 
 async function compressImage(filename) {
