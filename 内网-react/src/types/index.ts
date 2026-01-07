@@ -86,6 +86,13 @@ export interface PatientProfile {
   patientName: string;
   detailedInfo: Record<string, unknown>;
   lastUpdated: string;
+  // Patient care fields
+  dateOfBirth?: string;          // YYYY-MM-DD format
+  lastVisitDate?: string;        // YYYY-MM-DD format
+  vipLevel?: 'regular' | 'silver' | 'gold' | 'platinum';
+  totalVisits?: number;
+  phone?: string;
+  email?: string;
 }
 
 // ==================== DENTAL CHART TYPES ====================

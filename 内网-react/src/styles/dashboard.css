@@ -4,6 +4,126 @@
    ========================================================================== */
 
 /* ==========================================================================
+   Premium Card Design System
+   ========================================================================== */
+
+/* Premium stat card with left accent bar */
+.stat-card-premium {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 1.5rem;
+  padding-left: 1.75rem;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Left accent bar */
+.stat-card-premium::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 0;
+  bottom: 12px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--accent-color, var(--color-primary));
+  transition: all 0.3s ease;
+}
+
+/* Top shimmer effect on hover */
+.stat-card-premium::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+
+.stat-card-premium:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card-premium:hover::before {
+  top: 8px;
+  bottom: 8px;
+  width: 5px;
+  box-shadow: 0 0 12px var(--accent-color, var(--color-primary));
+}
+
+.stat-card-premium:hover::after {
+  left: 100%;
+}
+
+/* Accent color variants */
+.stat-card-premium.accent-success { --accent-color: #22c55e; }
+.stat-card-premium.accent-info { --accent-color: #3b82f6; }
+.stat-card-premium.accent-primary { --accent-color: var(--color-primary); }
+.stat-card-premium.accent-danger { --accent-color: #ef4444; }
+.stat-card-premium.accent-warning { --accent-color: #f59e0b; }
+.stat-card-premium.accent-purple { --accent-color: #8b5cf6; }
+
+/* Analysis card premium style */
+.analysis-card-premium {
+  position: relative;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(255, 255, 255, 0.9) 100%
+  );
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Gradient top border on hover */
+.analysis-card-premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    var(--color-primary) 0%,
+    var(--color-primary-light) 50%,
+    var(--color-success) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.analysis-card-premium:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.analysis-card-premium:hover::before {
+  opacity: 1;
+}
+
+/* ==========================================================================
    Stat Cards with Animation
    ========================================================================== */
 .dashboard-stats-grid {
@@ -961,4 +1081,448 @@
   50% {
     box-shadow: 0 0 0 8px rgba(217, 119, 6, 0);
   }
+}
+
+/* ==========================================================================
+   Patient Care Panel - Birthday Reminders
+   ========================================================================== */
+.patient-care-panel {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.care-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.care-panel-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.care-panel-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.care-panel-icon.birthday {
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  color: #db2777;
+}
+
+.care-panel-icon.followup {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #2563eb;
+}
+
+.care-panel-icon.inactive {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #d97706;
+}
+
+/* Birthday patient item */
+.birthday-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+  border-radius: 14px;
+  border-left: 4px solid #ec4899;
+  transition: all 0.2s ease;
+  margin-bottom: 0.625rem;
+}
+
+.birthday-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.15);
+}
+
+.birthday-item:last-child {
+  margin-bottom: 0;
+}
+
+.birthday-avatar {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  color: white;
+  font-weight: 600;
+  border-radius: 12px;
+  font-size: 1rem;
+  position: relative;
+}
+
+.birthday-avatar::after {
+  content: '🎂';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 0.875rem;
+}
+
+.birthday-info {
+  flex: 1;
+}
+
+.birthday-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 0.9375rem;
+  margin-bottom: 0.125rem;
+}
+
+.birthday-date {
+  font-size: 0.8125rem;
+  color: #be185d;
+  font-weight: 500;
+}
+
+.birthday-badge {
+  padding: 0.25rem 0.625rem;
+  background: #ec4899;
+  color: white;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.birthday-badge.today {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  animation: celebratePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes celebratePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Care alert items (inactive patients, no-shows) */
+.care-alert-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-bg-base);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.care-alert-item:hover {
+  background: var(--color-bg-subtle);
+  transform: translateX(4px);
+}
+
+.care-alert-item:last-child {
+  margin-bottom: 0;
+}
+
+.care-alert-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 0.875rem;
+}
+
+.care-alert-icon.warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.care-alert-icon.danger {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.care-alert-content {
+  flex: 1;
+}
+
+.care-alert-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  margin-bottom: 0.125rem;
+}
+
+.care-alert-subtitle {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Time Range Selector
+   ========================================================================== */
+.time-range-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 4px;
+  background: var(--color-bg-subtle);
+  border-radius: 12px;
+}
+
+.time-range-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-range-btn:hover:not(.active) {
+  color: var(--color-text-secondary);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.time-range-btn.active {
+  background: white;
+  color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   Appointment Heatmap - Left Column Full Width Layout
+   ========================================================================== */
+.heatmap-container {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.heatmap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.heatmap-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: 50px repeat(6, 1fr);
+  gap: 6px;
+}
+
+.heatmap-day-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.heatmap-hour-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+  height: 28px;
+}
+
+.heatmap-cell {
+  height: 28px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.05);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Heatmap intensity levels */
+.heatmap-cell.level-0 { background: var(--color-bg-subtle); }
+.heatmap-cell.level-1 { background: #ccfbf1; }
+.heatmap-cell.level-2 { background: #99f6e4; }
+.heatmap-cell.level-3 { background: #5eead4; }
+.heatmap-cell.level-4 { background: #2dd4bf; }
+.heatmap-cell.level-5 { background: #14b8a6; }
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.heatmap-legend-item {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   Area Chart Enhancement
+   ========================================================================== */
+.area-chart-gradient {
+  fill: url(#areaGradient);
+}
+
+/* Clinic Comparison Bar Chart */
+.clinic-comparison {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.clinic-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.clinic-bar:last-child {
+  margin-bottom: 0;
+}
+
+.clinic-bar-label {
+  width: 100px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.clinic-bar-track {
+  flex: 1;
+  height: 28px;
+  background: var(--color-bg-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+}
+
+.clinic-bar-segment {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: white;
+  transition: width 1s var(--ease-out-expo);
+}
+
+.clinic-bar-segment.completed { background: #22c55e; }
+.clinic-bar-segment.scheduled { background: #3b82f6; }
+.clinic-bar-segment.noshow { background: #ef4444; }
+
+/* ==========================================================================
+   Sparkline Mini Chart
+   ========================================================================== */
+.sparkline-container {
+  height: 32px;
+  margin-top: 0.75rem;
+}
+
+.sparkline-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sparkline-line {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sparkline-area {
+  fill: url(#sparklineGradient);
+  opacity: 0.3;
+}
+
+/* ==========================================================================
+   Empty State Enhancement
+   ========================================================================== */
+.empty-state-premium {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.empty-state-premium .empty-icon {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-bg-subtle) 0%, var(--color-bg-muted) 100%);
+  color: var(--color-text-muted);
+  border-radius: 20px;
+  font-size: 1.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.empty-state-premium .empty-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-premium .empty-description {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  max-width: 280px;
 }

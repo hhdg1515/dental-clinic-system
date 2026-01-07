@@ -1,7 +1,11 @@
 /**
- * Simple in-memory cache for Firebase queries
+ * Hybrid Cache System for Firebase queries
+ * - Memory cache for fast access
+ * - IndexedDB for persistence across page reloads
  * Reduces redundant Firestore reads and improves performance
  */
+
+import { indexedDBCache } from './indexedDBCache';
 
 interface CacheEntry<T> {
   data: T;
@@ -12,21 +16,65 @@ interface CacheEntry<T> {
 interface CacheOptions {
   ttl?: number; // Time to live in milliseconds
   maxEntries?: number;
+  persist?: boolean; // Whether to persist to IndexedDB
 }
 
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
 const DEFAULT_MAX_ENTRIES = 100;
 
+type CacheCategory = 'appointments' | 'patients' | 'dentalCharts' | 'general';
+
 class QueryCache {
   private cache: Map<string, CacheEntry<unknown>> = new Map();
   private maxEntries: number;
+  private category: CacheCategory;
+  private persistEnabled: boolean;
+  private initialized: boolean = false;
 
-  constructor(maxEntries = DEFAULT_MAX_ENTRIES) {
+  constructor(
+    maxEntries = DEFAULT_MAX_ENTRIES,
+    category: CacheCategory = 'general',
+    persistEnabled = true
+  ) {
     this.maxEntries = maxEntries;
+    this.category = category;
+    this.persistEnabled = persistEnabled;
+
+    // Initialize IndexedDB and warm cache from persistent storage
+    if (persistEnabled) {
+      this.warmFromIndexedDB();
+    }
   }
 
   /**
-   * Get cached data if valid
+   * Warm memory cache from IndexedDB on startup
+   */
+  private async warmFromIndexedDB(): Promise<void> {
+    if (this.initialized) return;
+
+    try {
+      const entries = await indexedDBCache.getAllInCategory<unknown>(this.category);
+
+      entries.forEach((entry) => {
+        // Only add to memory if not expired and under limit
+        if (Date.now() <= entry.expiresAt && this.cache.size < this.maxEntries) {
+          this.cache.set(entry.key, {
+            data: entry.data,
+            timestamp: entry.timestamp,
+            expiresAt: entry.expiresAt,
+          });
+        }
+      });
+
+      this.initialized = true;
+    } catch (error) {
+      console.warn('Failed to warm cache from IndexedDB:', error);
+      this.initialized = true;
+    }
+  }
+
+  /**
+   * Get cached data if valid (memory first, then IndexedDB)
    */
   get<T>(key: string): T | null {
     const entry = this.cache.get(key) as CacheEntry<T> | undefined;
@@ -36,10 +84,39 @@ class QueryCache {
     // Check if expired
     if (Date.now() > entry.expiresAt) {
       this.cache.delete(key);
+      // Also clean from IndexedDB (async, don't wait)
+      if (this.persistEnabled) {
+        indexedDBCache.delete(key);
+      }
       return null;
     }
 
     return entry.data;
+  }
+
+  /**
+   * Async get - checks IndexedDB if not in memory
+   */
+  async getAsync<T>(key: string): Promise<T | null> {
+    // First check memory
+    const memoryResult = this.get<T>(key);
+    if (memoryResult !== null) return memoryResult;
+
+    // Then check IndexedDB
+    if (this.persistEnabled) {
+      const indexedResult = await indexedDBCache.get<T>(key);
+      if (indexedResult !== null) {
+        // Add back to memory cache
+        this.cache.set(key, {
+          data: indexedResult,
+          timestamp: Date.now(),
+          expiresAt: Date.now() + DEFAULT_TTL,
+        });
+        return indexedResult;
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -54,11 +131,18 @@ class QueryCache {
       }
     }
 
-    this.cache.set(key, {
+    const entry: CacheEntry<T> = {
       data,
       timestamp: Date.now(),
       expiresAt: Date.now() + ttl,
-    });
+    };
+
+    this.cache.set(key, entry);
+
+    // Persist to IndexedDB (async, don't wait)
+    if (this.persistEnabled) {
+      indexedDBCache.set(key, data, ttl, this.category);
+    }
   }
 
   /**
@@ -66,6 +150,9 @@ class QueryCache {
    */
   invalidate(key: string): void {
     this.cache.delete(key);
+    if (this.persistEnabled) {
+      indexedDBCache.delete(key);
+    }
   }
 
   /**
@@ -78,6 +165,9 @@ class QueryCache {
         this.cache.delete(key);
       }
     }
+    if (this.persistEnabled) {
+      indexedDBCache.deletePattern(pattern);
+    }
   }
 
   /**
@@ -85,27 +175,45 @@ class QueryCache {
    */
   clear(): void {
     this.cache.clear();
+    if (this.persistEnabled) {
+      indexedDBCache.clearCategory(this.category);
+    }
   }
 
   /**
    * Get cache stats
    */
-  getStats(): { size: number; maxEntries: number } {
+  getStats(): { size: number; maxEntries: number; category: string } {
     return {
       size: this.cache.size,
       maxEntries: this.maxEntries,
+      category: this.category,
+    };
+  }
+
+  /**
+   * Get full stats including IndexedDB
+   */
+  async getFullStats(): Promise<{
+    memory: { size: number; maxEntries: number };
+    indexedDB: { total: number; byCategory: Record<string, number> };
+  }> {
+    const indexedStats = await indexedDBCache.getStats();
+    return {
+      memory: { size: this.cache.size, maxEntries: this.maxEntries },
+      indexedDB: indexedStats,
     };
   }
 }
 
-// Singleton instance for appointments
-export const appointmentsCache = new QueryCache(50);
+// Singleton instance for appointments (with persistence)
+export const appointmentsCache = new QueryCache(50, 'appointments', true);
 
-// Singleton instance for patients
-export const patientsCache = new QueryCache(100);
+// Singleton instance for patients (with persistence)
+export const patientsCache = new QueryCache(100, 'patients', true);
 
-// Singleton instance for dental charts
-export const dentalChartsCache = new QueryCache(30);
+// Singleton instance for dental charts (with persistence)
+export const dentalChartsCache = new QueryCache(30, 'dentalCharts', true);
 
 /**
  * Cache key generators
@@ -134,7 +242,7 @@ export const cacheKeys = {
 };
 
 /**
- * Wrapper for cached queries
+ * Wrapper for cached queries (sync memory check + async fallback)
  */
 export async function cachedQuery<T>(
   cache: QueryCache,
@@ -144,10 +252,16 @@ export async function cachedQuery<T>(
 ): Promise<T> {
   const { ttl = DEFAULT_TTL } = options;
 
-  // Try cache first
-  const cached = cache.get<T>(key);
-  if (cached !== null) {
-    return cached;
+  // Try sync memory cache first
+  const syncCached = cache.get<T>(key);
+  if (syncCached !== null) {
+    return syncCached;
+  }
+
+  // Try async IndexedDB cache
+  const asyncCached = await cache.getAsync<T>(key);
+  if (asyncCached !== null) {
+    return asyncCached;
   }
 
   // Execute query
@@ -187,6 +301,34 @@ export function invalidateDentalChartCaches(userId?: string): void {
   } else {
     dentalChartsCache.clear();
   }
+}
+
+/**
+ * Clear all caches (memory + IndexedDB)
+ */
+export async function clearAllCaches(): Promise<void> {
+  appointmentsCache.clear();
+  patientsCache.clear();
+  dentalChartsCache.clear();
+  await indexedDBCache.clearAll();
+}
+
+/**
+ * Get combined cache statistics
+ */
+export async function getCacheStats(): Promise<{
+  appointments: { size: number; maxEntries: number };
+  patients: { size: number; maxEntries: number };
+  dentalCharts: { size: number; maxEntries: number };
+  indexedDB: { total: number; byCategory: Record<string, number> };
+}> {
+  const indexedStats = await indexedDBCache.getStats();
+  return {
+    appointments: { size: appointmentsCache.getStats().size, maxEntries: 50 },
+    patients: { size: patientsCache.getStats().size, maxEntries: 100 },
+    dentalCharts: { size: dentalChartsCache.getStats().size, maxEntries: 30 },
+    indexedDB: indexedStats,
+  };
 }
 
 export default QueryCache;

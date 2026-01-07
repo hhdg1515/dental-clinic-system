@@ -211,7 +211,7 @@ export default function AdminLayout() {
               <div className="flex items-center gap-3 pl-3 border-l border-[var(--color-border-subtle)]">
                 <div className="w-10 h-10 bg-gradient-to-br from-[var(--color-primary-light)] to-[var(--color-primary)] rounded-xl flex items-center justify-center overflow-hidden shadow-md">
                   {userData?.photoURL ? (
-                    <img src={userData.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                    <img src={userData.photoURL} alt="Profile" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   ) : (
                     <i className="fas fa-user text-white"></i>
                   )}

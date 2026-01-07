@@ -4,9 +4,10 @@
    ========================================================================== */
 
 /* Google Fonts - Distinctive Typography
-   Outfit: Modern geometric display font with personality
-   Manrope: Warm humanist body font for readability */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
+   Outfit: Modern geometric display font with personality (headings)
+   Manrope: Warm humanist body font for readability (body text)
+   Optimized: Only loading actually used weights */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
 
 /* Component-specific styles */
 @import './calendar.css';

@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { useAuth } from './context/AuthContext';
 import AdminLayout from './components/AdminLayout';
 import { useI18n } from './i18n';
+import { DevTools } from './components/DevTools';
 
 // Lazy load page components for better initial load performance
 const LoginPage = lazy(() => import('./pages/LoginPage'));
@@ -70,8 +71,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function App() {
   // BrowserRouter's basename now handles /内网/ prefix automatically
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
+    <>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
         {/* Public route */}
         <Route path="/login" element={<LoginPage />} />
 
@@ -93,8 +95,12 @@ function App() {
 
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+
+      {/* Development Tools - only visible in dev mode */}
+      <DevTools />
+    </>
   );
 }
 

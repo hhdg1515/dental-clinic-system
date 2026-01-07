@@ -27,7 +27,8 @@ import type {
   ChartComparison,
   TeethData,
 } from '../types';
-import { exportDentalChartPDF, exportPatientReportPDF } from '../utils/pdfExport';
+// PDF export functions are dynamically imported when needed (saves ~290KB initial bundle)
+// import { exportDentalChartPDF, exportPatientReportPDF } from '../utils/pdfExport';
 import { useI18n } from '../i18n';
 import { STATUS_COLORS, getStatusLabel } from '../constants';
 
@@ -322,11 +323,12 @@ export default function PatientAccountModal({
     }
   };
 
-  // Export dental chart to PDF
-  const handleExportDentalChartPDF = () => {
+  // Export dental chart to PDF (dynamically imported)
+  const handleExportDentalChartPDF = async () => {
     if (!dentalChart || !patientData) return;
 
     try {
+      const { exportDentalChartPDF } = await import('../utils/pdfExport');
       exportDentalChartPDF(dentalChart, patientData.patientName, {
         includePeriodontal: true,
         includeTreatments: true,
@@ -337,11 +339,12 @@ export default function PatientAccountModal({
     }
   };
 
-  // Export patient report to PDF
-  const handleExportPatientReportPDF = () => {
+  // Export patient report to PDF (dynamically imported)
+  const handleExportPatientReportPDF = async () => {
     if (!patientData) return;
 
     try {
+      const { exportPatientReportPDF } = await import('../utils/pdfExport');
       exportPatientReportPDF(
         patientData.patientName,
         patientData.phone,

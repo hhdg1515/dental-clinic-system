@@ -2,14 +2,15 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  CartesianGrid
 } from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -21,6 +22,7 @@ import {
 import { getStatusLabel } from '../constants';
 import { useAnimatedNumber, useAnimatedPercentage } from '../hooks';
 import { useI18n } from '../i18n';
+import { AppointmentHeatmap, PatientCarePanel } from '../components/dashboard';
 import type { Appointment, PendingConfirmation, ClinicId, UserRole, AppointmentStatus } from '../types';
 
 type ServicePeriod = 'weekly' | 'monthly';
@@ -147,6 +149,36 @@ function StatCard({ label, value, icon, colorClass, bgClass, delay = 0 }: StatCa
           <i className={`${icon} ${colorClass} text-2xl`}></i>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Time range type for charts
+type TimeRange = '7d' | '30d' | '90d';
+
+// Time Range Selector component
+function TimeRangeSelector({ value, onChange }: { value: TimeRange; onChange: (range: TimeRange) => void }) {
+  const { t } = useI18n();
+  return (
+    <div className="time-range-selector">
+      <button
+        className={`time-range-btn ${value === '7d' ? 'active' : ''}`}
+        onClick={() => onChange('7d')}
+      >
+        {t('dashboard.days7')}
+      </button>
+      <button
+        className={`time-range-btn ${value === '30d' ? 'active' : ''}`}
+        onClick={() => onChange('30d')}
+      >
+        {t('dashboard.days30')}
+      </button>
+      <button
+        className={`time-range-btn ${value === '90d' ? 'active' : ''}`}
+        onClick={() => onChange('90d')}
+      >
+        {t('dashboard.days90')}
+      </button>
     </div>
   );
 }
@@ -379,6 +411,7 @@ export default function Dashboard() {
   const [allAppointmentsData, setAllAppointmentsData] = useState<Appointment[]>([]);
   const [pendingConfirmations, setPendingConfirmations] = useState<PendingConfirmation[]>([]);
   const [servicePeriod, setServicePeriod] = useState<ServicePeriod>('weekly');
+  const [trendTimeRange, setTrendTimeRange] = useState<TimeRange>('30d');
 
   // Get today's date key
   const getTodayKey = () => {
@@ -512,8 +545,11 @@ export default function Dashboard() {
       completedCounts.set(dateKey, (completedCounts.get(dateKey) || 0) + 1);
     });
 
+    // Determine days based on time range
+    const days = trendTimeRange === '7d' ? 7 : trendTimeRange === '30d' ? 30 : 90;
+
     const data = [];
-    for (let i = 29; i >= 0; i -= 1) {
+    for (let i = days - 1; i >= 0; i -= 1) {
       const date = new Date();
       date.setDate(date.getDate() - i);
       const dateKey = toDateKey(date);
@@ -524,7 +560,7 @@ export default function Dashboard() {
       });
     }
     return data;
-  }, [allAppointmentsData]);
+  }, [allAppointmentsData, trendTimeRange]);
 
   const hasTrendData = useMemo(
     () => trendData.some(item => item.completed > 0),
@@ -798,21 +834,36 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-heading text-lg font-bold text-[var(--color-text-primary)] flex items-center gap-3">
                 <div className="w-9 h-9 bg-[var(--color-primary-50)] rounded-xl flex items-center justify-center">
-                  <i className="fas fa-chart-line text-[var(--color-primary)]"></i>
+                  <i className="fas fa-chart-area text-[var(--color-primary)]"></i>
                 </div>
                 {t('dashboard.completedTrend')}
               </h2>
-              <span className="text-xs text-[var(--color-text-muted)] font-medium">
-                {formatShortDate(toDateKey(new Date(Date.now() - 29 * 24 * 60 * 60 * 1000)))} - {formatShortDate(toDateKey(new Date()))}
-              </span>
+              <TimeRangeSelector value={trendTimeRange} onChange={setTrendTimeRange} />
             </div>
 
             {hasTrendData ? (
               <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-                    <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--color-text-light)' }} />
-                    <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: 'var(--color-text-light)' }} />
+                  <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 11, fill: 'var(--color-text-light)' }}
+                      tickLine={false}
+                      axisLine={{ stroke: 'rgba(0,0,0,0.08)' }}
+                    />
+                    <YAxis
+                      allowDecimals={false}
+                      tick={{ fontSize: 11, fill: 'var(--color-text-light)' }}
+                      tickLine={false}
+                      axisLine={{ stroke: 'rgba(0,0,0,0.08)' }}
+                    />
                     <Tooltip
                       formatter={(value: number) => [
                         t('dashboard.countAppointments', { count: value }),
@@ -825,27 +876,30 @@ export default function Dashboard() {
                       contentStyle={{
                         borderRadius: '12px',
                         border: '1px solid rgba(0, 0, 0, 0.08)',
-                        boxShadow: 'var(--shadow-md)'
+                        boxShadow: 'var(--shadow-md)',
+                        background: 'rgba(255,255,255,0.95)',
+                        backdropFilter: 'blur(8px)'
                       }}
                     />
-                    <Line
+                    <Area
                       type="monotone"
                       dataKey="completed"
                       stroke="var(--color-primary)"
-                      strokeWidth={3}
-                      dot={{ r: 3 }}
-                      activeDot={{ r: 5 }}
+                      strokeWidth={2.5}
+                      fill="url(#colorCompleted)"
+                      dot={{ r: 3, fill: 'var(--color-primary)', strokeWidth: 0 }}
+                      activeDot={{ r: 6, fill: 'var(--color-primary)', stroke: 'white', strokeWidth: 2 }}
                     />
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="empty-state !py-10">
-                <div className="empty-state-icon">
-                  <i className="fas fa-chart-line"></i>
+              <div className="empty-state-premium">
+                <div className="empty-icon">
+                  <i className="fas fa-chart-area"></i>
                 </div>
-                <div className="empty-state-title">{t('dashboard.noCompletedTitle')}</div>
-                <div className="empty-state-description">{t('dashboard.noCompletedDesc')}</div>
+                <div className="empty-title">{t('dashboard.noCompletedTitle')}</div>
+                <div className="empty-description">{t('dashboard.noCompletedDesc')}</div>
               </div>
             )}
           </div>
@@ -871,6 +925,9 @@ export default function Dashboard() {
               delay={200}
             />
           </div>
+
+          {/* Appointment Heatmap - Full width in left column */}
+          <AppointmentHeatmap appointments={allAppointmentsData} />
         </div>
 
         {/* Right Column */}
@@ -1011,6 +1068,9 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+
+          {/* Patient Care Panel */}
+          <PatientCarePanel appointments={allAppointmentsData} />
 
           {/* Quick Actions */}
           <div className="glass-card p-6">

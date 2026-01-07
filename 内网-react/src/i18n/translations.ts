@@ -70,6 +70,26 @@ export const translations = {
       quickActions: 'Quick Actions',
       managePatients: 'Patient Management',
       openCalendar: 'Open Calendar',
+      // Time range selector
+      days7: '7 Days',
+      days30: '30 Days',
+      days90: '90 Days',
+      // Heatmap
+      appointmentHeatmap: 'Busy Hours',
+      last4Weeks: 'Last 4 weeks',
+      appointments: 'appointments',
+      less: 'Less',
+      more: 'More',
+      // Patient care panel
+      patientCare: 'Patient Care',
+      allPatientsHealthy: 'All caught up!',
+      noAlertsToday: 'No patient care alerts today',
+      birthdays: 'Birthdays',
+      today: 'Today',
+      followUpNeeded: 'Follow-up Needed',
+      inactivePatients: 'Inactive Patients',
+      inactiveCount: '{count} patients inactive',
+      noVisitIn3Months: 'No visit in 3+ months',
     },
     calendar: {
       viewDay: 'Day',
@@ -458,6 +478,26 @@ export const translations = {
       quickActions: '快速操作',
       managePatients: '患者管理',
       openCalendar: '查看日历',
+      // Time range selector
+      days7: '7天',
+      days30: '30天',
+      days90: '90天',
+      // Heatmap
+      appointmentHeatmap: '繁忙时段',
+      last4Weeks: '近4周',
+      appointments: '个预约',
+      less: '少',
+      more: '多',
+      // Patient care panel
+      patientCare: '患者关怀',
+      allPatientsHealthy: '一切正常！',
+      noAlertsToday: '今日无需关注的患者',
+      birthdays: '生日提醒',
+      today: '今天',
+      followUpNeeded: '需要跟进',
+      inactivePatients: '久未就诊',
+      inactiveCount: '{count} 位患者',
+      noVisitIn3Months: '超过3个月未就诊',
     },
     calendar: {
       viewDay: '日',
